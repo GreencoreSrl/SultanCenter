@@ -1,0 +1,38 @@
+  subject: character encoding throughout PoS components
+           as supported by character-to-byte conversions of sun.io
+
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿ ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿ ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿ ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³Lineprinters   ³ ³Linedisplays   ³ ³PoS Server     ÃÄ´Local File IO  ³
+ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´ ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´ ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´ ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³thermal 42/44  ³ ³customer 4x20  ³ ³parameters     ³ ³report files   ³
+³impact  40     ³ ³operator 2x20  ³ ³hash files     ³ ³idc / journal  ³
+³slip    45/66  ³ ³               ³ ³a2a services   ³ ³console logs   ³
+ÀÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÙ ÀÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÙ ÀÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÙ ÀÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÙ
+        ³                 ³                 ³                 ³
+        ÀÄÄ<Ä<ÄÄÄÂÄÄÄ>Ä>ÄÄÙ                 ÀÄÄ>Ä<ÄÄÄÂÄÄ>Ä<ÄÄÄÙ
+                 ³                                   ³
+ÚÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ³ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ³ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ Ä¿
+³                ³         ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿         ³                ³
+³                ÀÄÄÄ<Ä<ÄÄÄ´OEM/DOS Bytes[]ÃÄÄÄ>Ä<ÄÄÄÙ                ³
+³                          ³e.g. US (Cp437)³                          ³
+³                          ÀÄÄÄÄÄÄÂÄÂÄÄÄÄÄÄÙ                          ³
+³                                 ³ ³                                 ³
+³                  new String     ³ ³String.getBytes                  ³
+³                ÚÄÄÄ<Ä<ÄÄÄÄÄÄÄÄÄÄÙ ÀÄÄÄÄÄÄÄÄÄÄ<Ä<ÄÄÄ¿                ³
+³                ³         ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿         ³                ³
+³                ÀÄÄÄ>Ä>ÄÄÄ´UniCode StringsÃÄÄÄ>Ä>ÄÄÄÙ                ³
+³                          ÀÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÙ                          ³
+ÀÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ³ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÄ ÄÙ
+                                   ³ 
+                  List.add         ³
+                 ÚÄÄÄÄÄÄÄÄÄÄÄ<Ä<ÄÄÄÁÄÄÄ>Ä>ÄÄÄÄÄÄÄÄÄÄÄ¿
+          Dialog.³setTitle                  Graphics.³drawString
+        ÚÄÄ<Ä<ÄÄÄÁÄÄÄ>Ä>ÄÄ¿                 ÚÄÄ<Ä<ÄÄÄÁÄÄÄ>Ä>ÄÄ¿
+ÚÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄ¿ ÚÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄ¿ ÚÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄ¿ ÚÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄ¿
+³Windows NT/XP  ³ ³Linux/XWindow  ³ ³JVM Windows    ³ ³JVM Linux      ³
+ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´ ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´ ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´ ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³ANSI codepage  ³ ³ISO codepage   ³ ³fontconfig.XP  ³ ³fontconfig.SuSE³
+³e.g. Western   ³ ³e.g. Latin-1   ³ ³.properties    ³ ³.properties    ³
+³(Cp1252)       ³ ³(ISO8859-1)    ³ ³name=Monospaced³ ³name=Monospaced³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+                           

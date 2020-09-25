@@ -1,0 +1,40 @@
+
+
+protocol headers (N5P5) partly unclear / not used
+-------------------------------------------------
+details:
+NNNNN = node (probably senseless in interface between PoS appl and WinEPTS client)
+PPPPP = port (which one, PoS appl or WinEPTS client ?)
+        neither one is necessary, all datagrams carry both ports anyway.
+GGG   = virtual EFT terminal id (probably senseless in interface between PoS appl and WinEPTS client)
+
+
+data message formats partly unclear / not specified
+---------------------------------------------------
+details:
+- some 1-byte fields hold numeric info, binary (0x00-0xff) or ASCII (0x30-0x39) is not specified.
+- various ASCII strings hold 1-byte character sets, IBM/DOS (oem) or ANSI (Latin-1) is not specified.
+- crc is said to be "performed on the whole message", is N5P5 header and var.length included ?
+- max. message size missing in specification:
+  C-code sample shows MsgIn/MsgOut sizes of 256 bytes each,
+  whereas Receipt-Data message has upto 512b receipt data plus 512b extra data ?
+
+
+data message contents do not match with PoS framework 
+-----------------------------------------------------
+print-line issues:
+- line-size of receipt data not specified.
+- how to print doublewide ?
+
+properties of modal dialogues inconsistent or not supported:
+- extended error message too large for 2x20.
+- getString prompt in multiple lines on 2x20 ?
+- answer upto 64 characters not supported.
+- choices can be aborted, getString cannot ?
+
+referral number (for void) cannot be xfered in authorization request
+- PoS appl requests this input before EFT transaction starts
+
+end-of-day command missing (generation change):
+- PoS supports terminal shut-down before store EoD
+

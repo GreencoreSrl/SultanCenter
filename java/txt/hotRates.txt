@@ -1,0 +1,33 @@
+
+hot maintenance of foreign currency exchange rates
+implemented by maintenance gateway (M_MNTHSH.DAT)
+
+*RFC = Request For Change (Rate of Foreign Currency)
+
+header (24 bytes).......S_REG record data (54 bytes)..........................
+     sup# yymmdd hhmmss icsc description  flags/ctrl (zero)  (base)  (foreign)
+*RFC:0899:071127:163900:4208:EUR / 1 CHF :03:0002:24+000000+0006800+0000010000
+
+
+enable terminal specific maintenance / support
+implemented by all maintenance records with 10 bytes routing header
+(record size of M_MNTHSH.DAT = 90 bytes)
+
+(10 bytes)         (78 bytes)            (2bytes)
+S1234:*01:.....Maintenance.record.data....0x0D0A
+
+   S = origin (B=BackOffice, H=HighOrder, S=SupportMenu, W=WebMaster)
+1234 = target store id (0000 = all stores)
+ *01 = target group or terminal (000 = all terminals)
+
+examples:
+W0000:000:*RFC:0899:071127:163900:4208:EUR / 1 CHF :03:0002:24+000000+0006800+0000010000\r\n
+S1234:*01:*F2F:gif\PROMO.GIF hot                                                        \r\n
+S0000:008:*F2F:hotfix\FIX0815.BAT hot                                                   \r\n
+S0000:008:*F2X:hot\FIX0815.BAT /noRollBack=true                                         \r\n
+S0000:008:*F2D:hot\FIX0815.BAT                                                          \r\n
+
+where 7052_F2X.BAT makes argument %1 executable, then calls it.
+note: 7052_F2X executes in a new process, not on the JVM console.
+      Stdout and stderr of this process are being echoed to the JVM console,
+      and they are subject to further redirection thereby.

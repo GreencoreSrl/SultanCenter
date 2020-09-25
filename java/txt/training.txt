@@ -1,0 +1,227 @@
+
+
+history
+
+      MTX.1 to MTX.6  pos.exe, eod.exe, mas.exe
+                      on MS-DOS/TAPS/MS-C, LAN protocol NetBIOS
+
+      AS@R.1          above plus pos.exe, dy_pos.exe, d8_pos.exe
+                      on WinNT/OPOS/MFC/C++, LAN protocol NetBIOS, TCP/IP
+
+      AS@R.2          above plus GdPoS package
+                      on JavaVM/JavaPOS/Java, LAN protocol TCP/IP
+
+      AS@R.2.5        MS-DOS/TAPS/MS-C and JavaVM/JavaPOS/Java versions
+                      Java versions with DigitalPromotion from NCR Atlanta
+                                    via  FrequentShopper  from NCR Milano
+
+      AS@R.2.6        Java versions only (not MS-DOS)
+                      plus touch-screen versions (cafeteria) on Windows
+
+      AS@R.2.7        Biometrics device integration (fingerprint),
+
+      AS@R.2.8        plus touch-screen versions (cafeteria) on Linux
+
+      AS@R.3          registry based upon vector-borne transactions
+                      with tentative and ultimate discounting / promotions
+                      with electronic clean receipt and delta totals
+
+
+packages
+
+      java.awt        abstract window toolkit for gui
+                      (video output, mouse and keyboard event creation)
+
+      java.io         access to local disk files
+
+      java.net        connection to PoS server via TCP/IP
+
+      javax.comm      serial communications (EFT devices etc)
+
+      jpos            retail peripherals (printers, linedisplays etc)
+
+      default         PoS application
+
+
+versions
+
+      VMs             MS jview (NT), Insignia evm (CE), Sun java, IBM jre
+
+      GUIs            CRT / LCD 640x480, 800x600, 1024x768
+                      com.ncr.Dynakey 10, 12, 15 inch (dyna)
+                      com.ncr.Dynakey on 800x600 background picture (d800)
+                      Touchscreen 800x600 (dyna 640x480 + touchzones)
+                      Touchscreen 1024x768, 1280x1024 (d800 emulations)
+                      2x20 operator display (dark CRT)
+
+
+directory structure
+
+      gd90            scripts, S_???XXX.ORG S_PLU???.DAT P_REG???.DAT
+      gd90/class      classes of base version
+      gd90/data       S_???%REG%.DAT
+      gd90/inq        S_HSH?LU.DAT
+      gd90/hot        hot maintenance (file level)
+      gd90/gif        pictures
+      gd90/cafe       picture tables for non-modal item selections
+
+      gd90/dyna       classes and dynakey pictures for dynakeys
+      gd90/d800       classes and pictures for 800x600 picturesque gui
+
+      gd90/ts800      classes and hardkey pictures for 800x600 touch
+      gd90/ts1024     classes and hardkey pictures for 1024x768 touch
+      gd90/ts1280     classes and hardkey pictures for 1280x1024 touch
+
+
+package components
+
+      com.ncr.GdPos.env       property file of environment variables
+
+      public classes  com.ncr.GdPos, LanMaint, LanLdata
+                      with commandline execution via main method
+
+      EVENT.TBL       event state machine definition table
+
+      TS*.REG         touchzone definition files (* = 800,1024,1280)
+
+
+event table maintenance
+
+      maint.exe       EVENT.TBL, EVENT.LST, EVENT.TMP
+
+
+class conception
+
+      object oriented gui, retail device access, file i/o, TCP/IP comms
+
+      procedural      business logic ported from MS-C/C++
+
+
+application design    gui application = collection of event handlers
+
+      keyboard events numeric data and function keys
+
+      mouse events    dialogue buttons / touch zones clicks
+
+      action events   scanners, scale, MSR, ticker
+
+      item events     selection from listboxes
+
+      focus events    transfer focus to handler of key events
+
+      window events   activation / closing
+
+
+thread design
+
+      main            start up from command line / read all parameters
+
+      dispatch        handle all events from the JavaVM system event queue
+
+      hotpump         create and destroy network sockets
+                      establish / close TCP/IP connections
+                      xfer all totals after offline transactions
+                      xfer rest of sequential data-file records
+                      (electronic receipt and delta totals)
+                      (electronic journal and item data capture)
+
+      hotcare         apply record level maintenance for hash files
+                      and copy/delete/exec files on request
+
+      hotnote         monitoring of news data-file at the PoS server
+                      for both new messages and confirmations
+
+      ticker          launch action events for various monitors
+
+      scanner input   one thread per device awaiting data from serial port
+
+
+active windows
+
+      main frame      base window with input processed by state machine
+
+      modal dialogs   for solicited input while frame painting continues
+
+
+application classes
+
+      methods         actions specified within event state table,
+                      identified by combination of class and method number
+
+      inheritance     derived from Action with central action dispatch,
+                      derived from Basis with commonly used subroutines,
+                      derived from Table with access to local/remote data,
+                      derived from Struc with shared data structures,
+                      derived from FmtIo with format specifications,
+                      derived from Config with environment configurations
+
+utility classes
+
+      FmtIo           field level conversions from/to UniCode char strings
+
+      LinIo           record level parsing/formatting for fixed line sizes
+
+
+local/remote data file access
+
+      oem char sets   provided by characterToByte converter class (sun.io)
+
+      local access    based on java.io.RandomAccessFile
+                      record size fixed, record separator = 0x0d0a
+
+      remote access   totals/report services with relative record numbers
+
+      data files      within transaction:  sales totals --> memory tables
+                                     electronic journal --> S_JRN%REG%.DAT
+                                      item data capture --> S_TRA%REG%.DAT
+
+                      end of transaction: memory tables --> local + remote
+                                        S_TRA%REG%.DAT  --> S_IDC%REG%.DAT
+                                     electronic receipt --> S_GPO%REG%.DAT
+                                     transaction deltas --> S_DTL%REG%.DAT
+
+      param files     sequential or by binary search (sorted by access key)
+
+      inquiry files   seek at record number computed by hash algorithm
+
+
+video output based on java.awt
+
+      arrangement     by AWT layout managers Border, Grid, Card
+
+      peers to OS     by AWT components Canvas, Listbox, Window
+
+      GdLabel         Canvas + line of text + style + fg/bg image
+
+      GdElJrn         Canvas + lines of text single/double wide + fg image
+
+      BarCode         Canvas + EAN/UPC label
+
+      Border          Panel + insets + top-card control + bg image
+
+
+output to retail devices
+
+      class DevIo     collection of all peripheral access methods
+                      two versions, depending on printer/cashdrawer access
+
+      catalog class   device access by JavaPOS (base implementation)
+                      using class PosIo for common controls
+
+      catalog apio    alternate direct serial communications (non JavaPOS)
+
+
+wedge device i/o
+
+      catalog class   using JavaPos input filtered by NCR keyboard hook
+                      keyboard --> active window / focus owner
+                      keylock --> all users of keylock service object
+                      msr data --> owner of msr service object
+                      scanner  --> owner of scanner service object
+                      tone indicator is wedge output device
+
+      catalog apio    non JavaPos with all input --> focus owner
+                      and additional native OS kernel mode utilities
+                      KEYLOCK to obtain initial position
+                      SPEAKER to sound error tones
+

@@ -1,0 +1,40 @@
+
+event table maintenance    operating instruction
+
+
+
+
+cursor position control
+ÚÄÄÄÄ¿
+³ÄÄ> ³ one position to the right
+ÆÍÍÍÍµ at end: first position in the next line
+³<ÄÄ ³ one position to the left
+ÆÍÍÍÍµ at end: last position in the line before
+³tab ³ first position in the next field
+ÆÍÍÍÍµ at end: first position in the first field
+³<ÄÙ ³ first position in the next line
+ÀÄÄÄÄÙ     
+        
+cursor line control
+ÚÄÄÄÄ¿
+³   ³ one line up
+ÆÍÍÍÍµ     
+³   ³ one line down
+ÆÍÍÍÍµ     
+³PgUp³ 20 lines up
+ÆÍÍÍÍµ 
+³PgDn³ 20 lines down
+ÆÍÍÍÍµ
+³home³ first line of the event table
+ÆÍÍÍÍµ     
+³end ³ last line of the event table
+ÀÄÄÄÄÙ     
+
+function control
+ÚÄÄÄÄ¿
+³ins ³ insert event line or section header
+ÆÍÍÍÍµ
+³del ³ delete event line or section header
+ÆÍÍÍÍµ
+³esc ³ terminate maintenance
+ÀÄÄÄÄÙ

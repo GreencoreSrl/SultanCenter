@@ -1,0 +1,13 @@
+
+     Cash & Carry
+     = Prices do not include VAT in any source (files, labels, displays), taxes being added before tendering.
+
+   зддддддддддддддбддддддддддддбддддддддддддддддддддбдддддддддддддддддбддддддддддддддддддддддддддддддддддддддд©
+   Ё param file   Ё access key Ё position           Ё non C&C         Ё C&C data                              Ё
+   фммммммммммммммьммммммммммммьммммммммммммммммммммьмммммммммммммммммьммммммммммммммммммммммммммммммммммммммм╣
+   Ё P_REGPAR.DAT Ё COPT0:     Ё digit pair 01      Ё 0x00            Ё smallest coin after addition of taxes Ё
+   цддддддддддддддеддддддддддддеддддддддддддддддддддедддддддддддддддддеддддддддддддддддддддддддддддддддддддддд╢
+   Ё S_REGXXX.ORG Ё icsc 0609  Ё flag               Ё 0x01            Ё 0x11 (accumulate to current subtotal) Ё
+   Ё S_REGXXX.ORG Ё icsc 0709  Ё description        Ё "VAT  Total  "  Ё "GROSS INCOME"                        Ё
+   юддддддддддддддаддддддддддддаддддддддддддддддддддадддддддддддддддддаддддддддддддддддддддддддддддддддддддддды
+

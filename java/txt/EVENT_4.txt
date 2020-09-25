@@ -1,0 +1,40 @@
+
+event table maintenance    record - descriptions
+
+
+
+
+menu control section / event line
+----                   -----
+
+line = line number of menu line in event table
+       (in ascending and uninterrupted order)
+
+code = menu item identification number
+       (always > zero)
+
+ nxt = header line of section to follow
+       (input control section is required)
+
+ alt = header line of alternate next section
+       (action may set event.nxt = event.alt)
+
+lock = valid keylock positions
+       (01 = N, 02 = X, 04 = S, 10 = authorized)
+
+ lin = line in menu window for text display
+       (12 lines per page within DOS list box)
+
+ pos = position in dynakey window
+       (valid range from 01 to 08)
+
+ txt = text in menus.tbl for menu item display
+       (if act = tender selection, obtain
+        text from tender table [spec])
+
+spec = additional specification for the action
+       (such as actioncode, tender id etc.)
+
+ act = application action ccx to be executed
+       (cc = class number, x = action 0-9)
+       (000 = no action, 001 = submenu)

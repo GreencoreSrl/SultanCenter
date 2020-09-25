@@ -1,0 +1,43 @@
+
+event table maintenance    record - descriptions
+
+
+
+
+input control section / header line
+-----                   ------
+
+line = line number of header line in event table
+       (in ascending and uninterrupted order)
+
+code = section header identification
+       (always = zero)
+
+ nxt = event line of chained events       
+       (zero = end of section)
+
+ txt = text in mnemo.tbl for operator display
+       (zero = display special prompt instead)
+
+flag = input control flag
+       (80 = delay prompt after keystroke)
+       (40 = no echo before decimal point)
+       (20 = no echo behind decimal point)
+       (10 = alpha input terminated by CR)
+       (0F - 01 = dynakey description nbr)
+
+ max = max. number of numerics incl. decimals
+       (for all events within the section)
+
+ msk = number of asterisks in prompt
+       (zero = no prompt)
+
+ dec = number of asterisks after decimal point
+       (00 = no point, 99 = monetary amount)
+
+help = help identification number xxxx
+       (POSxxxx.00 is the access key to help)
+       (POSxxxx is the key to short instructions)
+
+ act = application action to be done on entry
+       to the section (zero = no action)

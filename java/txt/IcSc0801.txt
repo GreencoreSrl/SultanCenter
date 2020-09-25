@@ -1,0 +1,24 @@
+
+
+
+   S_REGxxx.ORG itemcode 08 subcode 01 description = Sales Total
+   
+   general: accumulated at end of each sales transaction,
+            not affected by all transaction modes other than sales
+            (abort, training, re-entry, inventory, transfer, layaway),
+            not affected by strictly monitary transactions
+            (received on account, paidout, tender media exchange).
+   
+   customer count: number of sales transactions,
+                   always incremented by one, regardless of sign,
+                   also with transaction preselections
+                   (sales void, sales return).
+                   
+   item count    : number of items sold,
+                   weight items count for one,
+                   deposits and items negative by nature do not count
+                   (negative plu, bottle refund, item return).
+                   
+   sales amount  : total value of items sold,
+                   including vat (if prices include vat),
+                   net respecting all item and transaction-level discounts.

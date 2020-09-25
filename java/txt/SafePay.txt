@@ -1,0 +1,75 @@
+
+Integration of SafePay POS device
+--------------------------------- 
+
+1. Connection:
+   LocalAreaNetwork (TCP/IP) Port 20703 
+
+2. Communication Protocol:
+   Stop-and-Wait ARQ with SN / NFE
+   and CRC16 (Polynomial = 0x8005)
+
+3. Implementation:
+   Class SafePay extends BcrIo (BulkCashRecycler)
+   
+4. Configuration:
+   BCR=SPComputerName:1234\SafePay
+
+5. Cashier mode functions:
+   Deposit / Dispense cash via specific tender (type 'H'),
+   with option to monitor denominations by View-Key
+   
+6. Device services menu (AC80):
+   Select cassette and dump notes,
+   with electronic journal and monitary amount in IDC.
+   CoinRecyclingUnit cover open.
+
+7. Event Handling:
+   Health checking in reply to POS application requests,
+   added to operator interventions at end-of-transaction
+
+8. Diagnostics:
+   Optional communication log (e.g. BCRLOG=L_BCR%REG%.LOG),
+   in lab environment only, monitoring creates mass data.
+
+
+Parameters required
+-------------------
+
+1. in S_REGXXX.ORG:
+   Special uncontrolled tender (e.g. 08 = BCR-Device)
+
+2. in P_REGTND.DAT:
+   Tender flags and limits
+
+3. in P_REGPAR.KEY:
+   Individual tender selection key
+   View-key (if denom view dialogue is desired)
+
+4. in P_REGPAR.DAT:
+   Assignment of tender number to selection key (CMNY)
+   Table of denominations inside BCR (e.g. DT080 - DT08F)
+
+5. in subdirectory gif (optionally):
+   Pictures of denoms (e.g. CSH_0800.GIF - CSH_0831.GIF)
+
+
+Functional adaptation to cashier accountability
+-----------------------------------------------
+
+1. loan (xfer cash from office via cashier into BCR)
+   step1 = select cash and do cashier loan (AC11)
+   step2 = give loan receipt to cash-office
+   step3 = select cash and do media xfer to BCR (AC30)
+   step4 = keep media xfer receipt for settlement
+
+2. pickup (xfer cash out of BCR via cashier to office)
+   step1 = select BCR and do media xfer to cash (AC30)
+   step2 = give media xfer receipt to cash-office
+   step3 = select cash and do cashier pickup (AC12)
+   step4 = keep pickup receipt for settlement
+
+3. use financial reports of PoS to balance cashiers
+
+4. use BackOfficeCashManagement (BOCM) to control devices
+

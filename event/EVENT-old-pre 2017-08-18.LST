@@ -1,0 +1,909 @@
+GD     Event Table Maintenance   mm/dd/yy = 12/21/16  hh:mm:ss = 12:51:28
+-------------------------------------------------------------------------
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*000*               001  0x00  03  03  00  0000  007  บ closed state    บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*001*  0x000d  069  017  0x05  03  01  00  0001  003  บ ckr/sup open    บ
+*002*  0x4f4f  069  017  0x05  16  04  00  0001  003  บ ckr/sup badge   บ
+*003*  0x4d4d  069  017  0x05  20  04  00  0001  003  บ ckr/sup by msr  บ
+*004*  0x00be  000  000  0x05  00  00  00  0057  107  บ price inquiry   บ
+*005*  0xcda0  000  000  0x0f  00  00  00  0099  007  บ auto clusterEOD บ
+*006*  0x00f1  008  008  0x85  02  01  00  0099  007  บ online eod      บ
+*007*  0x001b  000  000  0x05  00  00  00  0000  002  บ exit from pos   บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*008*               001  0x01  03  03  00  9900  000  บ online eod 99   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*009*  0x000d  000  000  0x05  03  01  00  0000  007  บ ckr/sup number  บ
+*010*  0x4f4f  000  000  0x05  16  04  00  0000  007  บ ckr/sup badge   บ
+*011*  0x4d4d  000  000  0x05  20  04  00  0000  007  บ ckr/sup by msr  บ
+*012*  0x001b  000  000  0x05  00  00  00  0000  030  บ trans. clear    บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*013*               001  0x00  03  03  00  0800  102  บ checker pause   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*014*  0x000d  069  000  0x05  03  01  00  0000  005  บ ckr number      บ
+*015*  0x4f4f  069  000  0x05  16  04  00  0000  005  บ ckr badge       บ
+*016*  0x4d4d  069  000  0x05  20  04  00  0000  005  บ ckr card by msr บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*017*               014  0x01  02  02  00  8001  102  บ sup ready state บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*018*  0x00f1  021  021  0x05  02  00  00  0000  001  บ menu admin      บ
+*019*  0x00a2  000  000  0x0f  00  00  21  0002  004  บ super close     บ
+*020*  0x000c  017  017  0x04  00  00  00  0061  106  บ journal watch   บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  hdr  ษอออออออออออออออออป
+*021*               014  0xff  02  02  00  8001  003  บ sup menu admin  บ
+line#    code  nxt  alt  lock lin pos txt  spec  act  ฬอออออออออออออออออน
+*022*  0x0002  000  000  0x05  01  00  21  0002  004  บ super close     บ
+*023*  0x0013  017  017  0x04  03  00  07  0019  099  บ ckr settlement  บ
+*024*  0x0014  017  017  0x04  04  00  08  0020  090  บ ckr tbl report  บ
+*025*  0x0015  017  017  0x04  14  00  09  0021  099  บ ckr report      บ
+*026*  0x0017  017  017  0x04  16  00  11  0023  093  บ fin report      บ
+*027*  0x0018  017  017  0x04  17  00  12  0024  094  บ act report      บ
+*028*  0x0019  037  037  0x04  18  00  13  0000  001  บ slm report      บ
+*029*  0x001a  047  047  0x04  19  00  14  0000  001  บ dpt report      บ
+*030*  0x001b  017  017  0x04  20  00  15  0027  097  บ ckr rsp report  บ
+*031*  0x001c  017  017  0x04  21  00  16  0028  098  บ lan sts report  บ
+*032*  0x001d  057  057  0x04  06  00  17  0029  100  บ pluean inq/mnt  บ
+*033*  0x004b  561  561  0x04  07  00  36  0075  108  บ preset dpt keys บ
+*034*  0x004c  017  017  0x04  08  00  38  0076  006  บ password change บ
+*035*  0x0062  066  066  0x04  09  00  02  0098  008  บ declare defect  บ
+*036*  0x0063  000  000  0x04  10  00  18  0099  009  บ end-of-day      บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*037*               015  0xf6  01  01  00  8025  064  บ slm report type บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*038*  0x0001  069  017  0x04  01  01  65  0025  095  บ all majors *... บ
+*039*  0x0002  069  017  0x04  02  02  66  0025  095  บ all majors **.. บ
+*040*  0x0003  069  017  0x04  03  03  67  0025  095  บ all majors ***. บ
+*041*  0x0004  045  045  0x04  05  04  68  0000  095  บ inquiry    1234 บ
+*042*  0x0005  045  045  0x04  06  05  69  0000  095  บ lvl under  1234 บ
+*043*  0x0006  045  045  0x04  07  06  70  0000  095  บ all under  1234 บ
+*044*  0x0007  069  017  0x04  09  07  71  0025  095  บ total report    บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*045*               005  0x01  04  04  00  8025  000  บ slm inquiry     บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*046*  0x000d  069  017  0x04  04  00  00  0025  095  บ salesman nbr    บ
+       0x0000  068                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*047*               015  0xf6  01  01  00  8026  064  บ dpt report type บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*048*  0x0001  069  017  0x04  01  01  65  0026  096  บ all majors *... บ
+*049*  0x0002  069  017  0x04  02  02  66  0026  096  บ all majors **.. บ
+*050*  0x0003  069  017  0x04  03  03  67  0026  096  บ all majors ***. บ
+*051*  0x0004  055  055  0x04  05  04  68  0000  096  บ inquiry    1234 บ
+*052*  0x0005  055  055  0x04  06  05  69  0000  096  บ lvl under  1234 บ
+*053*  0x0006  055  055  0x04  07  06  70  0000  096  บ all under  1234 บ
+*054*  0x0007  069  017  0x04  09  07  71  0026  096  บ total report    บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*055*               006  0x01  04  04  00  8026  000  บ dpt inquiry     บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*056*  0x000d  069  017  0x04  04  00  00  0026  096  บ department nbr  บ
+       0x0000  068                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*057*               009  0x01  16  00  00  2900  000  บ pluean inq/mnt  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*058*  0x000d  062  062  0x04  16  01  00  0029  050  บ keyb plu nbr    บ
+*059*  0x4f4f  062  062  0x04  16  01  00  0029  050  บ scan plu nbr    บ
+*060*  0x000e  062  062  0x04  16  01  00  0029  050  บ special plu key บ
+*061*  0x0019  069  017  0x05  00  00  00  0000  050  บ total           บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*062*               036  0x81  07  07  99  2901  000  บ pluean maint    บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*063*  0x000d  057  057  0x04  07  00  99  0000  101  บ new price       บ
+*064*  0x000f  057  057  0x04  07  00  99  0001  101  บ new label       บ
+*065*  0x000b  057  057  0x05  00  00  00  0000  101  บ clear           บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*066*               003  0x01  03  03  00  9800  000  บ declare defect  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*067*  0x000d  017  017  0x04  03  03  00  0000  008  บ terminal number บ
+*068*  0x000b  069  017  0x04  00  00  00  0000  030  บ abort / clear   บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*069*               016  0x03  20  00  00  0001  102  บ ckr ready state บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*070*  0x0019  069  069  0x05  00  00  00  0000  037  บ no sale         บ
+*071*  0x0007  095  095  0x05  00  00  00  0000  027  บ remote invoice  บ
+*072*  0x00f1  100  100  0x05  02  00  00  0000  001  บ menu admin      บ
+*073*  0x00a2  000  000  0x05  00  00  21  0002  004  บ checker close   บ
+*074*  0x00a8  013  013  0x05  00  00  27  0008  005  บ checker pause   บ
+*075*  0xcda8  013  013  0x0f  00  00  27  0008  005  บ auto ckr pause  บ
+*076*  0x00a9  522  532  0x05  00  00  28  0905  081  บ cash count      บ
+*077*  0x00aa  522  532  0x05  00  00  04  1002  081  บ loan            บ
+*078*  0x00ab  522  532  0x05  00  00  05  1103  081  บ pickup          บ
+*079*  0x00af  522  532  0x05  00  00  06  1504  081  บ float           บ
+*080*  0x000f  069  164  0x05  04  00  00  0000  026  บ slip post/pres  บ
+*081*  0x00f2  118  118  0x05  02  00  00  0000  001  บ menu regis      บ
+*082*  0x00a3  162  162  0x05  00  00  00  0003  011  บ trans return    บ
+*083*  0x00a5  296  296  0x05  00  00  00  0005  011  บ rcvd on account บ
+*084*  0x00a6  296  296  0x05  00  00  00  0006  011  บ paid outs       บ
+*085*  0x00a7  327  327  0x05  00  00  00  0007  011  บ till tl entry   บ
+*086*  0x00f8  131  131  0x05  00  00  00  0030  019  บ media exchange  บ
+*087*  0x00f3  133  133  0x05  01  00  00  0000  001  บ trans.preselect บ
+*088*  0x00b1  162  162  0x05  00  00  44  0001  031  บ trans void      บ
+*089*  0x00b3  162  162  0x05  00  00  46  0003  031  บ surcharge       บ
+*090*  0x00b0  154  154  0x05  00  00  00  0000  010  บ anonymous sales บ
+*091*  0x00b4  146  146  0x05  00  00  00  0007  010  บ employee sales  บ
+*092*  0x00b5  146  146  0x05  00  00  00  0008  010  บ customer sales  บ
+*093*  0x0020  069  069  0x05  00  00  00  0000  120  บ GC : BALANCE    บ
+*094*  0x001d  156  156  0x05  00  00  47  0004  031  บ resume          บ
+       0x0000  188                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*095*               030  0x02  07  07  00  0080  000  บ remote invoice  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*096*  0x000d  098  098  0x05  07  04  00  0001  027  บ transaction nbr บ
+*097*  0x000b  069  069  0x05  00  00  00  0000  030  บ trans. clear    บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*098*               013  0x02  02  02  00  0081  000  บ remote invoice  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*099*  0x000d  069  069  0x05  02  00  00  0002  027  บ currency type   บ
+       0x0000  097                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  hdr  ษอออออออออออออออออป
+*100*               014  0xff  02  02  00  0001  003  บ ckr menu admin  บ
+line#    code  nxt  alt  lock lin pos txt  spec  act  ฬอออออออออออออออออน
+*101*  0x0002  000  000  0x05  01  00  21  0002  004  บ checker close   บ
+*102*  0x0008  013  013  0x05  02  00  27  0008  005  บ checker pause   บ
+*103*  0x0009  522  532  0x05  03  00  28  0005  081  บ cash count      บ
+*104*  0x000a  522  532  0x05  04  00  04  0002  081  บ loan            บ
+*105*  0x000b  522  532  0x05  05  00  05  0003  081  บ pickup          บ
+*106*  0x000f  522  532  0x05  06  00  06  0004  081  บ float           บ
+*107*  0x0013  069  000  0x04  07  00  07  0019  091  บ ckr settlement  บ
+*108*  0x0015  069  069  0x04  12  00  09  0021  091  บ ckr report      บ
+*109*  0x0017  069  069  0x04  13  00  11  0023  093  บ fin report      บ
+*110*  0x0018  069  069  0x04  14  00  12  0024  094  บ act report      บ
+*111*  0x0019  037  037  0x04  15  00  13  0000  001  บ slm report      บ
+*112*  0x001a  047  047  0x04  16  00  14  0000  001  บ dpt report      บ
+*113*  0x001b  069  069  0x04  17  00  15  0027  097  บ ckr rsp report  บ
+*114*  0x001c  069  069  0x04  18  00  16  0028  098  บ lan sts report  บ
+*115*  0x004b  561  561  0x04  19  00  36  0075  108  บ preset dpt keys บ
+*116*  0x004c  069  069  0x05  20  00  38  0076  006  บ password change บ
+*117*  0x0050  069  069  0x06  21  00  40  0080  105  บ device services บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  hdr  ษอออออออออออออออออป
+*118*               014  0xff  02  02  00  0002  019  บ ckr menu regis  บ
+line#    code  nxt  alt  lock lin pos txt  spec  act  ฬอออออออออออออออออน
+*119*  0x0003  162  162  0x05  02  00  45  0003  011  บ trans return    บ
+*120*  0x0005  296  296  0x05  04  00  24  0005  011  บ rcvd on account บ
+*121*  0x0006  296  296  0x05  05  00  25  0006  011  บ paid outs       บ
+*122*  0x0007  327  327  0x05  06  00  26  0007  011  บ till tl entry   บ
+*123*  0x0010  069  069  0x05  08  00  29  0016  013  บ training mode   บ
+*124*  0x0011  069  320  0x05  09  00  30  0017  013  บ re-entry mode   บ
+*125*  0x001e  131  131  0x05  10  00  50  0030  019  บ media exchange  บ
+*126*  0x002d  322  322  0x05  14  00  31  0045  015  บ inventory       บ
+*127*  0x002e  325  325  0x05  16  00  32  0046  015  บ goods xfer to   บ
+*128*  0x0038  325  325  0x05  17  00  33  0056  015  บ goods xfer from บ
+*129*  0x002f  329  329  0x05  19  00  34  0047  015  บ layaway out     บ
+*130*  0x0039  329  329  0x05  20  00  35  0057  015  บ layaway return  บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*131*               056  0x04  07  07  99  0050  000  บ media exchange  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*132*  0x000b  069  069  0x05  00  00  00  0000  030  บ trans. clear    บ
+       0x0000  393                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*133*               015  0xf6  01  01  00  0003  043  บ trans.preselect บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*134*  0x0001  162  162  0x05  02  01  44  0001  031  บ trans void      บ
+*135*  0x0002  162  162  0x05  04  03  46  0003  031  บ surcharge       บ
+*136*  0x0003  146  146  0x05  08  07  22  0007  010  บ employee sales  บ
+*137*  0x0004  146  146  0x05  09  08  23  0008  010  บ customer sales  บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*138*               015  0xf6  01  01  00  0004  051  บ item preselect  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*139*  0x0001  271  271  0x05  02  01  52  0001  041  บ void            บ
+*140*  0x0002  271  271  0x05  03  02  53  0002  041  บ return          บ
+*141*  0x0003  260  260  0x05  04  03  54  0003  041  บ p/o at stock    บ
+*142*  0x0004  260  260  0x05  05  04  55  0004  041  บ p/o at pos      บ
+*143*  0x0005  262  262  0x05  06  05  56  0005  041  บ commission      บ
+*144*  0x0006  264  264  0x05  08  06  57  0006  041  บ price display   บ
+*145*  0x0007  268  268  0x05  09  07  58  0007  041  บ set of items    บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*146*               007  0x03  16  00  00  0300  000  บ pers/cust sales บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*147*  0x000d  160  151  0x05  16  01  00  0000  021  บ customer nbr    บ
+*148*  0x4f4f  160  151  0x05  16  01  00  0000  021  บ number by scan  บ
+*149*  0x4d4d  160  151  0x05  20  01  00  0000  021  บ number by imsr  บ
+*150*  0x000b  162  069  0x05  00  00  00  0000  040  บ item clear      บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*151*               020  0x83  03  03  01  0401  000  บ pers/cust dsc   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*152*  0x000d  160  160  0x05  03  00  01  0000  022  บ discount rate   บ
+*153*  0x001b  069  069  0x05  00  00  00  0002  035  บ trans. abort    บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*154*               018  0x03  20  00  00  0002  000  บ anonymous sales บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*155*  0x000b  162  069  0x05  00  00  00  0000  040  บ item clear      บ
+       0x0000  094                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*156*               030  0x03  13  07  00  0082  000  บ resume          บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*157*  0x000b  160  069  0x05  00  00  00  0000  040  บ item clear      บ
+*158*  0x000d  181  181  0x05  13  04  00  0001  059  บ transaction nbr บ
+*159*  0x4f4f  181  181  0x05  13  13  00  0001  059  บ transaction lbl บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*160*               018  0x03  20  00  00  0002  000  บ after cus ident บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*161*  0x001b  069  069  0x05  00  00  00  0002  035  บ trans. abort    บ
+       0x0000  094                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*162*               018  0x03  20  00  00  0002  000  บ after tran pres บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*163*  0x001b  069  069  0x05  00  00  00  0002  035  บ trans. abort    บ
+       0x0000  087                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*164*               016  0x03  20  00  00  0001  000  บ after slip pres บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*165*  0x000f  069  069  0x05  00  00  00  0000  026  บ no slip / abort บ
+       0x0000  081                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*166*               015  0x03  16  00  00  0070  000  บ cust/trans id   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*167*  0x000d  181  181  0x05  16  01  00  0015  020  บ receipt# by kbd บ
+*168*  0x4f4f  181  181  0x05  16  01  00  0015  020  บ customer by ean บ
+*169*  0x4d4d  181  181  0x05  20  01  00  0015  020  บ customer by msr บ
+       0x0000  259                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*170*               007  0x03  16  00  00  0300  000  บ late pers/cust  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*171*  0x000d  181  175  0x05  16  01  00  0000  021  บ customer nbr    บ
+*172*  0x4f4f  181  175  0x05  16  01  00  0000  021  บ number by scan  บ
+*173*  0x4d4d  181  175  0x05  20  01  00  0000  021  บ number by imsr  บ
+*174*  0x000b  181  069  0x05  00  00  00  0000  040  บ item clear      บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*175*               020  0x83  03  03  01  0401  000  บ late discount   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*176*  0x000d  181  181  0x05  03  00  01  0000  023  บ discount rate   บ
+*177*  0x001b  069  069  0x05  00  00  00  0002  035  บ trans. abort    บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*178*               017  0x03  20  00  00  0009  000  บ after subtotal  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+       0x0000  183                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*179*               000  0x83  20  00  00  0003  000  บ after sel.total บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*180*  0x000b  181  181  0x05  00  00  00  9999  033  บ clear display   บ
+       0x0000  182                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*181*               017  0x03  20  00  00  0003  000  บ top of sls item บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*182*  0x0018  178  178  0x05  02  00  00  0000  032  บ subtotal        บ
+*183*  0x0011  282  282  0x05  00  00  00  1234  047  บ line item void  บ
+*184*  0x001b  069  069  0x05  00  00  00  0002  035  บ trans. abort    บ
+*185*  0x001d  069  069  0x05  00  00  00  0008  035  บ trans. suspend  บ
+*186*  0x0019  069  283  0x05  00  00  00  0000  033  บ total / nosale  บ
+*187*  0x0019  179  179  0x05  01  01  00  0001  033  บ sel. itemizer   บ
+*188*  0x0004  181  181  0x05  04  00  00  0000  036  บ salesman nbr    บ
+*189*  0x00b4  170  170  0x05  00  00  00  0007  010  บ late employee   บ
+*190*  0x00b5  170  170  0x05  00  00  00  0008  010  บ late customer   บ
+*191*  0x0006  166  166  0x05  00  00  00  0000  020  บ cust/trans id   บ
+*192*  0x00f4  138  138  0x05  01  00  00  0000  001  บ item preselect  บ
+*193*  0x00b9  271  271  0x05  00  00  52  0001  041  บ void            บ
+*194*  0x00ba  271  271  0x05  00  00  53  0002  041  บ return          บ
+*195*  0x00bb  260  260  0x05  00  00  54  0003  041  บ p/o at stock    บ
+*196*  0x00bc  260  260  0x05  00  00  55  0004  041  บ p/o at pos      บ
+*197*  0x00bd  262  262  0x05  00  00  56  0005  041  บ commission      บ
+*198*  0x00be  264  264  0x05  00  00  57  0006  041  บ price display   บ
+*199*  0x00bf  268  268  0x05  00  00  58  0007  041  บ set of items    บ
+*200*  0x00f0  271  271  0x05  00  00  00  0010  041  บ GC : TOPUP      บ
+*201*  0x0020  181  181  0x05  00  00  00  0000  120  บ GC : BALANCE    บ
+*202*  0x0021  181  181  0x05  00  00  00  0000  121  บ LO : BALANCE    บ
+*203*  0x0022  257  275  0x05  00  00  00  0001  052  บ utility list    บ
+*204*  0x0010  273  273  0x05  06  01  03  0000  049  บ quantity        บ
+*205*  0x0005  255  257  0x05  04  00  00  0000  055  บ coded dpt nbr   บ
+*206*  0x00d1  257  275  0x05  07  00  99  0001  054  บ dir dpt key  1  บ
+*207*  0x00d2  257  275  0x05  07  00  99  0002  054  บ dir dpt key  2  บ
+*208*  0x00d3  257  275  0x05  07  00  99  0003  054  บ dir dpt key  3  บ
+*209*  0x00d4  257  275  0x05  07  00  99  0004  054  บ dir dpt key  4  บ
+*210*  0x00d5  257  275  0x05  07  00  99  0005  054  บ dir dpt key  5  บ
+*211*  0x00d6  257  275  0x05  07  00  99  0006  054  บ dir dpt key  6  บ
+*212*  0x00d7  257  275  0x05  07  00  99  0007  054  บ dir dpt key  7  บ
+*213*  0x00d8  257  275  0x05  07  00  99  0008  054  บ dir dpt key  8  บ
+*214*  0x00d9  257  275  0x05  07  00  99  0009  054  บ dir dpt key  9  บ
+*215*  0x00da  257  275  0x05  07  00  99  0010  054  บ dir dpt key  A  บ
+*216*  0x00db  257  275  0x05  07  00  99  0011  054  บ dir dpt key  B  บ
+*217*  0x00dc  257  275  0x05  07  00  99  0012  054  บ dir dpt key  C  บ
+*218*  0x00dd  257  275  0x05  07  00  99  0013  054  บ dir dpt key  D  บ
+*219*  0x00de  257  275  0x05  07  00  99  0014  054  บ dir dpt key  E  บ
+*220*  0x00df  257  275  0x05  07  00  99  0015  054  บ dir dpt key  F  บ
+*221*  0x000d  257  275  0x07  20  01  00  0001  053  บ keyb lbl line 1 บ
+*222*  0x4f4f  257  275  0x05  20  01  00  0001  053  บ scan lbl line 1 บ
+*223*  0x0090  232  181  0x05  02  00  00  0000  115  บ customer menu   บ
+*224*  0x0091  238  181  0x05  00  00  00  0001  113  บ points isredeem บ
+*225*  0x0092  181  181  0x05  00  00  00  0000  113  บ points inquiry  บ
+*226*  0x0093  241  181  0x05  08  00  00  0000  112  บ insert customer บ
+*227*  0x0094  248  248  0x05  00  00  00  0000  110  บ regist customer บ
+*228*  0x0095  251  181  0x05  00  00  00  0000  114  บ insert coupon   บ
+*229*  0x000d  257  275  0x07  16  01  00  0000  052  บ ean/upc by keyb บ
+*230*  0x4f4f  257  275  0x05  16  01  00  0000  052  บ ean/upc by ocia บ
+*231*  0x000e  257  275  0x07  16  01  00  0000  052  บ special plu key บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*232*               013  0xf6  02  02  00  0010  080  บ customer menu   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*233*  0x0001  238  238  0x05  01  01  00  0001  113  บ points isredeem บ
+*234*  0x0002  181  181  0x05  02  02  00  0000  113  บ points inquiry  บ
+*235*  0x0003  241  181  0x05  03  03  00  0000  112  บ insert customer บ
+*236*  0x0004  248  248  0x05  04  04  00  0000  110  บ regist customer บ
+*237*  0x0005  251  181  0x05  05  05  00  0000  114  บ insert coupon   บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*238*               088  0x03  08  01  00  0010  000  บ points isredeem บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*239*  0x000d  181  238  0x05  08  01  00  0002  113  บ points by keyb  บ
+*240*  0x000b  181  181  0x05  00  00  00  9999  033  บ clear display   บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*241*               008  0x03  08  08  00  0010  000  บ insert customer บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*242*  0x000d  181  241  0x05  08  08  00  0099  112  บ cuscard by keyb บ
+*243*  0x000b  181  181  0x05  00  00  00  9999  033  บ clear display   บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*244*               083  0x03  13  13  00  0010  000  บ request cuscard บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*245*  0x000d  181  244  0x05  13  13  00  0001  110  บ cuscard by keyb บ
+*246*  0x4f4f  181  244  0x05  13  13  00  0002  110  บ cuscard by ocia บ
+*247*  0x000b  181  181  0x05  00  00  00  9999  033  บ clear display   บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*248*               085  0x03  12  10  00  0010  000  บ request mobile  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*249*  0x000d  244  248  0x05  12  10  00  0099  110  บ mobile customer บ
+*250*  0x000b  181  181  0x05  00  00  00  9999  033  บ clear display   บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*251*               086  0x03  08  06  00  0010  000  บ insert coupon   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*252*  0x000d  251  251  0x05  08  06  00  0001  114  บ coupon by keyb  บ
+*253*  0x4f4f  251  251  0x05  08  06  00  0001  114  บ coupon by ocia  บ
+*254*  0x000b  181  181  0x05  00  00  00  9999  033  บ clear display   บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*255*               043  0x03  08  08  00  0010  000  บ after coded dpt บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*256*  0x0006  257  257  0x05  08  00  00  0001  056  บ ident number 1  บ
+       0x0000  259                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*257*               036  0x03  07  07  99  0012  000  บ after ident #   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*258*  0x000d  275  275  0x05  07  01  99  0000  057  บ sales price     บ
+*259*  0x000b  181  069  0x05  00  00  00  0000  040  บ item clear      บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*260*               041  0x03  07  07  99  0014  000  บ price overwrite บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*261*  0x000d  271  271  0x05  07  01  99  0000  042  บ new price       บ
+       0x0000  259                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*262*               019  0x03  08  08  00  0015  000  บ commission      บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*263*  0x000d  271  271  0x05  08  01  00  0000  043  บ commission code บ
+       0x0000  259                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*264*               009  0x03  16  00  00  0016  000  บ price display   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*265*  0x000d  181  069  0x05  16  01  00  0000  050  บ ean/upc by keyb บ
+*266*  0x4f4f  181  069  0x05  16  01  00  0000  050  บ ean/upc by scan บ
+*267*  0x000e  181  069  0x05  16  01  00  0000  050  บ special plu key บ
+       0x0000  259                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*268*               015  0x03  16  08  00  0017  000  บ set of items    บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*269*  0x000d  181  181  0x05  16  01  00  0000  058  บ number by keyb  บ
+*270*  0x4f4f  181  181  0x05  16  01  00  0000  058  บ number by scan  บ
+       0x0000  259                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*271*               018  0x03  20  00  00  0004  000  บ after item pres บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*272*  0x000b  181  069  0x05  00  00  00  0000  040  บ item clear      บ
+       0x0000  192                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*273*               018  0x03  20  00  00  0004  000  บ after item qty  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*274*  0x000b  181  069  0x05  00  00  00  0000  040  บ item clear      บ
+       0x0000  204                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*275*               000  0x83  20  00  00  0005  000  บ after item      บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*276*  0x0010  275  275  0x05  00  00  00  0000  046  บ repetition      บ
+*277*  0x0001  279  279  0x05  03  00  01  0000  044  บ credit rate     บ
+*278*  0x0002  279  279  0x05  07  01  99  0000  045  บ credit amount   บ
+       0x0000  280                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*279*               000  0x83  20  00  00  0006  000  บ after credit    บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*280*  0x000f  282  282  0x05  00  00  00  0000  048  บ item on slip    บ
+*281*  0x0011  282  282  0x05  00  00  00  0000  047  บ error correct   บ
+       0x0000  182                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*282*               000  0x83  20  00  00  0003  000  บ after ec / slip บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+       0x0000  182                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*283*               000  0x80  20  00  00  0083  000  บ demographic     บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*284*  0x000d  283  287  0x05  00  00  00  0000  028  บ data query      บ
+*285*  0x0011  283  287  0x05  00  00  00  9999  028  บ step backwards  บ
+*286*  0x000b  287  287  0x05  00  00  00  0000  029  บ abort ddq       บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*287*               025  0x04  07  07  99  0007  000  บ after sales tl  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*288*  0x000b  181  181  0x05  00  00  00  0000  034  บ sales continued บ
+*289*  0x00b6  287  292  0x05  00  00  00  0049  038  บ no tax / tax    บ
+*290*  0x0001  295  295  0x05  03  00  01  0008  023  บ discount rate   บ
+*291*  0x0002  387  387  0x05  07  01  99  0007  024  บ discount amount บ
+       0x0000  388                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*292*               067  0x04  16  00  00  0070  000  บ after no tax    บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*293*  0x000d  287  287  0x05  16  00  00  0000  038  บ tax ident nbr   บ
+*294*  0x000b  287  287  0x05  00  00  00  9999  038  บ clear / show tl บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*295*               025  0x04  07  07  99  0008  000  บ after discount  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+       0x0000  291                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*296*               029  0x01  04  04  00  0500  000  บ top of roa/pdo  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*297*  0x000b  069  069  0x05  00  00  00  0000  030  บ trans. clear    บ
+       0x0000  299                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*298*               029  0x01  04  04  00  0500  000  บ after tran pres บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*299*  0x00f3  301  301  0x05  01  00  00  0000  001  บ trans.preselect บ
+*300*  0x00b1  298  298  0x05  00  00  44  0001  031  บ voids           บ
+       0x0000  306                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*301*               015  0xf6  01  01  00  0501  043  บ trans.preselect บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*302*  0x0001  298  298  0x05  02  01  44  0001  031  บ voids           บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*303*               029  0x01  04  04  00  0502  000  บ roa/pdo item    บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*304*  0x0018  303  303  0x05  00  00  00  0000  032  บ subtotal        บ
+*305*  0x0019  069  318  0x05  00  00  00  0000  033  บ total           บ
+*306*  0x001b  069  069  0x05  00  00  00  0002  035  บ trans. abort    บ
+*307*  0x0004  303  303  0x05  04  00  00  0000  036  บ salesman number บ
+*308*  0x0005  309  312  0x05  04  00  00  0000  061  บ roa/pdo type    บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*309*               043  0x01  13  08  00  0503  000  บ roa/pdo ident   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*310*  0x0006  312  315  0x05  13  00  00  0000  062  บ receipt number  บ
+*311*  0x4f4f  312  315  0x05  13  13  00  0000  062  บ receipt nbr lbl บ
+       0x0000  314                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*312*               036  0x01  07  07  99  0504  000  บ roa/pdo amount  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*313*  0x000d  315  315  0x05  07  01  99  0000  063  บ amount          บ
+*314*  0x000b  303  296  0x05  00  00  00  0000  060  บ item clear      บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*315*               029  0x01  04  04  00  0506  000  บ after mny item  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*316*  0x0011  317  317  0x05  00  00  00  0000  064  บ error correct   บ
+       0x0000  304                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*317*               000  0x81  04  00  00  0502  000  บ after error cor บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+       0x0000  304                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*318*               025  0x04  07  07  99  0507  000  บ after mny total บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*319*  0x000b  303  303  0x05  00  00  00  0000  034  บ money continued บ
+       0x0000  388                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*320*               037  0x01  06  06  00  4400  000  บ reentries       บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*321*  0x000d  069  069  0x05  06  05  00  0000  014  บ date of sales   บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*322*               040  0x01  08  08  00  4500  000  บ inventory       บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*323*  0x000d  331  331  0x05  08  01  00  0000  016  บ id number       บ
+*324*  0x001b  069  069  0x05  00  00  00  0002  035  บ trans. abort    บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*325*               011  0x01  04  04  00  4600  000  บ goods xfer      บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*326*  0x000d  331  331  0x05  04  04  00  0000  017  บ store number    บ
+       0x0000  324                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*327*               042  0x01  04  04  00  0700  000  บ other till tl   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*328*  0x000d  162  162  0x05  04  03  00  0000  012  บ register nbr    บ
+       0x0000  150                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*329*               030  0x01  08  08  00  4700  000  บ layaways        บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*330*  0x000d  331  331  0x05  08  01  00  0030  018  บ receipt number  บ
+       0x0000  324                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*331*               017  0x03  20  00  00  4001  000  บ top of ledger   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+       0x0000  335                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*332*               017  0x03  20  00  00  4003  000  บ ledger item     บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*333*  0x0018  332  332  0x05  00  00  00  0000  032  บ subtotal        บ
+*334*  0x0011  386  386  0x05  00  00  00  1234  047  บ line item void  บ
+*335*  0x0019  069  069  0x05  00  00  00  0000  033  บ total / nosale  บ
+*336*  0x001b  069  069  0x05  00  00  00  0002  035  บ trans. abort    บ
+*337*  0x0004  332  332  0x05  04  00  00  0000  036  บ salesman nbr    บ
+*338*  0x00f4  364  364  0x05  01  00  00  0000  001  บ item preselect  บ
+*339*  0x00b9  372  372  0x05  00  00  52  0001  041  บ void            บ
+*340*  0x00bb  381  381  0x05  00  00  54  0003  041  บ p/o at stock    บ
+*341*  0x00be  368  368  0x05  00  00  57  0006  041  บ price display   บ
+*342*  0x0010  374  374  0x05  06  01  03  0000  049  บ quantity        บ
+*343*  0x0005  376  378  0x05  04  00  00  0000  055  บ coded dpt nbr   บ
+*344*  0x00d1  378  383  0x05  07  00  99  0001  054  บ dir dpt key  1  บ
+*345*  0x00d2  378  383  0x05  07  00  99  0002  054  บ dir dpt key  2  บ
+*346*  0x00d3  378  383  0x05  07  00  99  0003  054  บ dir dpt key  3  บ
+*347*  0x00d4  378  383  0x05  07  00  99  0004  054  บ dir dpt key  4  บ
+*348*  0x00d5  378  383  0x05  07  00  99  0005  054  บ dir dpt key  5  บ
+*349*  0x00d6  378  383  0x05  07  00  99  0006  054  บ dir dpt key  6  บ
+*350*  0x00d7  378  383  0x05  07  00  99  0007  054  บ dir dpt key  7  บ
+*351*  0x00d8  378  383  0x05  07  00  99  0008  054  บ dir dpt key  8  บ
+*352*  0x00d9  378  383  0x05  07  00  99  0009  054  บ dir dpt key  9  บ
+*353*  0x00da  378  383  0x05  07  00  99  0010  054  บ dir dpt key  A  บ
+*354*  0x00db  378  383  0x05  07  00  99  0011  054  บ dir dpt key  B  บ
+*355*  0x00dc  378  383  0x05  07  00  99  0012  054  บ dir dpt key  C  บ
+*356*  0x00dd  378  383  0x05  07  00  99  0013  054  บ dir dpt key  D  บ
+*357*  0x00de  378  383  0x05  07  00  99  0014  054  บ dir dpt key  E  บ
+*358*  0x00df  378  383  0x05  07  00  99  0015  054  บ dir dpt key  F  บ
+*359*  0x000d  378  383  0x05  20  01  00  0001  053  บ keyb lbl line 1 บ
+*360*  0x4f4f  378  383  0x05  20  01  00  0001  053  บ scan lbl line 1 บ
+*361*  0x000d  378  383  0x05  16  01  00  0000  052  บ ean/upc by keyb บ
+*362*  0x4f4f  378  383  0x05  16  01  00  0000  052  บ ean/upc by ocia บ
+*363*  0x000e  378  383  0x05  16  01  00  0000  052  บ special plu key บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*364*               015  0xf6  01  01  00  0005  051  บ item preselect  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*365*  0x0001  372  372  0x05  02  01  52  0001  041  บ void            บ
+*366*  0x0003  381  381  0x05  04  03  54  0003  041  บ p/o at stock    บ
+*367*  0x0006  368  368  0x05  08  06  57  0006  041  บ price display   บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*368*               009  0x03  16  00  00  0016  000  บ price display   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*369*  0x000d  332  069  0x05  16  01  00  0000  050  บ ean/upc by keyb บ
+*370*  0x4f4f  332  069  0x05  16  01  00  0000  050  บ ean/upc by scan บ
+*371*  0x000e  332  069  0x05  16  01  00  0000  050  บ special plu key บ
+       0x0000  380                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*372*               018  0x03  20  00  00  4004  000  บ after item pres บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*373*  0x000b  332  069  0x05  00  00  00  0000  040  บ item clear      บ
+       0x0000  338                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*374*               018  0x03  20  00  00  4004  000  บ after item qty  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*375*  0x000b  332  069  0x05  00  00  00  0000  040  บ item clear      บ
+       0x0000  342                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*376*               043  0x03  08  08  00  4010  000  บ after coded dpt บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*377*  0x0006  378  378  0x05  08  00  00  0001  056  บ ident number 1  บ
+       0x0000  380                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*378*               036  0x03  07  07  99  4012  000  บ after ident #   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*379*  0x000d  383  383  0x05  07  01  99  0000  057  บ sales price     บ
+*380*  0x000b  332  069  0x05  00  00  00  0000  040  บ item clear      บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*381*               041  0x03  07  07  99  4014  000  บ price overwrite บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*382*  0x000d  372  372  0x05  07  01  99  0000  042  บ new price       บ
+       0x0000  380                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*383*               000  0x83  20  00  00  4005  000  บ after item      บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*384*  0x0010  383  383  0x05  00  00  00  0000  046  บ repeat          บ
+*385*  0x0011  386  386  0x05  00  00  00  0000  047  บ error correct   บ
+       0x0000  333                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*386*               000  0x83  20  00  00  4003  000  บ after error cor บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+       0x0000  333                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*387*               025  0x04  07  07  99  0019  000  บ inhouse ticket  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*388*  0x000f  387  387  0x05  02  00  00  0000  079  บ slip linefeeds  บ
+       0x0000  390                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*389*               025  0x04  07  07  99  0020  000  บ tenderization   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*390*  0x001b  069  069  0x05  00  00  00  0002  035  บ trans. abort    บ
+*391*  0x001d  069  069  0x05  00  00  00  0008  035  บ trans. suspend  บ
+*392*  0x0018  069  520  0x05  00  00  00  0068  069  บ total transfer  บ
+*393*  0x000d  069  520  0x05  07  00  99  0000  073  บ cash amount     บ
+*394*  0x00f8  423  423  0x05  02  00  00  0001  001  บ tender menu     บ
+*395*  0x00f9  484  484  0x05  02  00  00  0010  001  บ credit cards    บ
+*396*  0x00fa  469  469  0x05  02  00  00  0020  001  บ charge types    บ
+*397*  0x00fb  495  495  0x05  02  00  00  0030  001  บ foreign curr.   บ
+*398*  0x00c1  069  520  0x05  02  00  00  0001  073  บ cash preset  1  บ
+*399*  0x00c2  069  520  0x05  02  00  00  0002  073  บ cash preset  2  บ
+*400*  0x00c3  069  520  0x05  02  00  00  0003  073  บ cash preset  3  บ
+*401*  0x00c4  069  520  0x05  02  00  00  0004  073  บ cash preset  4  บ
+*402*  0x00c5  069  520  0x05  02  00  00  0005  073  บ cash preset  5  บ
+*403*  0x00c6  069  520  0x05  02  00  00  0006  073  บ cash preset  6  บ
+*404*  0x00c7  069  520  0x05  02  00  00  0007  073  บ cash preset  7  บ
+*405*  0x00c8  069  520  0x05  02  00  00  0008  073  บ cash preset  8  บ
+*406*  0x00c9  069  520  0x05  02  00  00  0009  073  บ cash preset  9  บ
+*407*  0x00ca  069  520  0x05  02  00  00  0010  073  บ cash preset  A  บ
+*408*  0x00e1  436  436  0x05  00  00  00  0001  071  บ tender preset 1 บ
+*409*  0x00e2  436  436  0x05  00  00  00  0002  071  บ tender preset 2 บ
+*410*  0x00e3  436  436  0x05  00  00  00  0003  071  บ tender preset 3 บ
+*411*  0x00e4  436  436  0x05  00  00  00  0004  071  บ tender preset 4 บ
+*412*  0x00e5  436  436  0x05  00  00  00  0005  071  บ tender preset 5 บ
+*413*  0x00e6  436  436  0x05  00  00  00  0006  071  บ tender preset 6 บ
+*414*  0x00e7  436  436  0x05  00  00  00  0007  071  บ tender preset 7 บ
+*415*  0x00e8  436  436  0x05  00  00  00  0008  071  บ tender preset 8 บ
+*416*  0x00e9  436  436  0x05  00  00  00  0009  071  บ tender preset 9 บ
+*417*  0x00ea  436  436  0x05  00  00  00  0010  071  บ tender preset A บ
+*418*  0x00eb  436  436  0x05  00  00  00  0011  071  บ tender preset B บ
+*419*  0x00ec  436  436  0x05  00  00  00  0012  071  บ tender preset C บ
+*420*  0x00ed  436  436  0x05  00  00  00  0013  071  บ tender preset D บ
+*421*  0x00ee  436  436  0x05  00  00  00  0014  071  บ tender preset E บ
+*422*  0x00ef  436  436  0x05  00  00  00  0015  071  บ tender preset F บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*423*               013  0xf6  02  02  00  0020  059  บ tender menu     บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*424*  0x0001  436  436  0x05  00  01  00  0001  075  บ cash            บ
+*425*  0x0002  436  436  0x05  01  02  00  0002  075  บ cheque          บ
+*426*  0x0003  436  436  0x05  02  03  00  0003  075  บ credit note (+) บ
+*427*  0x0004  436  436  0x05  03  04  00  0004  075  บ voucher         บ
+*428*  0x0005  436  436  0x05  04  05  00  0005  075  บ misc            บ
+*429*  0x0006  436  436  0x05  05  06  00  0006  075  บ bank order      บ
+*430*  0x0007  436  436  0x05  06  07  00  0007  075  บ electronic cash บ
+*431*  0x0008  436  436  0x05  07  08  00  0008  075  บ paid in advance บ
+*432*  0x0009  436  436  0x05  08  00  00  0009  075  บ debit note (-)  บ
+*433*  0x000a  484  484  0x05  09  00  61  0010  001  บ credit cards    บ
+*434*  0x0014  469  469  0x05  10  00  60  0020  001  บ charge types    บ
+*435*  0x001e  495  495  0x05  11  00  62  0030  001  บ foreign curr.   บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  hdr  ษอออออออออออออออออป
+*436*               000  0xff  02  02  00  0000  000  บ tender types    บ
+line#    code  nxt  alt  lock lin pos txt  spec  act  ฬอออออออออออออออออน
+*437*  0x0041  450  454  0x05  00  00  00  0000  071  บ A: cash [rcpt#] บ
+*438*  0x0042  450  506  0x05  00  00  00  0000  071  บ B: check [card] บ
+*439*  0x0043  450  462  0x05  00  00  00  0000  071  บ C: credit cards บ
+*440*  0x0044  450  480  0x05  00  00  00  0000  071  บ D: charge types บ
+*441*  0x0045  450  456  0x05  00  00  00  0000  071  บ E: bank order   บ
+*442*  0x0046  450  458  0x05  00  00  00  0000  071  บ F: EFT device   บ
+*443*  0x0047  450  517  0x05  00  00  00  0000  071  บ G: coupon       บ
+*444*  0x0048  450  454  0x05  00  00  00  0000  071  บ H: BCR device   บ
+*445*  0x004a  450  462  0x05  00  00  00  0000  071  บ J: EFT Tamimi   บ
+*446*  0x004b  450  462  0x05  00  00  00  0000  071  บ K: EFT Al Hamra บ
+*447*  0x004c  450  454  0x05  00  00  00  0000  071  บ L: Gift Card    บ
+*448*  0x004d  450  462  0x05  00  00  00  0000  071  บ M: Verifone     บ
+*449*  0x004e  450  462  0x05  00  00  00  0000  071  บ N: EFT Eye Pay  บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*450*               000  0x84  07  07  99  0021  000  บ cash tender     บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*451*  0x000d  069  520  0x05  07  00  99  0000  073  บ tender amount   บ
+*452*  0x000b  389  131  0x05  00  00  00  0000  070  บ tender clear    บ
+*453*  0x000c  450  450  0x05  00  00  00  0000  077  บ view recycler   บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*454*               030  0x04  08  00  00  0024  000  บ receipt number  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*455*  0x000d  450  450  0x05  08  01  00  0000  072  บ number by kbd   บ
+       0x0000  452                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*456*               030  0x04  04  00  00  0024  000  บ bank order form บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*457*  0x000d  450  508  0x05  04  01  00  0000  072  บ transaction nbr บ
+       0x0000  452                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*458*               030  0x04  08  00  00  0024  000  บ EFT host device บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*459*  0x000d  450  460  0x05  08  01  00  0000  072  บ transaction nbr บ
+       0x0000  452                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*460*               066  0x04  07  07  99  0025  000  บ EFT cash back   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*461*  0x000d  450  450  0x05  07  00  99  0000  076  บ change amount   บ
+       0x0000  452                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*462*               030  0x04  04  00  00  0024  000  บ credit cards    บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*463*  0x000d  450  464  0x05  04  01  00  0000  072  บ transaction nbr บ
+       0x0000  452                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*464*               031  0x04  19  00  00  0023  000  บ credit card     บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*465*  0x4d4d  450  450  0x05  19  01  00  0019  072  บ number by MSR   บ
+*466*  0x000d  467  467  0x05  19  01  00  0019  072  บ number by kbd   บ
+       0x0000  452                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*467*               070  0x04  04  04  02  0029  000  บ expiration date บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*468*  0x000d  450  450  0x05  04  03  02  0009  072  บ mm.yy           บ
+       0x0000  452                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*469*               013  0xf6  02  02  00  0027  060  บ charge menu     บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*470*  0x0001  436  436  0x05  01  01  00  0020  075  บ charge type  1  บ
+*471*  0x0002  436  436  0x05  02  02  00  0021  075  บ charge type  2  บ
+*472*  0x0003  436  436  0x05  03  03  00  0022  075  บ charge type  3  บ
+*473*  0x0004  436  436  0x05  04  04  00  0023  075  บ charge type  4  บ
+*474*  0x0005  436  436  0x05  05  05  00  0024  075  บ charge type  5  บ
+*475*  0x0006  436  436  0x05  06  06  00  0025  075  บ charge type  6  บ
+*476*  0x0007  436  436  0x05  07  07  00  0026  075  บ charge type  7  บ
+*477*  0x0008  436  436  0x05  08  08  00  0027  075  บ charge type  8  บ
+*478*  0x0009  436  436  0x05  09  00  00  0028  075  บ charge type  9  บ
+*479*  0x000a  436  436  0x05  10  00  00  0029  075  บ charge type 10  บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*480*               033  0x04  16  00  00  0026  000  บ account number  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*481*  0x4d4d  450  450  0x05  16  01  00  0000  072  บ number by MSR   บ
+*482*  0x4f4f  450  450  0x05  16  01  00  0000  072  บ number by ean   บ
+*483*  0x000d  450  450  0x05  16  01  00  0000  072  บ number by kbd   บ
+       0x0000  452                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*484*               013  0xf6  02  02  00  0028  061  บ creditcard menu บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*485*  0x0001  436  436  0x05  01  01  00  0010  075  บ credit card  1  บ
+*486*  0x0002  436  436  0x05  02  02  00  0011  075  บ credit card  2  บ
+*487*  0x0003  436  436  0x05  03  03  00  0012  075  บ credit card  3  บ
+*488*  0x0004  436  436  0x05  04  04  00  0013  075  บ credit card  4  บ
+*489*  0x0005  436  436  0x05  05  05  00  0014  075  บ credit card  5  บ
+*490*  0x0006  436  436  0x05  06  06  00  0015  075  บ credit card  6  บ
+*491*  0x0007  436  436  0x05  07  07  00  0016  075  บ credit card  7  บ
+*492*  0x0008  436  436  0x05  08  08  00  0017  075  บ credit card  8  บ
+*493*  0x0009  436  436  0x05  09  00  00  0018  075  บ credit card  9  บ
+*494*  0x000a  436  436  0x05  10  00  00  0019  075  บ credit card 10  บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*495*               013  0xf6  02  02  00  0040  062  บ foreign curr.   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*496*  0x0001  436  436  0x05  01  01  00  0030  075  บ foreign curr. 1 บ
+*497*  0x0002  436  436  0x05  02  02  00  0031  075  บ foreign curr. 2 บ
+*498*  0x0003  436  436  0x05  03  03  00  0032  075  บ foreign curr. 3 บ
+*499*  0x0004  436  436  0x05  04  04  00  0033  075  บ foreign curr. 4 บ
+*500*  0x0005  436  436  0x05  05  05  00  0034  075  บ foreign curr. 5 บ
+*501*  0x0006  436  436  0x05  06  06  00  0035  075  บ foreign curr. 6 บ
+*502*  0x0007  436  436  0x05  07  07  00  0036  075  บ foreign curr. 7 บ
+*503*  0x0008  436  436  0x05  08  08  00  0037  075  บ foreign curr. 8 บ
+*504*  0x0009  436  436  0x05  09  00  00  0038  075  บ foreign curr. 9 บ
+*505*  0x000a  436  436  0x05  10  00  00  0039  075  บ foreign curr.10 บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*506*               031  0x84  13  13  00  0030  000  บ ec checque      บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*507*  0x000d  450  508  0x05  13  00  00  0001  072  บ card number     บ
+       0x0000  452                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*508*               033  0x84  10  10  00  0031  000  บ bank entry info บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*509*  0x000d  511  511  0x05  10  00  00  0002  072  บ account number  บ
+*510*  0x4dec  450  513  0x05  10  10  00  0018  072  บ ec card by MSR  บ
+       0x0000  452                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*511*               034  0x84  08  08  00  0032  000  บ bank entry info บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*512*  0x000d  450  513  0x05  08  00  00  0003  072  บ bank number     บ
+       0x0000  452                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*513*               032  0x04  13  13  00  0033  000  บ bank entry info บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*514*  0x000d  515  515  0x05  13  04  00  0004  072  บ check number    บ
+       0x0000  452                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*515*               013  0x04  02  02  00  0034  000  บ bank entry info บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*516*  0x000d  450  450  0x05  02  00  00  0005  072  บ check type      บ
+       0x0000  452                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*517*               015  0x04  14  00  00  0036  000  บ vendor coupons  บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*518*  0x4f4f  069  520  0x05  14  01  00  0006  072  บ number by scan  บ
+*519*  0x000d  069  520  0x05  14  01  00  0006  072  บ number by keyb  บ
+       0x0000  452                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*520*               025  0x04  07  07  99  0020  000  บ after tender    บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*521*  0x0011  069  389  0x05  00  00  00  9999  074  บ error correct   บ
+       0x0000  392                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*522*               035  0x05  04  04  00  0900  000  บ onhand count    บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*523*  0x0019  069  017  0x05  00  00  00  0000  086  บ cashcount total บ
+*524*  0x001b  069  017  0x05  00  00  00  0000  082  บ cashcount abort บ
+*525*  0x000d  522  532  0x05  00  00  00  0000  085  บ next denom/tnd  บ
+*526*  0x0012  522  532  0x05  00  00  00  0000  085  บ next denom/tnd  บ
+*527*  0x0011  522  532  0x05  00  00  00  0001  085  บ prev denom/tnd  บ
+*528*  0x00b9  530  530  0x05  00  00  00  0002  085  บ minus           บ
+*529*  0x000d  522  522  0x05  04  01  00  0000  083  บ count           บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*530*               035  0x05  04  04  00  0904  000  บ after minus     บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*531*  0x000b  522  522  0x05  00  00  00  0000  080  บ clear minus     บ
+       0x0000  529                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*532*               036  0x05  07  07  99  0901  000  บ onhand amount   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*533*  0x0019  069  017  0x05  00  00  00  0000  086  บ cashcount total บ
+*534*  0x001b  069  017  0x05  00  00  00  0000  082  บ cashcount abort บ
+*535*  0x000d  522  532  0x05  00  00  00  0000  085  บ next denom/tnd  บ
+*536*  0x0012  522  532  0x05  00  00  00  0000  085  บ next denom/tnd  บ
+*537*  0x00e1  522  532  0x05  00  00  00  0001  087  บ tender preset 1 บ
+*538*  0x00e2  522  532  0x05  00  00  00  0002  087  บ tender preset 2 บ
+*539*  0x00e3  522  532  0x05  00  00  00  0003  087  บ tender preset 3 บ
+*540*  0x00e4  522  532  0x05  00  00  00  0004  087  บ tender preset 4 บ
+*541*  0x00e5  522  532  0x05  00  00  00  0005  087  บ tender preset 5 บ
+*542*  0x00e6  522  532  0x05  00  00  00  0006  087  บ tender preset 6 บ
+*543*  0x00e7  522  532  0x05  00  00  00  0007  087  บ tender preset 7 บ
+*544*  0x00e8  522  532  0x05  00  00  00  0008  087  บ tender preset 8 บ
+*545*  0x00e9  522  532  0x05  00  00  00  0009  087  บ tender preset 9 บ
+*546*  0x00ea  522  532  0x05  00  00  00  0010  087  บ tender preset A บ
+*547*  0x00eb  522  532  0x05  00  00  00  0011  087  บ tender preset B บ
+*548*  0x00ec  522  532  0x05  00  00  00  0012  087  บ tender preset C บ
+*549*  0x00ed  522  532  0x05  00  00  00  0013  087  บ tender preset D บ
+*550*  0x00ee  522  532  0x05  00  00  00  0014  087  บ tender preset E บ
+*551*  0x00ef  522  532  0x05  00  00  00  0015  087  บ tender preset F บ
+*552*  0x0011  522  532  0x05  00  00  00  0001  085  บ prev denom/tnd  บ
+*553*  0x00b9  557  557  0x05  00  00  00  0002  085  บ minus           บ
+*554*  0x0010  559  559  0x05  04  01  00  0003  085  บ x               บ
+*555*  0x0006  559  559  0x05  04  01  00  0004  085  บ for             บ
+*556*  0x000d  532  532  0x05  07  01  99  0000  084  บ amount          บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*557*               036  0x05  07  07  99  0905  000  บ after minus     บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*558*  0x000b  532  532  0x05  00  00  00  0001  080  บ clear minus     บ
+       0x0000  554                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*559*               036  0x05  07  07  99  0903  000  บ after x / for   บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*560*  0x000b  532  532  0x05  00  00  00  0002  080  บ clear x / for   บ
+       0x0000  556                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*561*               006  0x03  04  04  00  7500  000  บ preset dpt keys บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+*562*  0x00d1  561  561  0x04  04  00  00  0001  109  บ dpt preset key1 บ
+*563*  0x00d2  561  561  0x04  04  00  00  0002  109  บ dpt preset key2 บ
+*564*  0x00d3  561  561  0x04  04  00  00  0003  109  บ dpt preset key3 บ
+*565*  0x00d4  561  561  0x04  04  00  00  0004  109  บ dpt preset key4 บ
+*566*  0x00d5  561  561  0x04  04  00  00  0005  109  บ dpt preset key5 บ
+*567*  0x00d6  561  561  0x04  04  00  00  0006  109  บ dpt preset key6 บ
+*568*  0x00d7  561  561  0x04  04  00  00  0007  109  บ dpt preset key7 บ
+*569*  0x00d8  561  561  0x04  04  00  00  0008  109  บ dpt preset key8 บ
+*570*  0x00d9  561  561  0x04  04  00  00  0009  109  บ dpt preset key9 บ
+*571*  0x00da  561  561  0x04  04  00  00  0010  109  บ dpt preset keyA บ
+*572*  0x00db  561  561  0x04  04  00  00  0011  109  บ dpt preset keyB บ
+*573*  0x00dc  561  561  0x04  04  00  00  0012  109  บ dpt preset keyC บ
+*574*  0x00dd  561  561  0x04  04  00  00  0013  109  บ dpt preset keyD บ
+*575*  0x00de  561  561  0x04  04  00  00  0014  109  บ dpt preset keyE บ
+*576*  0x00df  561  561  0x04  04  00  00  0015  109  บ dpt preset keyF บ
+*577*  0x0019  069  017  0x05  00  00  00  0000  109  บ end maint       บ
+       0x0000  000                                    ศอออออออออออออออออผ
+                    txt  flag max msk dec  help  act  ษอออออออออออออออออป
+*578*               000  0x00  00  00  00  0000  000  บ <<END>> <<END>> บ
+line#    code  nxt  alt  lock max min dec  spec  act  ฬอออออออออออออออออน
+-------------------------------------------------------------------------

@@ -1,0 +1,2 @@
+@echo off
+java -DRDR1=COM1 -DSCALE_VRS=7870 -DSCALE=RDR1 -DNOP=C7 -DREG=001 -DSRV=000 -cp class %1 %2 %3

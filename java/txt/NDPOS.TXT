@@ -1,0 +1,93 @@
+  subject: Internal names of the Component objects,
+           as returned by public String getName ().
+
+������������������������������������������������������������������������������Ŀ
+� frame 0                                                                      �
+������������������������������������������������������������������������������Ĵ
+� dspArea 3        � dspArea 0                                                 �
+� dspArea 4        �                                                           �
+������������������������������������������������������������������������������Ĵ
+�                                                 �        � msgArea 0         �
+�                                                 �        � msgArea 1         �
+�                                                 �   s    �������������������Ĵ
+�                                                 �   c    �                   �
+�                                                 �   r    �                   �
+�                                                 �   o    �                   �
+� journal                                         �   l    � picture           �
+�                                                 �   l    �                   �
+�                                                 �   b    �                   �
+�                                                 �   a    �                   �
+�                                                 �   r    �������������������Ĵ
+�                                                 �        �                   �
+�                                                 �        � sticker           �
+�                                                 �        �                   �
+������������������������������������������������������������������������������Ĵ
+�                                                                              �
+� dspArea 1                                                                    �
+�                                                                              �
+�                                                                              �
+������������������������������������������������������������������������������Ĵ
+�                                                                              �
+� dspArea 2                                                                    �
+�                                                                              �
+�                                                                              �
+������������������������������������������������������������������������������Ĵ
+� stsArea 0 - 4                                                                �
+��������������������������������������������������������������������������������
+
+  special version for dynakey keyboard
+          and dynakey emulations on touch screens
+
+������������������������������������������������������������������������������Ŀ
+� dspArea 3        � sinArea 0                             �                   �
+� dspArea 4        � sinArea 1                             � dynaKey 0         �
+����������������������������������������������������������Ĵ                   �
+� dspArea 2                                       �version �������������������Ĵ
+�                                                 �        �                   �
+����������������������������������������������������������Ĵ dynaKey 1         �
+� dspArea 1                                       �sticker �                   �
+�                                                 �        �������������������Ĵ
+����������������������������������������������������������Ĵ                   �
+�                                                 �        � dynaKey 2         �
+�                                                 �        �                   �
+�                                                 �   s    �������������������Ĵ
+�                                                 �   c    �                   �
+�                                                 �   r    � dynaKey 3         �
+�                                                 �   o    �                   �
+� journal                                         �   l    �������������������Ĵ
+�                                                 �   l    �                   �
+�                                                 �   b    � dynaKey 4         �
+�                                                 �   a    �                   �
+�                                                 �   r    �������������������Ĵ
+�                                                 �        �                   �
+�                                                 �        � dynaKey 5         �
+�                                                 �        �                   �
+������������������������������������������������������������������������������Ĵ
+�                  � dspArea 0                             �                   �
+�                  ���������������������������������������Ĵ dynaKey 6         �
+� picture          � dspArea 5                             �                   �
+�                  �����������������������������������������������������������Ĵ
+�                  � msgArea 0         �                   �                   �
+����������������������������������������������������������Ĵ dynaKey 7         �
+� stsArea 0 - 4                                            �                   �
+��������������������������������������������������������������������������������
+
+  method names in class com.ncr.GdPos to invoke these components:
+������������������������������������������������������������������������������Ŀ
+� sinArea = short instructions     � msgArea = office messages                 �
+� void dspShort                    � void dspNotes                             �
+� (int line, String data)          � (int line, String data)                   �
+������������������������������������������������������������������������������Ĵ
+� picture = tiny pleasure          � sticker = currency symbol                 �
+� void dspPicture (String gifName) � void dspSymbol (String data)              �
+������������������������������������������������������������������������������Ĵ
+� dspArea = operator displays      � stsArea = status information              �
+� void display                     � void dspStatus                            �
+� (int line, String data)          � (int area, String data, enabled, alerted) �
+� 0 = date/time or total           � 0 = add/change/del counters               �
+� 1 = previous operation           � 1 = communication status                  �
+� 2 = input prompt and echo        � 2 = keylock position                      �
+� 3 = terminal number              � 3 = authorization mode                    �
+� 4 = store/operator number        � 4 = slip preselection                     �
+� 5 = discount total               �                                           �
+��������������������������������������������������������������������������������

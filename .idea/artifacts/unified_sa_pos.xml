@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="unified-sa-pos">
+    <output-path>$PROJECT_DIR$/out/artifacts/unified_sa_pos</output-path>
+    <root id="archive" name="unified-sa-pos.jar">
+      <element id="module-output" name="unified-sa-pos" />
+    </root>
+  </artifact>
+</component>
