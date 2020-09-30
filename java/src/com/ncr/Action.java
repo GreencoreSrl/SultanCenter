@@ -10,7 +10,7 @@ import java.io.*;
  *******************************************************************/
 public abstract class Action extends Basis {
 	/** all instances of appl classes with methods = actions **/
-	public static final Action group[] = new Action[18];    //WINEPTS-CGA#A
+	public static final Action group[] = new Action[19];    //ECOMMERCE-SBE#A
 	//WINEPTS-CGA#A BEG
 	private static long eptsCheckDeltaMilliSec = 0;
 	private static long milliSec = System.currentTimeMillis();
@@ -43,6 +43,7 @@ public abstract class Action extends Basis {
 		group[15] = new VeriFoneTerminal();  //ECR-CGA#A
 		group[16] = new ECommerce();  //INSTASHOP-FINALIZE-CGA#A
 		group[17] = new PosGPE();   //WINEPTS-CGA#A
+		group[18] = ECommerceManager.getInstance();   //ECOMMERCE-SBE#A
 
 
 		timeFormat = trl_line.substring(20, 35);

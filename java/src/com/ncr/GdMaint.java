@@ -1,7 +1,5 @@
 package com.ncr;
 
-import com.ncr.ecommerce.ECommerceManager;
-
 import java.io.*;
 
 class GdMaint extends Action {
@@ -114,7 +112,11 @@ class GdMaint extends Action {
 		if ((input.tic & 3) == 1)
 			hot_maint();
 
-		boolean result = ECommerceManager.getInstance().checkForNewBasket(editKey(ctl.reg_nbr, 3));
+		//ECOMMERCE-SBE#A BEG
+		if (ECommerceManager.getInstance().checkForNewBasket(editKey(ctl.reg_nbr, 3))) {
+			return 0xabcd;
+		}
+		//ECOMMERCE-SBE#A END
 		return 0;
 	}
 
