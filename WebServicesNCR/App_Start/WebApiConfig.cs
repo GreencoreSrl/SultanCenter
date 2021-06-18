@@ -7,6 +7,7 @@
 // Copyright(C) Greencore srl 2020
 
 
+using System;
 using System.Web.Http;
 
 namespace EComArsInterface
@@ -42,8 +43,8 @@ namespace EComArsInterface
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApiBasketId",
-                routeTemplate: "api/{controller}/{BasketId}",
-                defaults: new { BasketId = RouteParameter.Optional }
+                routeTemplate: "api/{controller}/{BasketId}/{Type}",
+                defaults: new { BasketId = RouteParameter.Optional,Type=RouteParameter.Optional }
             );
 
             config.Routes.MapHttpRoute(

@@ -29,18 +29,27 @@ namespace EComArsInterface.Controllers
         private static readonly NLog.Logger _log = NLog.LogManager.GetCurrentClassLogger();
 
         // GET: api/Status
-        public IQueryable<TermStatus> GetTerminals()
+        public TermStatus GetTerminals()
         {
-            _log.Trace("GetTerminals");            
+            _log.Trace("GetTerminals");
 
-            List<TermStatus> objList = new List<TermStatus>();
+            /*List<TermStatus> objList = new List<TermStatus>();
             objList.Add(new TermStatus()
             {
                 Terminals = BuildTerminalList(),
                 ActiveBaskets = new List<Basket>(db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Where(b => b.Status == "Processing").AsEnumerable<Basket>())
             });
 
-            return objList.AsQueryable<TermStatus>();
+            return objList.AsQueryable<TermStatus>();*/
+
+            TermStatus objList = new TermStatus()
+            {
+                Terminals = BuildTerminalList(),
+                ActiveBaskets = new List<Basket>(db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Where(b => b.Status == "Processing").AsEnumerable<Basket>())
+            };
+
+            return objList;
+
         }
 
         private List<Terminal> BuildTerminalList()

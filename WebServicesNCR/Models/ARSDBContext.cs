@@ -19,6 +19,9 @@ namespace EComArsInterface.Models
         }
 
         public DbSet<Basket> Baskets { get; set; }
+        public DbSet<Item> Items { get; set; }
+        public DbSet<SoldItem> SoldItems { get; set; }
+        public DbSet<NotSoldItem> NotSoldItems { get; set; }
         public DbSet<Terminal> Terminals { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

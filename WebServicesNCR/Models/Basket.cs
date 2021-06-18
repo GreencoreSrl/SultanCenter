@@ -21,7 +21,7 @@ namespace EComArsInterface.Models
     {
         [Key]
         [JsonIgnore]
-        public int ID  { get; set; }
+        public int ID { get; set; }
         public string BasketID { get; set; }
         public string Status { get; set; }
         public string TerminalID { get; set; }
@@ -37,6 +37,11 @@ namespace EComArsInterface.Models
         public List<NotSoldItem> NotSoldItems { get; set; }
         public string OriginBasketId { get; set; }
         public string TenderType { get; set; }
+        ///*
+        // * Edit By : Soukaina Mouatassim
+        // * Description: Add TenderId to handle others payment types
+        // * **/
+        public string TenderId { get; set; }
         public int ErrorCode { get; set; }
 
         [JsonIgnore]
@@ -54,7 +59,19 @@ namespace EComArsInterface.Models
         public int ID { get; set; }
         public string Code { get; set; }
         public string Qty { get; set; }
-        public string UnitPrice { get; set; }
+        //public string UnitPrice { get; set; }
+        [JsonIgnore]
+        private decimal? _unitPrice { get; set; }
+        public decimal? UnitPrice {
+            get { return _unitPrice; }
+            set
+            {
+                _unitPrice = value;
+                if (value == null)
+                    _unitPrice = 0;
+            }
+       
+        }
         public string Barcode { get; set; }
         public decimal Price { get; set; }
     }
@@ -68,7 +85,8 @@ namespace EComArsInterface.Models
         public int ID { get; set; }
         public string Code { get; set; }
         public string Qty { get; set; }
-        public string UnitPrice { get; set; }
+       
+        public decimal UnitPrice { get; set; }
         public string Barcode { get; set; }
         public decimal Price { get; set; }
     }
@@ -82,7 +100,28 @@ namespace EComArsInterface.Models
         public int ID { get; set; }
         public string Code { get; set; }
         public string Qty { get; set; }
-        public string UnitPrice { get; set; }
+        //public string UnitPrice { get; set; }
+        //[JsonIgnore]
+        //private string _unitPrice;
+        //public string UnitPrice
+        //{
+        //    get
+        //    {
+        //        return _unitPrice;
+        //    }
+        //    set
+        //    {
+        //        if (value == null)
+        //        {
+        //            _unitPrice = "";
+        //        }
+        //        else
+        //        {
+        //            _unitPrice = value;
+        //        }
+        //    }
+        //}
+        public decimal UnitPrice { get; set; }
         public string Barcode { get; set; }
         public decimal Price { get; set; }
     }

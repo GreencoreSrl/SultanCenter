@@ -141,3 +141,10 @@ C:\Progetti\WebServicesNCR\obj\Debug\EComArsInterface.pdb
 C:\Progetti\WebServicesNCR\obj\Debug\EComArsInterface.Migrations.ECommerce.resources
 C:\Progetti\WebServicesNCR\obj\Debug\EComARSInterface.csproj.GenerateResource.cache
 C:\Progetti\WebServicesNCR\obj\Debug\EComARSInterface.csprojAssemblyReference.cache
+C:\Progetti\WebServicesNCR\obj\Debug\EComArsInterface.Migrations.TenderIdAdded.resources
+C:\Progetti\WebServicesNCR\obj\Debug\EComArsInterface.Migrations.addVirtual.resources
+C:\Progetti\WebServicesNCR\obj\Debug\EComArsInterface.Migrations.Update1.resources
+C:\Progetti\WebServicesNCR\obj\Debug\EComArsInterface.Migrations.ChangeUnitPriceTypeFromStringToDecimal.resources
+C:\Progetti\WebServicesNCR\obj\Debug\EComArsInterface.Migrations.ChangeUnitPriceTypeRollBack.resources
+C:\Progetti\WebServicesNCR\obj\Debug\EComArsInterface.Migrations.ChangeUnitPriceTypeFromStringToDecimal1.resources
+C:\Progetti\WebServicesNCR\obj\Debug\EComArsInterface.Migrations.ChangeUnitPriceTypeFromStringToDecimalNullable.resources

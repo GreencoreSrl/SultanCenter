@@ -35,11 +35,12 @@
     <LegacyPublishPropertiesPageEnabled>true</LegacyPublishPropertiesPageEnabled>
     <IncludeIisSettings>true</IncludeIisSettings>
     <DeployEncryptKey>NCR</DeployEncryptKey>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
     <OutputPath>bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -114,6 +115,34 @@
     <Compile Include="Migrations\202103251013099_ECommerce.designer.cs">
       <DependentUpon>202103251013099_ECommerce.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202106100958424_TenderIdAdded.cs" />
+    <Compile Include="Migrations\202106100958424_TenderIdAdded.designer.cs">
+      <DependentUpon>202106100958424_TenderIdAdded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202106140752172_addVirtual.cs" />
+    <Compile Include="Migrations\202106140752172_addVirtual.designer.cs">
+      <DependentUpon>202106140752172_addVirtual.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202106140822268_Update1.cs" />
+    <Compile Include="Migrations\202106140822268_Update1.designer.cs">
+      <DependentUpon>202106140822268_Update1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202106151023282_ChangeUnitPriceTypeFromStringToDecimal.cs" />
+    <Compile Include="Migrations\202106151023282_ChangeUnitPriceTypeFromStringToDecimal.designer.cs">
+      <DependentUpon>202106151023282_ChangeUnitPriceTypeFromStringToDecimal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202106151035027_ChangeUnitPriceTypeRollBack.cs" />
+    <Compile Include="Migrations\202106151035027_ChangeUnitPriceTypeRollBack.designer.cs">
+      <DependentUpon>202106151035027_ChangeUnitPriceTypeRollBack.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202106151339271_ChangeUnitPriceTypeFromStringToDecimal1.cs" />
+    <Compile Include="Migrations\202106151339271_ChangeUnitPriceTypeFromStringToDecimal1.designer.cs">
+      <DependentUpon>202106151339271_ChangeUnitPriceTypeFromStringToDecimal1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202106151420048_ChangeUnitPriceTypeFromStringToDecimalNullable.cs" />
+    <Compile Include="Migrations\202106151420048_ChangeUnitPriceTypeFromStringToDecimalNullable.designer.cs">
+      <DependentUpon>202106151420048_ChangeUnitPriceTypeFromStringToDecimalNullable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ARSDBContext.cs" />
     <Compile Include="Models\Basket.cs" />
@@ -123,6 +152,7 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\EComARSIProfileIIS.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.CustomProfile.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -140,6 +170,27 @@
     <EmbeddedResource Include="Migrations\202103251013099_ECommerce.resx">
       <DependentUpon>202103251013099_ECommerce.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106100958424_TenderIdAdded.resx">
+      <DependentUpon>202106100958424_TenderIdAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106140752172_addVirtual.resx">
+      <DependentUpon>202106140752172_addVirtual.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106140822268_Update1.resx">
+      <DependentUpon>202106140822268_Update1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106151023282_ChangeUnitPriceTypeFromStringToDecimal.resx">
+      <DependentUpon>202106151023282_ChangeUnitPriceTypeFromStringToDecimal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106151035027_ChangeUnitPriceTypeRollBack.resx">
+      <DependentUpon>202106151035027_ChangeUnitPriceTypeRollBack.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106151339271_ChangeUnitPriceTypeFromStringToDecimal1.resx">
+      <DependentUpon>202106151339271_ChangeUnitPriceTypeFromStringToDecimal1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106151420048_ChangeUnitPriceTypeFromStringToDecimalNullable.resx">
+      <DependentUpon>202106151420048_ChangeUnitPriceTypeFromStringToDecimalNullable.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -156,7 +207,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>50147</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:44335/</IISUrl>
+          <IISUrl>https://localhost:44335/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
