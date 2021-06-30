@@ -3,7 +3,7 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class ECommerce : DbMigration
+    public partial class Initial : DbMigration
     {
         public override void Up()
         {
@@ -18,12 +18,13 @@
                         CustomerID = c.String(),
                         Type = c.String(),
                         Receipt = c.String(),
-                        TotalAmount = c.Decimal(nullable: false, precision: 18, scale: 2),
+                        TotalAmount = c.Decimal(nullable: false, precision: 18, scale: 3),
                         EarnedLoyaltyPoints = c.Int(nullable: false),
                         TransactionId = c.String(),
                         BarcodeId = c.String(),
                         OriginBasketId = c.String(),
                         TenderType = c.String(),
+                        TenderId = c.String(),
                         ErrorCode = c.Int(nullable: false),
                         CreatedDate = c.DateTime(nullable: false, defaultValueSql: "getutcdate()"),
                     })
@@ -36,9 +37,9 @@
                         ID = c.Int(nullable: false, identity: true),
                         Code = c.String(),
                         Qty = c.String(),
-                        UnitPrice = c.String(),
+                        UnitPrice = c.Decimal(precision: 18, scale: 3),
                         Barcode = c.String(),
-                        Price = c.Decimal(nullable: false, precision: 18, scale: 2),
+                        Price = c.Decimal(nullable: false, precision: 18, scale: 3),
                         Basket_ID = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.ID)
@@ -52,7 +53,7 @@
                         ID = c.Int(nullable: false, identity: true),
                         Code = c.String(),
                         Qty = c.String(),
-                        UnitPrice = c.String(),
+                        UnitPrice = c.Decimal(nullable: false, precision: 18, scale: 2),
                         Barcode = c.String(),
                         Price = c.Decimal(nullable: false, precision: 18, scale: 2),
                         Basket_ID = c.Int(nullable: false),
@@ -68,7 +69,7 @@
                         ID = c.Int(nullable: false, identity: true),
                         Code = c.String(),
                         Qty = c.String(),
-                        UnitPrice = c.String(),
+                        UnitPrice = c.Decimal(nullable: false, precision: 18, scale: 2),
                         Barcode = c.String(),
                         Price = c.Decimal(nullable: false, precision: 18, scale: 2),
                         Basket_ID = c.Int(nullable: false),

@@ -7,13 +7,13 @@ namespace EComArsInterface.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.4")]
-    public sealed partial class addVirtual : IMigrationMetadata
+    public sealed partial class Initial : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(addVirtual));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Initial));
         
         string IMigrationMetadata.Id
         {
-            get { return "202106140752172_addVirtual"; }
+            get { return "202106231534434_Initial"; }
         }
         
         string IMigrationMetadata.Source
