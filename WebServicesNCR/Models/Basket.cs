@@ -19,6 +19,11 @@ namespace EComArsInterface.Models
     // Basket DBContext model class
     public class Basket
     {
+        //public Basket()
+        //{
+        //    this.CreatedDate = DateTime.UtcNow;
+
+        //}
         [Key]
         [JsonIgnore]
         public int ID { get; set; }
@@ -47,6 +52,7 @@ namespace EComArsInterface.Models
         [JsonIgnore]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         [DefaultValue("getutcdate()")]
+
         public DateTime CreatedDate { get; set; }
     }
 

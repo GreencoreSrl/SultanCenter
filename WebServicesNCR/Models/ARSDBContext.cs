@@ -8,6 +8,7 @@
 
 
 using System.Data.Entity;
+using System.Web;
 
 namespace EComArsInterface.Models
 {
@@ -30,6 +31,17 @@ namespace EComArsInterface.Models
             modelBuilder.Entity<Basket>().HasMany(b => b.Items).WithRequired().WillCascadeOnDelete(true);
             modelBuilder.Entity<Basket>().HasMany(b => b.SoldItems).WithRequired().WillCascadeOnDelete(true);
             modelBuilder.Entity<Basket>().HasMany(b => b.NotSoldItems).WithRequired().WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<Basket>().Property(x => x.TotalAmount).HasPrecision(18, 3);
+            modelBuilder.Entity<Item>().Property(x => x.UnitPrice).HasPrecision(18, 3);
+            modelBuilder.Entity<Item>().Property(x => x.Price).HasPrecision(18, 3);
+            modelBuilder.Entity<Basket>().Property(x => x.CreatedDate).HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Computed);
+            modelBuilder.Entity<SoldItem>().Property(x => x.UnitPrice).HasPrecision(18, 3);
+            modelBuilder.Entity<SoldItem>().Property(x => x.Price).HasPrecision(18, 3);
+            modelBuilder.Entity<NotSoldItem>().Property(x => x.UnitPrice).HasPrecision(18, 3);
+            modelBuilder.Entity<NotSoldItem>().Property(x => x.Price).HasPrecision(18, 3);
+        
+
 
             modelBuilder.Entity<Basket>().ToTable("DATA_BASKET");
             modelBuilder.Entity<Item>().ToTable("DATA_ITEM");

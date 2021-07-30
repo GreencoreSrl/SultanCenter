@@ -111,37 +111,25 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202103251013099_ECommerce.cs" />
-    <Compile Include="Migrations\202103251013099_ECommerce.designer.cs">
-      <DependentUpon>202103251013099_ECommerce.cs</DependentUpon>
+    <Compile Include="Migrations\202107061442352_Edit 3 Decimals.cs" />
+    <Compile Include="Migrations\202107061442352_Edit 3 Decimals.designer.cs">
+      <DependentUpon>202107061442352_Edit 3 Decimals.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202106100958424_TenderIdAdded.cs" />
-    <Compile Include="Migrations\202106100958424_TenderIdAdded.designer.cs">
-      <DependentUpon>202106100958424_TenderIdAdded.cs</DependentUpon>
+    <Compile Include="Migrations\202107061522476_t.cs" />
+    <Compile Include="Migrations\202107061522476_t.designer.cs">
+      <DependentUpon>202107061522476_t.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202106140752172_addVirtual.cs" />
-    <Compile Include="Migrations\202106140752172_addVirtual.designer.cs">
-      <DependentUpon>202106140752172_addVirtual.cs</DependentUpon>
+    <Compile Include="Migrations\202107061526195_upd1.cs" />
+    <Compile Include="Migrations\202107061526195_upd1.designer.cs">
+      <DependentUpon>202107061526195_upd1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202106140822268_Update1.cs" />
-    <Compile Include="Migrations\202106140822268_Update1.designer.cs">
-      <DependentUpon>202106140822268_Update1.cs</DependentUpon>
+    <Compile Include="Migrations\202107061539024_upd11.cs" />
+    <Compile Include="Migrations\202107061539024_upd11.designer.cs">
+      <DependentUpon>202107061539024_upd11.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202106151023282_ChangeUnitPriceTypeFromStringToDecimal.cs" />
-    <Compile Include="Migrations\202106151023282_ChangeUnitPriceTypeFromStringToDecimal.designer.cs">
-      <DependentUpon>202106151023282_ChangeUnitPriceTypeFromStringToDecimal.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202106151035027_ChangeUnitPriceTypeRollBack.cs" />
-    <Compile Include="Migrations\202106151035027_ChangeUnitPriceTypeRollBack.designer.cs">
-      <DependentUpon>202106151035027_ChangeUnitPriceTypeRollBack.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202106151339271_ChangeUnitPriceTypeFromStringToDecimal1.cs" />
-    <Compile Include="Migrations\202106151339271_ChangeUnitPriceTypeFromStringToDecimal1.designer.cs">
-      <DependentUpon>202106151339271_ChangeUnitPriceTypeFromStringToDecimal1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202106151420048_ChangeUnitPriceTypeFromStringToDecimalNullable.cs" />
-    <Compile Include="Migrations\202106151420048_ChangeUnitPriceTypeFromStringToDecimalNullable.designer.cs">
-      <DependentUpon>202106151420048_ChangeUnitPriceTypeFromStringToDecimalNullable.cs</DependentUpon>
+    <Compile Include="Migrations\202107061540110_upd2.cs" />
+    <Compile Include="Migrations\202107061540110_upd2.designer.cs">
+      <DependentUpon>202107061540110_upd2.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ARSDBContext.cs" />
@@ -153,6 +141,7 @@
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\EComARSIProfileIIS.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />
     <None Include="Web.CustomProfile.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -167,29 +156,20 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202103251013099_ECommerce.resx">
-      <DependentUpon>202103251013099_ECommerce.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202107061442352_Edit 3 Decimals.resx">
+      <DependentUpon>202107061442352_Edit 3 Decimals.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202106100958424_TenderIdAdded.resx">
-      <DependentUpon>202106100958424_TenderIdAdded.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202107061522476_t.resx">
+      <DependentUpon>202107061522476_t.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202106140752172_addVirtual.resx">
-      <DependentUpon>202106140752172_addVirtual.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202107061526195_upd1.resx">
+      <DependentUpon>202107061526195_upd1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202106140822268_Update1.resx">
-      <DependentUpon>202106140822268_Update1.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202107061539024_upd11.resx">
+      <DependentUpon>202107061539024_upd11.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202106151023282_ChangeUnitPriceTypeFromStringToDecimal.resx">
-      <DependentUpon>202106151023282_ChangeUnitPriceTypeFromStringToDecimal.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202106151035027_ChangeUnitPriceTypeRollBack.resx">
-      <DependentUpon>202106151035027_ChangeUnitPriceTypeRollBack.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202106151339271_ChangeUnitPriceTypeFromStringToDecimal1.resx">
-      <DependentUpon>202106151339271_ChangeUnitPriceTypeFromStringToDecimal1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202106151420048_ChangeUnitPriceTypeFromStringToDecimalNullable.resx">
-      <DependentUpon>202106151420048_ChangeUnitPriceTypeFromStringToDecimalNullable.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202107061540110_upd2.resx">
+      <DependentUpon>202107061540110_upd2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
