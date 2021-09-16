@@ -20,6 +20,13 @@ namespace EComArsInterface
             config.MapHttpAttributeRoutes();
 
             // Web API configuration and services
+            // SearchPLU Route
+            config.Routes.MapHttpRoute(
+                name: "SearchPLU",
+                routeTemplate: "api/SearchPLU",
+                defaults: new { controller = "SearchPLU", id = RouteParameter.Optional }
+            );
+
             // Heartbeat Route
             config.Routes.MapHttpRoute(
                 name: "Hearbeat",

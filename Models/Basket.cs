@@ -23,8 +23,11 @@ namespace EComArsInterface.Models
         [JsonIgnore]
         public int ID  { get; set; }
         public string BasketID { get; set; }
+        public string Source { get; set; }
+        public string ProviderID { get; set; }
         public string Status { get; set; }
         public string TerminalID { get; set; }
+        public Boolean SecurityCheck { get; set; }
         public string CustomerID { get; set; }
         public string Type { get; set; }
         public string Receipt { get; set; }
@@ -35,13 +38,14 @@ namespace EComArsInterface.Models
         public List<Item> Items { get; set; }
         public List<SoldItem> SoldItems { get; set; }
         public List<NotSoldItem> NotSoldItems { get; set; }
+        public List<ExtraItem> ExtraItems { get; set; }
         public string OriginBasketId { get; set; }
-        public string TenderType { get; set; }
+        public List<TenderType> TenderTypes { get; set; }
         ///*
         // * Edit By : Soukaina Mouatassim
         // * Description: Add TenderId to handle others payment types
         // * **/
-        public string TenderId { get; set; }
+        //public string TenderId { get; set; }
         public int ErrorCode { get; set; }
 
         [JsonIgnore]
@@ -124,6 +128,32 @@ namespace EComArsInterface.Models
         public decimal UnitPrice { get; set; }
         public string Barcode { get; set; }
         public decimal Price { get; set; }
+    }
+
+
+    // ExtraItem DBContext model class
+    public class ExtraItem
+    {
+        [Key]
+        [JsonIgnore]
+        public int ID { get; set; }
+        public string Code { get; set; }
+        public string Qty { get; set; }
+
+        public decimal UnitPrice { get; set; }
+        public string Barcode { get; set; }
+        public decimal Price { get; set; }
+    }
+
+
+    // TenderType DBContext model class
+    public class TenderType
+    {
+        [Key]
+        [JsonIgnore]
+        public int ID { get; set; }
+        public string Type { get; set; }
+        public decimal Amount { get; set; }
     }
 
 }
