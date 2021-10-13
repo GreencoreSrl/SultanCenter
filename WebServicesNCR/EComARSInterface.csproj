@@ -111,26 +111,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202107061442352_Edit 3 Decimals.cs" />
-    <Compile Include="Migrations\202107061442352_Edit 3 Decimals.designer.cs">
-      <DependentUpon>202107061442352_Edit 3 Decimals.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202107061522476_t.cs" />
-    <Compile Include="Migrations\202107061522476_t.designer.cs">
-      <DependentUpon>202107061522476_t.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202107061526195_upd1.cs" />
-    <Compile Include="Migrations\202107061526195_upd1.designer.cs">
-      <DependentUpon>202107061526195_upd1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202107061539024_upd11.cs" />
-    <Compile Include="Migrations\202107061539024_upd11.designer.cs">
-      <DependentUpon>202107061539024_upd11.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202107061540110_upd2.cs" />
-    <Compile Include="Migrations\202107061540110_upd2.designer.cs">
-      <DependentUpon>202107061540110_upd2.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ARSDBContext.cs" />
     <Compile Include="Models\Basket.cs" />
@@ -154,23 +134,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\202107061442352_Edit 3 Decimals.resx">
-      <DependentUpon>202107061442352_Edit 3 Decimals.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202107061522476_t.resx">
-      <DependentUpon>202107061522476_t.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202107061526195_upd1.resx">
-      <DependentUpon>202107061526195_upd1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202107061539024_upd11.resx">
-      <DependentUpon>202107061539024_upd11.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202107061540110_upd2.resx">
-      <DependentUpon>202107061540110_upd2.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

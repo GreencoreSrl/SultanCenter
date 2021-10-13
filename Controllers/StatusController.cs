@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
+using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Web.Http;
 using System.Web.UI.WebControls;
@@ -55,14 +56,35 @@ namespace EComArsInterface.Controllers
         private List<Terminal> BuildTerminalList()
         {
             List<Terminal> term = new List<Terminal>();
+
+            List<Terminal> terminalsToDelete = new List<Terminal>();
+            
             foreach (Terminal t in db.Terminals)
             {
-                if (DateTime.Now.Subtract(t.CheckDate).TotalMinutes > Convert.ToDouble(ConfigurationManager.AppSettings["HBTimeIsOver"]))
+                if (DateTime.Now.Subtract(t.CheckDate).TotalDays >= Convert.ToDouble(ConfigurationManager.AppSettings["HBEraseOlderDay"]))
+                {
+                    terminalsToDelete.Add(t);
+                    continue;
+                }
+
+             
+                if (DateTime.Now.Subtract(t.CheckDate).TotalMinutes >= Convert.ToDouble(ConfigurationManager.AppSettings["HBTimeIsOver"]))
+                {
                     t.Status = "Unreachable";
+                    t.ErrorCode = 104;
+                }
                 else
+                {
                     t.Status = "Ready";
+                }
 
                 term.Add(t);
+            }
+
+            if (terminalsToDelete.Count > 0)
+            {
+                db.Terminals.RemoveRange(terminalsToDelete.AsEnumerable<Terminal>());
+                db.SaveChanges();
             }
 
             return term;

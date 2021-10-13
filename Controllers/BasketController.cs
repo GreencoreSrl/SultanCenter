@@ -9,16 +9,22 @@
 
 using EComArsInterface.Models;
 using Newtonsoft.Json;
-using System.Collections;
+using NLog.Internal;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Net;
+using System.Configuration;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Collections.Specialized;
+using System.Collections;
+using System.Security.Authentication;
+using System;
+using System.Web.UI.WebControls;
+using System.Data.Entity.Migrations;
+using System.Data.Common;
 
 namespace EComArsInterface
 {
@@ -43,7 +49,7 @@ namespace EComArsInterface
                 return BadRequest("Type not defined");
             }
 
-            Basket basket = db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Include(i => i.TenderTypes).Where(b => b.BasketID.Trim().Equals(BasketId.Trim()) && b.Type.Trim().Equals(type.Trim())).FirstOrDefault();
+            Basket basket = db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Where(b => b.BasketID.Trim().Equals(BasketId.Trim()) && b.Type.Trim().Equals(type.Trim())).FirstOrDefault();
 
 
             if (basket == null)
@@ -66,7 +72,7 @@ namespace EComArsInterface
             Basket basket = null;
 
             //var tmp = db.Baskets.ToList();
-            basket = db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Include(i => i.TenderTypes).Where(b => b.Status.Trim().Equals("Received")).FirstOrDefault();
+            basket = db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Where(b => b.Status.Trim().Equals("Received")).FirstOrDefault();
 
             if (basket == null)
             {
@@ -111,8 +117,8 @@ namespace EComArsInterface
             }
 
             // Check if BasketId is already present into database
-            Basket obj = db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Include(i => i.TenderTypes).Where(b => (b.BasketID.Trim().Equals(basket.BasketID.Trim()) && b.Type.Trim().Equals(basket.Type.Trim()))).FirstOrDefault();
-            if (obj != null)
+            Basket obj = db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Where(b => (b.BasketID.Trim().Equals(basket.BasketID.Trim()) && b.Type.Trim().Equals(basket.Type.Trim()))).FirstOrDefault();
+            if (obj != null && obj.Status != "Canceled")
             {
                 _log.Info("Basket already exists!");
                 return BadRequest();
@@ -121,22 +127,59 @@ namespace EComArsInterface
             // Set necessary field to send response
             try
             {
-                // Set state to Received only for type Sale
-                basket.Status = "Received";
-                basket.TerminalID = "";
-                basket.Receipt = "";
-                basket.TotalAmount = 0.0M;
-                basket.EarnedLoyaltyPoints = 0;
-                basket.TransactionId = "";
-                basket.BarcodeId = "";
-                basket.SoldItems = null;
-                basket.NotSoldItems = null;
-                //basket.TenderType = "Online";
-                //basket.TenderId = tenderList.ContainsKey(basket.TenderType) ? tenderList[basket.TenderType].ToString() : null;
-                basket.OriginBasketId = "";
-                basket.ErrorCode = 0;
+                if (obj != null && obj.Status == "Canceled")
+                {
+                    obj.Status = "Received";
+                    basket.Status = "Received";
+                    obj.TerminalID = basket.TerminalID;
+                    obj.CustomerID = basket.CustomerID;
+                    obj.BarcodeId = basket.BarcodeId;
+                    obj.EarnedLoyaltyPoints = basket.EarnedLoyaltyPoints;
+                    obj.OriginBasketId = basket.OriginBasketId;
+                    obj.Type = basket.Type;
+                    obj.TenderType = basket.TenderType;
+                    obj.TenderId = tenderList.ContainsKey(basket.TenderType) ? tenderList[basket.TenderType].ToString() : null;
+                    obj.TotalAmount = basket.TotalAmount;
+                    obj.TransactionId = basket.TransactionId;
+                    obj.ErrorCode = basket.ErrorCode;
+                    obj.Receipt = basket.Receipt;
+                    db.Items.RemoveRange(obj.Items);
+                    db.SoldItems.RemoveRange(obj.SoldItems);
+                    db.NotSoldItems.RemoveRange(obj.NotSoldItems);
+                    try
+                    {
+                        db.SaveChanges();
 
-                db.Entry(basket).State = EntityState.Added;
+                    }
+                    catch (DbException de)
+                    {
+                        _log.Error("Cannot Reset List Items ,SoldItems, and NotSoldItems. Error: ", de.Message);
+                    }
+
+                    obj.Items = basket.Items;
+                    obj.SoldItems = basket.SoldItems;
+                    obj.NotSoldItems = basket.NotSoldItems;
+                    db.Baskets.AddOrUpdate(obj);
+                }
+                else
+                {
+                    basket.Status = "Received";
+                    basket.TerminalID = "";
+                    basket.Receipt = "";
+                    basket.TotalAmount = 0.0M;
+                    basket.EarnedLoyaltyPoints = 0;
+                    basket.TransactionId = "";
+                    basket.BarcodeId = "";
+                    basket.SoldItems = null;
+                    basket.NotSoldItems = null;
+                    basket.TenderType = "Online";
+                    basket.TenderId = tenderList.ContainsKey(basket.TenderType) ? tenderList[basket.TenderType].ToString() : null;
+                    basket.OriginBasketId = "";
+                    basket.ErrorCode = 0;
+
+                    db.Entry(basket).State = EntityState.Added;                    
+                }
+
                 db.SaveChanges();
             }
             catch (DbUpdateConcurrencyException ex)
@@ -305,42 +348,26 @@ namespace EComArsInterface
                 Basket objToUpdate = db.Baskets.Include(i => i.Items)
                                                .Include(i => i.SoldItems)
                                                .Include(i => i.NotSoldItems)
-                                               .Include(i => i.TenderTypes)
                                                .Where(b => b.BasketID.Trim().Equals(basket.BasketID.Trim()) && b.Type.Trim().Equals(basket.Type.Trim())).FirstOrDefault();
 
 
 
                 if (objToUpdate != null)
                 {
+
                     objToUpdate.Status = basket.Status;
                     objToUpdate.TerminalID = basket.TerminalID;
-                    objToUpdate.ProviderID = basket.ProviderID;
                     objToUpdate.CustomerID = basket.CustomerID;
                     objToUpdate.BarcodeId = basket.BarcodeId;
                     objToUpdate.EarnedLoyaltyPoints = basket.EarnedLoyaltyPoints;
                     objToUpdate.OriginBasketId = basket.OriginBasketId;
                     objToUpdate.Type = basket.Type;
+                    objToUpdate.TenderType = basket.TenderType;
+                    objToUpdate.TenderId = tenderList.ContainsKey(basket.TenderType) ? tenderList[basket.TenderType].ToString() : null;
                     objToUpdate.TotalAmount = basket.TotalAmount;
                     objToUpdate.TransactionId = basket.TransactionId;
                     objToUpdate.ErrorCode = basket.ErrorCode;
                     objToUpdate.Receipt = basket.Receipt;
-
-                    foreach (TenderType item in basket.TenderTypes)
-                    {
-
-                        TenderType current = objToUpdate.TenderTypes.Where(i => i.Type == item.Type).FirstOrDefault();
-
-                        if (current == null)
-                        {
-                            objToUpdate.TenderTypes.Add(item);
-                        }
-                        else
-                        {
-                            current.Type = item.Type;
-                            current.Amount = item.Amount;
-                        }
-                    }
-
                     db.Items.RemoveRange(objToUpdate.Items);
                     db.SoldItems.RemoveRange(objToUpdate.SoldItems);
                     db.NotSoldItems.RemoveRange(objToUpdate.NotSoldItems);
@@ -364,7 +391,8 @@ namespace EComArsInterface
                     else
                     {
                         objToUpdate.Status = basket.Status = "Received";
-                        objToUpdate.Receipt = "";                       
+                        objToUpdate.Receipt = "";
+                       
                     }
                  
 
@@ -395,7 +423,7 @@ namespace EComArsInterface
 
             if (basketId != "ALL")
             {
-                Basket basket = db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Include(i => i.TenderTypes).Where(b=>(b.BasketID.Equals(basketId) && b.Type.Equals(type))).FirstOrDefault();
+                Basket basket = db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Where(b=>(b.BasketID.Equals(basketId) && b.Type.Equals(type))).FirstOrDefault();
                 if (basket == null)
                 {
                     _log.Info("Basket not found!");
@@ -416,7 +444,7 @@ namespace EComArsInterface
             {
 
                 string JsonBasketsList = string.Empty;
-                List<Basket> basketList = db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Include(i => i.TenderTypes).Where(b => b.Status == "Received").ToList<Basket>();
+                List<Basket> basketList = db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Where(b => b.Status == "Received").ToList<Basket>();
                 if (basketList != null && basketList.Count > 0)
                 {
                     JsonBasketsList = JsonConvert.SerializeObject(basketList);
