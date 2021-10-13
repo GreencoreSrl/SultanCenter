@@ -104,29 +104,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\SearchPLUController.cs" />
     <Compile Include="Controllers\BasketController.cs" />
     <Compile Include="Controllers\HeartbeatController.cs" />
     <Compile Include="Controllers\StatusController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202108110937113_Ecommerce.cs" />
-    <Compile Include="Migrations\202108110937113_Ecommerce.designer.cs">
-      <DependentUpon>202108110937113_Ecommerce.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202108180951174_Ecommerce_update.cs" />
-    <Compile Include="Migrations\202108180951174_Ecommerce_update.designer.cs">
-      <DependentUpon>202108180951174_Ecommerce_update.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202108270822583_Ecommerce_update2.cs" />
-    <Compile Include="Migrations\202108270822583_Ecommerce_update2.designer.cs">
-      <DependentUpon>202108270822583_Ecommerce_update2.cs</DependentUpon>
+    <Compile Include="Migrations\202106231534434_Initial.cs" />
+    <Compile Include="Migrations\202106231534434_Initial.designer.cs">
+      <DependentUpon>202106231534434_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ARSDBContext.cs" />
     <Compile Include="Models\Basket.cs" />
-    <Compile Include="Models\Ean.cs" />
     <Compile Include="Models\Terminal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -147,14 +137,8 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202108110937113_Ecommerce.resx">
-      <DependentUpon>202108110937113_Ecommerce.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202108180951174_Ecommerce_update.resx">
-      <DependentUpon>202108180951174_Ecommerce_update.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202108270822583_Ecommerce_update2.resx">
-      <DependentUpon>202108270822583_Ecommerce_update2.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202106231534434_Initial.resx">
+      <DependentUpon>202106231534434_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
