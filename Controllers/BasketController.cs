@@ -117,7 +117,12 @@ namespace EComArsInterface
             }
 
             // Check if BasketId is already present into database
-            Basket obj = db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Include(i => i.TenderTypes).Where(b => (b.BasketID.Trim().Equals(basket.BasketID.Trim()) && b.Type.Trim().Equals(basket.Type.Trim()))).FirstOrDefault();
+            Basket obj = db.Baskets.Include(i => i.Items)
+                                    .Include(i => i.SoldItems)
+                                    .Include(i => i.NotSoldItems)
+                                    //.Include(i => i.TenderTypes)
+                                    .Where(b => (b.BasketID.Trim().Equals(basket.BasketID.Trim()) && b.Type.Trim().Equals(basket.Type.Trim())))
+                                    .FirstOrDefault();
             if (obj != null)
             {
                 _log.Info("Basket already exists!");

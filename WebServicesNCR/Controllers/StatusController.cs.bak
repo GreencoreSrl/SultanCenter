@@ -58,14 +58,9 @@ namespace EComArsInterface.Controllers
             foreach (Terminal t in db.Terminals)
             {
                 if (DateTime.Now.Subtract(t.CheckDate).TotalMinutes > Convert.ToDouble(ConfigurationManager.AppSettings["HBTimeIsOver"]))
-                {
                     t.Status = "Unreachable";
-                    t.ErrorCode = 104;
-                }                    
                 else
-                {
                     t.Status = "Ready";
-                }
 
                 term.Add(t);
             }
