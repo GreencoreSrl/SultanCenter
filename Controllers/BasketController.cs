@@ -43,13 +43,17 @@ namespace EComArsInterface
         public IHttpActionResult GetBasket(string BasketId, string type = "")
         {
             _log.Trace("GetBasketID - Start");
+
             if (string.IsNullOrEmpty(type))
             {
                 _log.Info("Type not supplied");
                 return BadRequest("Type not defined");
             }
 
-            Basket basket = db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Where(b => b.BasketID.Trim().Equals(BasketId.Trim()) && b.Type.Trim().Equals(type.Trim())).FirstOrDefault();
+            Basket basket = db.Baskets.Include(i => i.Items)
+                                        .Include(i => i.SoldItems)
+                                        .Include(i => i.NotSoldItems)
+                                        .Where(b => b.BasketID.Trim().Equals(BasketId.Trim()) && b.Type.Trim().Equals(type.Trim())).FirstOrDefault();
 
 
             if (basket == null)
@@ -72,7 +76,10 @@ namespace EComArsInterface
             Basket basket = null;
 
             //var tmp = db.Baskets.ToList();
-            basket = db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Where(b => b.Status.Trim().Equals("Received")).FirstOrDefault();
+            basket = db.Baskets.Include(i => i.Items)
+                                .Include(i => i.SoldItems)
+                                .Include(i => i.NotSoldItems)
+                                .Where(b => b.Status.Trim().Equals("Received")).FirstOrDefault();
 
             if (basket == null)
             {
@@ -92,7 +99,12 @@ namespace EComArsInterface
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                _log.Error("Exception: " + ex.Message);
+                _log.Error("DbUpdate Exception: " + ex.Message);
+                throw;
+            }
+            catch(Exception e)
+            {
+                _log.Error("Exception: " + e.Message);
                 throw;
             }
 
@@ -189,7 +201,12 @@ namespace EComArsInterface
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                _log.Error("Exception: " + ex.Message);
+                _log.Error("DbUpdate Exception: " + ex.Message);
+                throw;
+            }
+            catch(Exception e)
+            {
+                _log.Error("Exception: " + e.Message);
                 throw;
             }
 
@@ -347,7 +364,7 @@ namespace EComArsInterface
             {
                 _log.Info("Basket status is Processing!");
                 return BadRequest();
-        }
+            }
             else
             {
                 Basket objToUpdate = db.Baskets.Include(i => i.Items)
@@ -385,6 +402,10 @@ namespace EComArsInterface
                     {
                         _log.Error("Cannot Reset List Items ,SoldItems, and NotSoldItems. Error: ",de.Message);
                     }
+                    catch(Exception e)
+                    {
+                        _log.Error("Exception: ", e.Message);
+                    }
                     objToUpdate.Items = basket.Items;
 
                     if (fromSource.Trim().Equals("POS"))
@@ -413,6 +434,11 @@ namespace EComArsInterface
             catch (DbUpdateException ex)
             {
                 _log.Error("Exception: " + ex.Message);
+                throw;
+            }
+            catch(Exception e)
+            {
+                _log.Error("Exception: " + e.Message);
                 throw;
             }
 
