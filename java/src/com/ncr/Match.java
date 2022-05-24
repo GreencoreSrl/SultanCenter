@@ -44,6 +44,8 @@ abstract class Match extends Action {
 			panel.clearLink(Mnemo.getInfo(35), 0x81);
 		if (ind < 1)
 			return;
+		if (cus.isNoPromo())
+			return;
 
 		if ((plu.flag & F_NEGSLS) > 0)
 			plu.price = -plu.price;
@@ -262,6 +264,8 @@ abstract class Match extends Action {
 			return;
 		if (!Promo.isEnabled(Promo.PROMO_STD))
 			return;
+		if (cus.isNoPromo())
+			return;
 
 		plu = itm.copy();
 		if (!itm.isPlu()) {
@@ -333,6 +337,8 @@ abstract class Match extends Action {
 		int sts;
 
 		if (!Promo.isEnabled(Promo.PROMO_STD))
+			return;
+		if (cus.isNoPromo())
 			return;
 		plu = itm.copy();
 		plu.amt = itm.amt < 0 ? -itm.amt : itm.amt;

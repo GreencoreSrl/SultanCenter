@@ -24,7 +24,11 @@ public class SignOffRequestProcessor extends DefaultRequestProcessor {
         SscoCashier sscoCashier = getManager().getCashier();
         logger.info("User " + sscoCashier.getUserId() + ", with LaneNumber " + laneNumber + " is performing logoff");
 
-        if (!getManager().signOffRequest()) logger.warn("-- Warning ");
+        if (getManager().transactionHasStarted()) {
+            sendResponses(new SscoError(SscoError.CANT_SIGNOFF_NOW));
+        } else {
+            if (!getManager().signOffRequest()) logger.warn("-- Warning ");
+        }
 
         logger.debug("Exit");
     }

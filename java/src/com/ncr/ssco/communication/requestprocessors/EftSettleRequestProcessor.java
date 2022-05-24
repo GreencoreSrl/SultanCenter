@@ -1,6 +1,6 @@
 package com.ncr.ssco.communication.requestprocessors;
 
-import com.ncr.VeriFoneTerminal;
+import com.ncr.eft.MarshallEftPlugin;
 import com.ncr.ssco.communication.entities.pos.SscoError;
 import com.ncr.ssco.communication.manager.SscoMessageHandler;
 import com.ncr.ssco.communication.requestdecoder.RequestFromSsco;
@@ -30,7 +30,7 @@ public class EftSettleRequestProcessor extends DefaultRequestProcessor {
         logger.debug("Enter");
 
         ResponseToSsco responseToSsco = getMessageHandler().createResponseToSsco("EFTSettleReply");
-        responseToSsco.setIntField("Status", VeriFoneTerminal.isRisSettle() ? 1 : 0);
+        responseToSsco.setIntField("Status", MarshallEftPlugin.isRisSettle() ? 1 : 0);
 
         if (sscoError.OK != sscoError.getCode()) {
             logger.info("Response Eft Settle KO - Enter - error code: " + sscoError.getCode() + " message: " + sscoError.getMessage());

@@ -1,5 +1,8 @@
 package com.ncr;
 
+import com.ncr.eft.*;
+import com.ncr.eft.EftPlugin;
+import com.ncr.eft.MarshallEftPlugin;
 import com.ncr.ssco.communication.manager.SscoPosManager;
 import org.apache.log4j.Logger;
 
@@ -33,14 +36,14 @@ public class GdRegis extends Action {
 	 * setup begin of transaction
 	 */
 
-	static void set_tra_top() {
+	public static void set_tra_top() {
 		set_tra_top(false);
 	}
 
 	static void set_tra_top(boolean voucher) {
 		GdSigns.setEod(false);  // FIX-20170413-CGA#A
         GdPsh.setUTID(); // AMZ-2017-003#ADD
-		ECommerce.isAutomaticAmazonItem();  //AMAZON-COMM-CGA#A
+		ECommerce.resetAutomaticAmazonItem();  //AMAZON-COMM-CGA#A
 		ECommerce.resetAlreadyAmzCommCalc();
 		//AMAZON-COMM-CGA#A END
 		ECommerce.setInstashopChoice("0");  //INSTASHOP-SELL-CGA#A
@@ -91,14 +94,20 @@ public class GdRegis extends Action {
 			if ((options[O_copy2] & 0x40) > 0)
 				tra.slip |= 0x40;
 		}
+		if (ECommerce.isResumeInstashop()) tra.slip &= ~0x40;
 	}
 
 	/**
 	 * setup trailer line
 	 */
-	static void set_trailer() {
+	public static void set_trailer() {
+		set_trailer(0);
+	}
+
+	static void set_trailer(int delta) {
+		logger.info("setting trailer with tra: " + ctl.tran + " delta: " + delta);
 		prtLine.init(trl_line).poke(-1, (tra.slip & 0x21) > 0 ? '.' : '*');
-		prtLine.push(editNum(ctl.tran, 4)).skip().push(editNum(ctl.sto_nbr, 4)).skip().push(editKey(ctl.reg_nbr, 3))
+		prtLine.push(editNum(ctl.tran + delta, 4)).skip().push(editNum(ctl.sto_nbr, 4)).skip().push(editKey(ctl.reg_nbr, 3))
 				.skip().push(editNum(ctl.ckr_nbr, 3));
 		prtLine.onto(20, editDate(ctl.date)).onto(29, editTime(ctl.time / 100)).onto(38, editNum(tra.code, 2));
 		if (prtLine.peek(34) == 'p') {
@@ -197,10 +206,14 @@ public class GdRegis extends Action {
 			if ((lREG.tflg & 1) == 0)
 				continue;
 			if (ind < 11) {
-				prtBlock(2, save_txt, 10, ind = save_txt.length);
+				if (!Promo.isNoPrintPoints())    //NOPRINTPOINTS-CGA#A
+					prtBlock(2, save_txt, 10, ind = save_txt.length);
 			}
-			stsLine.init(lREG.text).upto(20, editPoints(cnt, false));
-			prtDwide(2, stsLine.toString());
+
+			if (!Promo.isNoPrintPoints()) {   //NOPRINTPOINTS-CGA#A
+				stsLine.init(lREG.text).upto(20, editPoints(cnt, false));
+				prtDwide(2, stsLine.toString());
+			}
 		}
 		prtBlock(2, mess_txt, 0, 10);
 	}
@@ -208,7 +221,7 @@ public class GdRegis extends Action {
 	/**
 	 * print receipt trailer
 	 */
-	static int prt_trailer(int lfs) {
+	public static int prt_trailer(int lfs) {
 		int ind, rec = 0;
 
 		dspLine.show(1);
@@ -233,29 +246,15 @@ public class GdRegis extends Action {
 		if (ctl.mode > 0)
 			prtDwide(ELJRN + 2, Mnemo.getInfo(ctl.mode + 17));
 
-        verifone.printVouchers(VeriFoneTerminal.SAME_RECEIPT_TYPE); //VERIFONE-20160201-CGA#A
-
-		// TAMI-ENH-20140526-SBE#A BEG
-		logger.info("prt_trailer same receipt");
-		eftTerminal.printVouchers(EftTerminal.SAME_RECEIPT_TYPE);
-		if (PluginHandler.getInstance().isEyePayPluginEnabled()) {
-			EftTerminalEyePay.getInstance().printVouchers(EftTerminal.SAME_RECEIPT_TYPE);   //1610
-		}
-		// TAMI-ENH-20140526-SBE#A END
-
-		if (PluginHandler.getInstance().isToneTagPluginEnabled()) {
-			EftTerminalToneTag.getInstance().printVouchers(EftTerminal.SAME_RECEIPT_TYPE);  //TONETAG-CGA#A  //1610
-		}
+		eftPluginManager.printVouchers(EftPlugin.SAME_RECEIPT_TYPE);
 
 		set_trailer();
 		prtLine.book(3);
 
-		// AMZ-2017-003#BEG
 		logger.info("prt_trailer print Philoshopic uniqueTransactionId barcode");
-		GdPsh.printBarcode();
-		// AMZ-2017-003#END
+		if (tra.print) GdPsh.printBarcode();
 
-		if (tra.slip == 0x10) {
+		if (tra.slip == 0x10 && tra.print) {
 			ElJrn.second_cpy(2, ctl.tran, tra.slip = 0);
 		}
 		while (rec < mat.length) {
@@ -276,14 +275,6 @@ public class GdRegis extends Action {
 		}
 		ElJrn.tender_cpy();
 
-		//INSTASHOP-SELL-CGA#A BEG
-		/*if (ECommerce.getInstashopChoiceType().trim().startsWith("S")
-				|| ECommerce.getInstashopChoiceType().trim().equals("F")) {
-			ElJrn.second_cpy(2, ctl.tran, 1);
-			ECommerce.setInstashopChoiceType("");
-		}*/
-		//INSTASHOP-SELL-CGA#A END
-
 		if (tra.slip > 0) {
 			if ((tra.slip & 1) > 0)
 				ElJrn.second_cpy(4, ctl.tran, 0);
@@ -294,9 +285,7 @@ public class GdRegis extends Action {
 		logger.info("PosGPE.isCreditCardVoucherPrintEnabled: " + PosGPE.isCreditCardVoucherPrintEnabled());
 		logger.info("PosGPE.getMinAmountToPrint(): " + PosGPE.getMinAmountToPrint());
 		logger.info("tra.amt: " + tra.amt);
-		if (!PosGPE.isCreditCardVoucherPrintEnabled()
-				|| tra.amt >= PosGPE.getMinAmountToPrint()) {
-
+		if (!PosGPE.isCreditCardVoucherPrintEnabled() || tra.amt >= PosGPE.getMinAmountToPrint()) {
 			DevIo.haveToPrintCreditCardVoucher();
 		} else {
 			DevIo.removeCreditCardVoucher();
@@ -357,20 +346,16 @@ public class GdRegis extends Action {
 				if (tra.spf2 > 0) {
 					prtLine.init(Mnemo.getText(sc_value(tra.spf2))).upto(20, tra.number).type(2);
 				}
+				ElJrn.printAdditionalHeader(tra.special);
 				ElJrn.print_tnd(2, 2);
 				prtBlock(2, spec_txt, 0, spec_txt.length);
 				hdr_print();
 			}
-			// SARAWAT-ENH-20150507-CGA#A BEG
-			if (GdSarawat.getInstance().isPrintFailureTransaction() && (GdTrans.getListFailedCoupon().size() > 0
-					|| !tra.successRedeemPoint || !tra.successTransaction)) {
 
-				logger.info("print capillary voucher for capillary failed");
-
-				GdSarawat.getInstance().printCapillaryVoucher();
-			}
-			// SARAWAT-ENH-20150507-CGA#A END
-			verifone.printVouchers(VeriFoneTerminal.NEW_RECEIPT_TYPE);  //VERIFONE-20160201-CGA#A
+			eftPluginManager.printVouchers(EftPlugin.NEW_RECEIPT_TYPE);
+		}
+		if (tra.eCommerce) {
+			ECommerceManager.getInstance().endOfTransaction();
 		}
 
 		//INSTASHOP-SELL-CGA#A BEG
@@ -453,7 +438,7 @@ public class GdRegis extends Action {
 		Itmdc.IDC_write('F', trx_pres(), tra.spf3, tra.number, tra.cnt, tra.amt);
 		if (tra.spf2 > 0)
 			if (lTRA.getSize() > 1) /* late customer to H-record */ {
-				Itmdc.IDC_update(1, trx_pres(), tra.spf3, cus.number, tra.rate);
+				Itmdc.IDC_update(1, trx_pres(), tra.spf3, cus.getNumber(), tra.rate);
 			}
 		tblWrite();
 		if (tra.mode < 9 && ctl.ckr_nbr < 800) {
@@ -476,26 +461,13 @@ public class GdRegis extends Action {
 			}
 		}
 
-		//GdTrans.setIsInstanshopResume(false);   //INSTASHOP-RESUME-CGA#A
-		// TAMI-ENH-20140526-SBE#A BEG
-		logger.info("prt_trailer new receipt");
-		eftTerminal.printVouchers(EftTerminal.NEW_RECEIPT_TYPE);
-		if (PluginHandler.getInstance().isEyePayPluginEnabled()) {
-			EftTerminalEyePay.getInstance().printVouchers(EftTerminal.NEW_RECEIPT_TYPE);  //1610
-		}
-		// TAMI-ENH-20140526-SBE#A END
-
-		if (PluginHandler.getInstance().isToneTagPluginEnabled()) {
-			EftTerminalToneTag.getInstance().printVouchers(EftTerminal.NEW_RECEIPT_TYPE);  //TONETAG-CGA#A  //1610
-		}
-
 		return GdTrans.tra_clear();
 	}
 
 	/**
 	 * pers/cust preselect
 	 */
-	int action0(int spec) {
+	public int action0(int spec) {
 		int sts;
 
 		if (tra.stat > 0)
@@ -525,7 +497,7 @@ public class GdRegis extends Action {
 	/**
 	 * ac 03/05/06/07 preselect
 	 */
-	int action1(int spec) {
+	public int action1(int spec) {
 		int sc, sts;
 
 		if (spec == 3) /* return */ {
@@ -555,7 +527,7 @@ public class GdRegis extends Action {
 	/**
 	 * extra till number
 	 */
-	int action2(int spec) {
+	public int action2(int spec) {
 		int nbr = input.scanKey(input.num);
 
 		if (nbr == 0 || nbr == ctl.reg_nbr)
@@ -571,7 +543,7 @@ public class GdRegis extends Action {
 	/**
 	 * training/reentry start/stop
 	 */
-	int action3(int spec) {
+	public int action3(int spec) {
 		int mode = spec - 13, sts;
 
 		if (ctl.mode > 0 && ctl.mode != mode)
@@ -582,6 +554,9 @@ public class GdRegis extends Action {
 		if (!tra.isActive())
 			set_tra_top();
 		prtTitle(event.dec);
+		if (SscoPosManager.getInstance().isUsed()) {
+			SscoPosManager.getInstance().enterExitTrainingModeResponse();
+		}
 		if ((ctl.mode ^= mode) != M_RENTRY)
 			return prt_trailer(2);
 		event.nxt = event.alt;
@@ -591,7 +566,7 @@ public class GdRegis extends Action {
 	/**
 	 * reentry date
 	 */
-	int action4(int spec) {
+	public int action4(int spec) {
 		int date = input.scanDate(input.num);
 		if (!dat_valid(date))
 			return 8;
@@ -605,7 +580,7 @@ public class GdRegis extends Action {
 	/**
 	 * inventory/xfer/layaway
 	 */
-	int action5(int spec) {
+	public int action5(int spec) {
 		int mode = spec % 10, sts;
 
 		if ((sts = sc_checks(1, mode)) > 0)
@@ -625,7 +600,7 @@ public class GdRegis extends Action {
 	/**
 	 * shelf/page number
 	 */
-	int action6(int spec) {
+	public int action6(int spec) {
 		int nbr = input.scanNum(input.num);
 
 		if (nbr == 0)
@@ -639,7 +614,7 @@ public class GdRegis extends Action {
 	/**
 	 * other store number
 	 */
-	int action7(int spec) {
+	public int action7(int spec) {
 		int nbr = input.scanNum(input.num);
 
 		if (nbr == 0 || nbr == ctl.sto_nbr)
@@ -653,7 +628,7 @@ public class GdRegis extends Action {
 	/**
 	 * layaway number
 	 */
-	int action8(int spec) {
+	public int action8(int spec) {
 		tra.number = input.scan(input.num);
 		dspLine.init(Mnemo.getText(spec)).onto(12, tra.number);
 		prtLine.init(dspLine.toString()).book(3);
@@ -663,7 +638,7 @@ public class GdRegis extends Action {
 	/**
 	 * ac 30 tender media exchange
 	 */
-	int action9(int spec) {
+	public int action9(int spec) {
 		int sts;
 
 		if ((sts = sc_checks(8, 5)) > 0)

@@ -32,14 +32,11 @@ public class ValidateUserIdRequestProcessor extends DefaultRequestProcessor {
 
         int validationUser = LoginManager.getInstance().getAuthenticationLevel( user, password);
         ResponseToSsco responseToSsco = getMessageHandler().createResponseToSsco("ValidateUserId");
-        if( validationUser != 0 ) {
-            responseToSsco.setStringField("UserId", user);
-            responseToSsco.setIntField("AuthenticationLevel", validationUser);
-        }
-        else{
-            responseToSsco.setStringField("UserId", user);
-            responseToSsco.setIntField("AuthenticationLevel", validationUser);
-            responseToSsco.setStringField("Message.1", "Errore nella validazione dello userId");
+
+        responseToSsco.setStringField("UserId", user);
+        responseToSsco.setIntField("AuthenticationLevel", validationUser);
+        if( validationUser == 0 ) {
+            responseToSsco.setStringField("Message.1", "Error validating userId");
         }
 
         getMessageHandler().sendResponseToSsco(responseToSsco);

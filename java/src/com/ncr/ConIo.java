@@ -13,6 +13,7 @@ public class ConIo extends LinIo {
 
 	String alpha, label, prompt;
 	String qrcode = "";  //QRCODE-SELL-CGA#A
+	String aux1 = ""; // TSC-ENH2014-1-AMZ#ADD -- extended EAN 128 info
 	static final char QR_CODE_SEPARATOR = ';';
 
 	static final int ABORT = 0x1B;
@@ -26,6 +27,7 @@ public class ConIo extends LinIo {
 	static final int PAUSE = 0xA8;
 	static final int POINT = 0x2E;
 	static final int SOUTH = 0x1F;
+	static final int TOTAL = 0x19;
 
 	static int optAuth = 0, posLock = 0;
 
@@ -169,6 +171,12 @@ public class ConIo extends LinIo {
 		if (!Character.isDigit(c))
 			ind++;
 		for (; ind < cmd.length(); num++) {
+			// TSC-ENH2014-1-AMZ#BEG
+			if (cmd.length() == 30 && num == 13) {
+				aux1 = cmd.substring(18, 30);
+				break;
+			}
+			// TSC-ENH2014-1-AMZ#END
 			if (num >= dataLen())
 				return 2;
 			pb += cmd.charAt(ind++);
@@ -321,7 +329,11 @@ public class ConIo extends LinIo {
 		if ((ecn.yymm = yymm) > 0) {
 			if (cmpDates(yymm * 100 + 31, Struc.ctl.date) < 0) {
 				logger.info("Dates: [" + ecn.yymm + "] [" + Struc.ctl.date + "]");
-				return 31;
+				// TSC-MOD2014-AMZ#ADD
+				if (!GdTsc.customerCardDateChk(pb)) {
+					return 31;
+				}
+				// TSC-MOD2014-AMZ#ADD
 			}
 		}
 		return 0;

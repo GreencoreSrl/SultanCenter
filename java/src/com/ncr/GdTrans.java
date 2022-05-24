@@ -1,19 +1,13 @@
 package com.ncr;
 
-import com.ncr.capillary.CouponDetails.RedeemCoupon;
+import com.ncr.eft.EftPlugin;
+import com.ncr.eft.MarshallEftPlugin;
 import com.ncr.ssco.communication.manager.SscoPosManager;
+import com.ncr.struc.Customer;
 import org.apache.log4j.Logger;
 
-import java.io.*;
-import java.util.ArrayList;
-
-class GdTrans extends Action {
+public class GdTrans extends Action {
 	private static final Logger logger = Logger.getLogger(GdTrans.class);
-
-	// SARAWAT-ENH-20150507-CGA#A BEG
-	private static ArrayList<String> listFailedCoupon = new ArrayList<String>();
-	// SARAWAT-ENH-20150507-CGA#A END
-
 
 	static void chg_auto() {
 		int sc = sc_value(M_CHARGE);
@@ -118,14 +112,21 @@ class GdTrans extends Action {
 			Itmdc.IDC_write('K', trx_pres(), itm.flag, itm.promo, itm.rew_qty, itm.rew_amt);
 		if (sc < 5 || itm.promo.length() == 0)
 			showPoints(tra.pnt += itm.pnt);
-		prtLine.init(itm.text).book(3);
-		if (!itm.number.startsWith("SD")) {
-			prtLine.init(Mnemo.getText(58));
-			if (itm.number.startsWith("SI"))
-				prtLine.onto(1, itm.number.substring(15));
-		} else
-			prtLine.init(itm.number.substring(12));
-		prtLine.upto(17, editDec(itm.amt, tnd[0].dec)).onto(20, editPoints(itm.pnt, false)).book(3);
+		if (GdTsc.isSimpleReceipt()
+			&& !Promo.isNoPrintPoints()) {    //NOPRINTPOINTS-CGA#A
+				prtLine.init(itm.text).onto(20, editPoints(itm.pnt, false)).book(3);
+		} else {
+			prtLine.init(itm.text).book(3);
+			if (!itm.number.startsWith("SD")) {
+				prtLine.init(Mnemo.getText(58));
+				if (itm.number.startsWith("SI"))
+					prtLine.onto(1, itm.number.substring(15));
+			} else
+				prtLine.init(itm.number.substring(12));
+
+			if (!Promo.isNoPrintPoints())    //NOPRINTPOINTS-CGA#A
+				prtLine.upto(17, editDec(itm.amt, tnd[0].dec)).onto(20, editPoints(itm.pnt, false)).book(3);
+		}
 	}
 
 	static void rbt_distrib() {
@@ -406,37 +407,12 @@ class GdTrans extends Action {
 			dspLine.init(Mnemo.getInfo(0));
 		showHeader(ctl.ckr_nbr > 0);
 		showMinus(false);
-		GdPsh.reset(); // PSH-ENH-001-AMZ#ADD -- reset
-		// SARAWAT-ENH-20150507-CGA#A BEG
-		if (CapillaryService.getInstance().isEnabled()) {
-			CapillaryService.getInstance().resetAllParam();
-		}
+		GdPsh.getInstance().resetAll(); // PSH-ENH-001-AMZ#ADD -- reset
 		GdSpinneys.getInstance().clearCoupons();
-		Struc.verifone.cleanReceiptData();
-
-		if (GdSarawat.getInstance().isCustomerCardRequestEnabled() && CapillaryService.getInstance().isEnabled()
-				&& !GdSarawat.getInstance().isCkrClose()
-				&& !GdSigns.isEod()) {  // FIX-20170413-CGA#A
-			logger.info("tra_clear - show prompt for request customer card");
-
-			stsLine.init("").upto(20, "").show(2);
-			if (panel.clearLink(Mnemo.getText(83), 0x23) == 2) { // "DataCustomer Card?"
-				GdSarawat.getInstance().setHaveCustomerCard(true);
-				dspLine.init(Mnemo.getMenu(23));
-			} else {
-				if (GdSarawat.getInstance().isAskForCustomerRegistration()) {
-					logger.info("tra_clear - show prompt for registration");
-
-					if (panel.clearLink(Mnemo.getText(84), 0x23) == 2) { // "Register customer?"
-						if (event.find(0x94, event.nxt) > 0) {
-							return GdSarawat.getInstance().action0(0);
-						}
-					}
-				}
-			}
+		if (eftPluginManager.isPluginEnabled(EftPlugin.MARSHALL_TENDER_ID)) {
+			MarshallEftPlugin marshallEftPlugin = (MarshallEftPlugin) eftPluginManager.getPlugin(EftPlugin.MARSHALL_TENDER_ID);
+			marshallEftPlugin.cleanReceiptData();
 		}
-		// SARAWAT-ENH-20150507-CGA#A END
-
 		return input.sel = 0;
 	}
 
@@ -544,15 +520,10 @@ class GdTrans extends Action {
 			prtLine.init(Mnemo.getText(21)).upto(17, editInt(tra.cnt)).onto(20, dspLine.toString()).book(3);
 		}
 		TView.append(' ', 0x80, Mnemo.getText(24), editInt(tra.cnt), "", editMoney(0, tra.amt), "");
-		if (tra.pnt != 0) {
+		if (tra.pnt != 0
+				&& !Promo.isNoPrintPoints()) {   //NOPRINTPOINTS-CGA#A
 			prtDline("PtsTL" + editNum(tra.code, 2));
-            //SARAWAT-ENH-20150507-CGA#A BEG
-            if (!CapillaryService.getInstance().isEnabled()) {
-                prtLine.init(Mnemo.getText(39)).onto(20, editPoints(tra.pnt, true)).book(3);
-            }
-            //SARAWAT-ENH-20150507-CGA#A END
-            //prtLine.init(Mnemo.getText(39)).onto(20, editPoints(tra.pnt, true)).book(3); //SARAWAT-ENH-20150507-CGA#D
-
+			prtLine.init(Mnemo.getText(39)).onto(20, editPoints(tra.pnt, true)).book(3);
 			prtLine.init(' ').book(2);
 		}
 	}
@@ -568,10 +539,10 @@ class GdTrans extends Action {
 			vat_exempt();
 	}
 
-	static int tra_finish() {
+	public static int tra_finish() {
 		// PSH-ENH-005-AMZ#BEG -- customer points
-		if (GdPsh.isEnabled()) {
-            if (GdPsh.isEnabledSMASH()) {// AMZ-2017-003-004#ADD
+		if (GdPsh.getInstance().isEnabled()) {
+            if (GdPsh.getInstance().isSmashEnabled()) {// AMZ-2017-003-004#ADD
                 GdPsh.customerUpdate(cus, tra);
                 GdPsh.sendDataCollect();//DMA-TLOG_UPLOADING#A
             } // AMZ-2017-003-004#ADD
@@ -585,147 +556,6 @@ class GdTrans extends Action {
 		}*/
 		//INSTASHOP-RESUME-CGA#A END
 		// PSH-ENH-005-AMZ#BEG -- customer points
-		// SARAWAT-ENH-20150507-CGA#A BEG
-		if (CapillaryService.getInstance().isEnabled()) {
-			logger.info("tra_finish - capillary is enabled");
-
-			long npoints = CommunicationCapillaryForPoints.getInstance().getNPointsRedeem();
-			logger.info("tra_finish - npoint used: " + npoints);
-
-			long valuePromo = 0;
-			long valuePromoDiscount = 0;
-
-			if (!CommunicationCapillaryForPoints.getInstance().getRedemptionPvDiscount().equals("")) {
-				valuePromo = Promo.getPromovar(
-						Long.parseLong("9" + CommunicationCapillaryForPoints.getInstance().getRedemptionPvDiscount()));
-				valuePromoDiscount = Promo.getPromovar(
-						Long.parseLong("1" + CommunicationCapillaryForPoints.getInstance().getRedemptionPvDiscount()));
-			}
-
-            int redeemPnt = 0;
-			if (valuePromo != 0) {
-				if (GdSarawat.getInstance().getDiscountPoints() == -valuePromoDiscount) {
-                    redeemPnt = CommunicationCapillaryForPoints.getInstance().pointsRedeem(tra, cus, npoints);
-					//successRedeemPoint = CommunicationCapillaryForPoints.getInstance().pointsRedeem(tra, cus, npoints);
-                    tra.successRedeemPoint = redeemPnt == 0;
-					logger.info("tra_finish - pointsRedeem error code: " + redeemPnt);
-				} else {
-					tra.successRedeemPoint = false;
-				}
-			} else {
-				if (GdSarawat.getInstance().isAppliedDiscountPoints()) {
-					tra.successRedeemPoint = false;
-				}
-			}
-
-            logger.info("tra_finish - pointsRedeem successRedeemPoint: " + tra.successRedeemPoint);
-			if (!tra.successRedeemPoint) {
-                if (redeemPnt > 2000) {
-                    logger.info("tra_finish - pointsRedeem error code: " + redeemPnt);
-
-                    String msg = GdSarawat.getInstance().readErrorCodeCapillary(redeemPnt);
-                    logger.info("tra_finish - pointsRedeem error message: " + msg);
-
-                    panel.clearLink(msg, 0x81);
-                } else {
-                    logger.info("tra_finish - pointsRedeem error code: " + redeemPnt);
-                    logger.info("tra_finish - pointsRedeem error message: " + Mnemo.getInfo(79));
-
-                    panel.clearLink(Mnemo.getInfo(79), 0x81); // REDEEM POINT FAILED
-                }
-			}
-
-			ArrayList<RedeemCoupon> listCoupon = new ArrayList<RedeemCoupon>();
-			listCoupon = CommunicationCapillaryForCoupon.getInstance().getListCouponIsRedeemable();
-
-			boolean notApplied = false;
-			boolean failed = false;
-
-			logger.info("tra_finish - size listCoupon used: " + listCoupon.size());
-
-            int capillarySuccess = 0;
-			for (int i = 0; i < listCoupon.size(); i++) {
-				//boolean success = true;
-                capillarySuccess = 0;
-
-				if (listCoupon.get(i).isApplied()) {
-					logger.info("tra_finish - coupon " + listCoupon.get(i).getCode() + " applied");
-
-                    //long valuePromoCoupons = -Promo.getPromovar(Long.parseLong("4" + listCoupon.get(i).getCode()));
-                    long valuePromoCoupons = -Promo.getPromovar(Long.parseLong("4" + listCoupon.get(i).getDiscountCode()));
-                    if(listCoupon.get(i).getDiscount() == 0D && valuePromoCoupons == 0) {
-                        notApplied = true;
-                        listFailedCoupon.add(listCoupon.get(i).getCode());
-                    }
-                    else {
-                        capillarySuccess = CommunicationCapillaryForCoupon.getInstance().couponRedeem(tra, cus,
-                                listCoupon.get(i).getCode());
-                        logger.info("tra_finish - couponRedeem success: " + capillarySuccess);
-                    }
-					/*
-					 * long valuePromoCoupons = -Promo.getPromovar(Long.parseLong("4" + listCoupon.get(i).getCode()));
-					 * 
-					 * if((!listCoupon.get(i).getDiscountType().equals("PERC") && listCoupon.get(i).getDiscount() !=
-					 * valuePromoCoupons) || (listCoupon.get(i).getDiscountType().equals("PERC") && valuePromoCoupons ==
-					 * 0)) { notApplied = true; listFailedCoupon.add(listCoupon.get(i).getCode()); } else { success =
-					 * CommunicationCapillaryForCoupon.getInstance().couponRedeem(tra, cus,
-					 * listCoupon.get(i).getCode()); logger.info("tra_finish - couponRedeem success: " + success);
-					 * 
-					 * }
-					 */
-				} else {
-					logger.info("tra_finish - coupon " + listCoupon.get(i).getCode() + " not applied");
-
-					notApplied = true;
-					prtLine.init(Mnemo.getMenu(86)).onto(20, listCoupon.get(i).getCode()).upto(40, "").book(3); // COUPON
-																												// NOT
-																												// ACCEPTED
-				}
-
-				//if (!success) {
-                if (capillarySuccess != 0) {
-					failed = true;
-					listFailedCoupon.add(listCoupon.get(i).getCode());
-				}
-			}
-
-			if (notApplied) {
-				panel.clearLink(Mnemo.getInfo(84), 0x81); // RETURN COUPON
-			}
-
-			if (failed) {
-                if (capillarySuccess > 2000) {
-                    String msg = GdSarawat.getInstance().readErrorCodeCapillary(capillarySuccess);
-                    panel.clearLink(msg, 0x81);
-                } else {
-                    panel.clearLink(Mnemo.getInfo(81), 0x81); // REDEEM COUPON FAILED
-                }
-			}
-
-			// send transaction data to capillary
-            int successTrans = 0;
-            successTrans = CommunicationCapillaryForTransaction.getInstance().transactionAdd(tra, cus, pit, ctl);
-			//successTransaction = CommunicationCapillaryForTransaction.getInstance().transactionAdd(tra, cus, pit, ctl);
-            tra.successTransaction = successTrans == 0;
-			logger.info("Communication with Capillary for sending info about the transaction - error code: "
-					+ successTrans);
-
-			if (!tra.successTransaction) {
-                DevIo.alert(0);
-                if (successTrans > 2000) {
-                    String msg = GdSarawat.getInstance().readErrorCodeCapillary(successTrans);
-                    logger.info("error message: " + msg);
-
-                    panel.clearLink(msg, 0x81);
-                } else {
-                    logger.info("error message: " + Mnemo.getInfo(82));
-                    panel.clearLink(Mnemo.getInfo(82), 0x81); // CAPILLARY FAILED
-                }
-			}  else {
-                DevIo.alert(1);
-            }
-		}
-		// SARAWAT-ENH-20150507-CGA#A END
 
 		if (tra.code == 0)
 			Promo.endTransaction();
@@ -747,11 +577,7 @@ class GdTrans extends Action {
 				int retvl = GdRegis.prt_trailer(1);
 				DevIo.printCreditCardVoucher(1);
 				DevIo.removeCreditCardVoucher();
-
-				/*if (GdPos.sscoClient != null && GdPos.sscoClient.isRunningOnFastLane()) {
-				} else {
-					PosGPE.smartCardStatus(); // BAS-ENH-2130177-AGA#A
-				}*/  //questo è quello che c'è in Finiper, e che ho sostituito con quello che segue
+				ECommerce.setAccount("");   //INSTASHOP-FINALIZE-CGA#A
 
 				if (!SscoPosManager.getInstance().isUsed()){
 					logger.info("call smartCardStatus");
@@ -773,21 +599,6 @@ class GdTrans extends Action {
 		return successPrTrl;
 	}
 
-	// SARAWAT-ENH-20150507-CGA#A BEG
-	public static ArrayList<String> getListFailedCoupon() {
-		return listFailedCoupon;
-	}
-
-	public static void setListFailedCoupon(ArrayList<String> listFailedCoupon) {
-		GdTrans.listFailedCoupon = listFailedCoupon;
-	}
-
-	public static void resetParamCapillaryVoucher() {
-		listFailedCoupon = new ArrayList<String>();
-		tra.successTransaction = true;
-	}
-	// SARAWAT-ENH-20150507-CGA#A END
-
 	static void tra_profic(int cnt) {
 		if (!tra.isActive())
 			GdRegis.set_tra_top();
@@ -799,7 +610,7 @@ class GdTrans extends Action {
 	/**
 	 * transaction clear
 	 */
-	int action0(int spec) {
+	public int action0(int spec) {
 
 		return tra_clear();
 	}
@@ -807,7 +618,7 @@ class GdTrans extends Action {
 	/**
 	 * trans preselect
 	 */
-	int action1(int spec) {
+	public int action1(int spec) {
 		int sc = 11, sts;
 
 		if (spec == 1) /* void */ {
@@ -833,7 +644,7 @@ class GdTrans extends Action {
 			if ((sts = sc_checks(4, 4)) > 0)
 				return sts;
 			tra.spf3 |= 4;
-			tra.xtra = tra.stat > 2 ? cus.extra : lREG.rate;
+			tra.xtra = tra.stat > 2 ? cus.getExtra() : lREG.rate;
 			if (!tra.isActive())
 				GdRegis.set_tra_top();
 			prtTitle(event.dec);
@@ -864,7 +675,7 @@ class GdTrans extends Action {
 	/**
 	 * subtotal
 	 */
-	int action2(int spec) {
+	public int action2(int spec) {
 		int lfs = 0;
 
 		if (input.num > 0) {
@@ -905,7 +716,7 @@ class GdTrans extends Action {
 	/**
 	 * total
 	 */
-	int action3(int spec) {
+	public int action3(int spec) {
 		int sts;
 
 		if (spec > 0) {
@@ -935,12 +746,6 @@ class GdTrans extends Action {
 		if (tra.code < 5)
 			rbt_auto();
 
-		// SARAWAT-ENH-20150507-CGA#A BEG
-		if (spec == 0 && CapillaryService.getInstance().isEnabled()) {
-			GdSarawat.getInstance().applyManualCoupon();
-		}
-		// SARAWAT-ENH-20150507-CGA#A END
-
 		dspBmap = "DPT_0000";
 		showTotal(24);
 		if (tra.mode > M_GROSS || tra.bal == 0)
@@ -953,8 +758,8 @@ class GdTrans extends Action {
 				return GdRegis.prt_trailer(2);
 		}
 		if (tra.bal == 0) {
-			if (SscoPosManager.getInstance().isEnabled()){
-				if (tra.mode == 0){
+			if (SscoPosManager.getInstance().isEnabled()) {
+				if (tra.mode == 0) {
 					SscoPosManager.getInstance().startTransaction(99999);
 				}
 				SscoPosManager.getInstance().updateTotalAmount((int) 0, (int)tra.bal, tra.cnt, 0 );
@@ -979,11 +784,15 @@ class GdTrans extends Action {
 
 		//INSTASHOP-RESUME-CGA#A BEG
 		//if (!GdTrans.isInstanshopResume()) {
+		//ECOMMERCE-SSAM#A BEG
+		if (!ECommerceManager.getInstance().isEnabled() || ECommerceManager.getInstance().isEnabled() && ECommerceManager.getInstance().getBasket() == null) {
 			if (Match.dd_query(tra.code < 7 ? 'T' : 'X', sts) < 0) {
 				event.next(event.nxt);
 				event.nxt = event.alt;
 				return group[2].action9(-1);
 			}
+		}
+		//ECOMMERCE-SSAM#A END
 		//}
 		//INSTASHOP-RESUME-CGA#A END
 
@@ -993,7 +802,7 @@ class GdTrans extends Action {
 	/**
 	 * resume after total
 	 */
-	int action4(int spec) {
+	public int action4(int spec) {
 		int ind = tra.vTrans.size();
 
 		if (tra.res > 0)
@@ -1004,12 +813,6 @@ class GdTrans extends Action {
 				ECommerce.getAmountInstashop() != 0) {   //INSTASHOP-FINALIZE-CGA#A*/
 			return 5;
 		}
-
-		// SARAWAT-ENH-20150507-CGA#A BEG
-		if (GdSarawat.getInstance().isAppliedDiscountPoints()) {
-			GdSarawat.getInstance().pointsDiscountApplies();
-		}
-		// SARAWAT-ENH-20150507-CGA#A END
 
 		showTotal(0);
 		showMinus(false);
@@ -1037,34 +840,12 @@ class GdTrans extends Action {
 	/**
 	 * transaction abort / suspend
 	 */
-	int action5(int spec) {
+	public int action5(int spec) {
 		int sts;
 		String nbr = editKey(ctl.reg_nbr, 3) + editNum(ctl.tran, 4);
 
 		if (tra.tnd > 0 && !SscoPosManager.getInstance().isUsed())
 			return 5;
-
-		// SARAWAT-ENH-20150507-CGA#A BEG
-		if (spec == M_CANCEL || spec == M_SUSPND) {
-			if (CapillaryService.getInstance().isEnabled()) {
-				logger.info("press abort or suspend - return coupon used");
-
-				ArrayList<RedeemCoupon> listCouponPassed = CommunicationCapillaryForCoupon.getInstance()
-						.getListCouponIsRedeemable();
-
-				logger.info("coupon used: " + listCouponPassed.size());
-				if (listCouponPassed != null && listCouponPassed.size() > 0) {
-					panel.clearLink(Mnemo.getInfo(84), 0x81); // RETURN COUPON
-
-					for (RedeemCoupon redeemCoupon : listCouponPassed) {
-						logger.info("print return coupon: " + redeemCoupon.getCode());
-
-						prtLine.init(Mnemo.getInfo(84) + ": ").onto(20, redeemCoupon.getCode()).upto(40, "").book(3);
-					}
-				}
-			}
-		}
-		// SARAWAT-ENH-20150507-CGA#A END
 
 		if ((sts = sc_checks(1, spec)) > 0)
 			return sts;
@@ -1075,7 +856,7 @@ class GdTrans extends Action {
 				return 7;
 		} else if ((sts = Match.chk_reason(9)) > 0)
 			return sts;
-		if ((sts = GdPsh.cancelAll()) > 0) // PSH-ENH-001-AMZ#ADD
+		if ((sts = GdPsh.getInstance().cancelAll()) > 0) // PSH-ENH-001-AMZ#ADD
 			return sts; // PSH-ENH-001-AMZ#ADD
 
         //PSH-ENH-20151120-CGA#A BEG
@@ -1085,7 +866,9 @@ class GdTrans extends Action {
         }
         //PSH-ENH-20151120-CGA#A END
 
-        showTotal(0);
+		ECommerce.setAccount("");   //INSTASHOP-FINALIZE-CGA#A
+
+		showTotal(0);
 		tra_profic(0);
 		tra.mode = spec;
 		if (tra.code < 5) {
@@ -1161,7 +944,7 @@ class GdTrans extends Action {
 	/**
 	 * salesman number
 	 */
-	int action6(int spec) {
+	public int action6(int spec) {
 		int rec, slm_no, sts, team;
 
 		if (input.num == 0)
@@ -1201,7 +984,7 @@ class GdTrans extends Action {
 	/**
 	 * no sale
 	 */
-	int action7(int spec) {
+	public int action7(int spec) {
 		int sts;
 
 		if (SscoPosManager.getInstance().isEnabled() ){
@@ -1226,7 +1009,7 @@ class GdTrans extends Action {
 	/**
 	 * no tax / tax
 	 */
-	int action8(int spec) {
+	public int action8(int spec) {
 		//WINEPTS-CGA#A BEG
 		logger.info("ENTER GdTrans.action8 - spec: " + spec);
 

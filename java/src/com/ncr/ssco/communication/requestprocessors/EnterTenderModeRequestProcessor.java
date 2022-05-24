@@ -18,10 +18,7 @@ public class EnterTenderModeRequestProcessor extends TransactionProcessor{
     public void process(RequestFromSsco requestFromSsco) {
         logger.debug("Enter");
 
-        if(!getManager().enterTenderModeRequest()) {
-            logger.warn("-- Warning ");
-        }
-
+        getManager().enterTenderModeRequest();
         getManager().resetTransactionalRewards();
         logger.debug("Exit");
     }
@@ -47,10 +44,10 @@ public class EnterTenderModeRequestProcessor extends TransactionProcessor{
         for (Itemdata itmd : getManager().getTransactionalRewards()) {
             ResponseToSsco responseToSsco = getMessageHandler().createResponseToSsco("ItemSold");
             responseToSsco.setIntField("ItemNumber", itmno++);
-            responseToSsco.setStringField("Description", "sconto transazionale");
+            responseToSsco.setStringField("Description", "Transaction Discount");
             responseToSsco.setIntField("DiscountAmount", (int) -itmd.amt);
             responseToSsco.setStringField("DiscountDescription.1", itmd.text);
-            responseToSsco.setIntField("AssociateItemNumber", 0);
+            responseToSsco.setIntField("AssociatedItemNumber", 0);
             responseToSsco.setIntField("RewardLocation", 1);
             getMessageHandler().sendResponseToSsco(responseToSsco);
         }

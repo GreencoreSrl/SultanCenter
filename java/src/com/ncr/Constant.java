@@ -92,6 +92,9 @@ interface Constant {
 
 	/* sales item properties */
 
+	// TSC-MOD2014-AMZ#BEG
+	static final int F_QTYPRH = 0x100;
+	// TSC-MOD2014-AMZ#END
 	/* plu/dpt flag */
 	/** negative sales plu / dpt **/
 	static final int F_NEGSLS = 0x80;

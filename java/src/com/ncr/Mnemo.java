@@ -1,10 +1,6 @@
-package com.ncr; /*******************************************************************/
-/*                                                                 */
-/*     mnemonic table                                              */
-/*                                                                 */
-/*******************************************************************/
+package com.ncr;
 
-class Mnemo {
+public class Mnemo {
 	private static String mnemo_tbl[] = { /**************************************/
 			/* MNEMO[00] */ "            ", /* MNEMO[01] */ "CASHIER     ", /* MNEMO[02] */ "SUPERVISOR  ",
 			/* MNEMO[03] */ "TERMINAL    ", /* MNEMO[04] */ "TIME SLICE  ", /* MNEMO[05] */ "SALESPERSON ",
@@ -64,6 +60,13 @@ class Mnemo {
 			//ECR-CGA#A END
 			/* MNEMO[102]*/ "NUM. TRANS.", //INSTASHOP-FINALIZE-CGA#A
 			/* MNEMO[103]*/ "CARD TYPE  ", //INSTASHOP-FINALIZE-CGA#A
+			/* MNEMO[104]*/ "BASKET     ",
+			// TSC-MOD2014-AMZ#BEG -- RIMAPPATE  ex 74 : nuovo 80 e cosi' via dunque +6 alle nmemo originali
+			/* MNEMO[105] */ "NOTE NUMBER ",
+			/* MNEMO[106] */ "TECHNICIAN  ",
+			/* MNEMO[107] */ "AUTHORIZ.#  ",
+			/* MNEMO[108] */ "EFT TERM.   ",
+			// TSC-MOD2014-AMZ#END
 
 
 			/**************************************/
@@ -155,8 +158,21 @@ class Mnemo {
 			/* MENUS[105]*/ "   VDI SETTLEMENT   ",    //ECR-CGA#A
 			/* MENUS[106]*/ "VDI SETTLE COMPLETED",    //ECR-CGA#A
 			/* MENUS[107]*/ "PENDING TRANSACTION ",    //INSTASHOP-SELL-CGA#A
-
-
+			/* MENUS[108]*/ "ECOMMERCE TRANSACT. ",
+			/* MENUS[109]*/ "BASKET SALE         ",
+			/* MENUS[110]*/ "BASKET RETURN       ",
+			/* MENUS[111]*/ "BASKET ITEM NOT SOLD",
+			// TSC-MOD2014-AMZ#BEG
+			/* MENUS[112] */"CREDIT CARD INFO    ",
+			// TSC-MOD2014-AMZ#
+			/* MENUS[113] */"  EMV PINPAD INIT   ",
+			/* MENUS[114] */"   PRINT RECEIPT?   ",
+			/* MENUS[115] */"  CHANGE DONATION?  ",
+			/* MENUS[116] */"ECOMMERCE ON / OFF  ",
+			/* MENUS[117] */"ECOMMERCE ENABLED   ",
+			/* MENUS[118] */"ECOMMERCE DISABLED  ",
+			/* MENUS[119] */"MORE                ",  //TNDMORE-CGA#A
+			/* MENUS[120] */"BACK                ",  //TNDMORE-CGA#A
 			/**************************************/
 	};
 
@@ -222,9 +238,12 @@ class Mnemo {
 			/* ERROR[96] */ "   INCORRECT PIN    ",
 			// ALSH-ENH-20140526-SBE#A END
             //PSH-ENH-20151120-CGA#A BEG
-            /* ERROR[97] */ "UTILITY FAILURE     ", /* ERROR[98] */ "Utility server error",
-            /* ERROR[99] */ "No keyb for Utility ", /* ERROR[100]*/ "companies not found ",
-            /* ERROR[101]*/ "ut. items not found ", /* ERROR[102]*/ "G.Card pay undertotal",
+            /* ERROR[97] */ "UTILITY FAILURE     ",
+			/* ERROR[98] */ "Utility server error",
+            /* ERROR[99] */ "No keyb for Utility ",
+			/* ERROR[100]*/ "companies not found ",
+            /* ERROR[101]*/ "ut. items not found ",
+			/* ERROR[102]*/ "G.Card pay undertotal",
             /* ERROR[103]*/ "   G.Card empty     ",
             //PSH-ENH-20151120-CGA#A END
             /* ERROR[104]*/ "   ERR_TRANSBASE    ", //VERIFONE-20160201-CGA#A
@@ -262,6 +281,22 @@ class Mnemo {
 			/* ERROR[133] */ " PAYMENT WINEPTS OK ",
 			//WINEPTS-CGA#A END
 			/* ERROR[134] */ "VDI SETTLEMENT ERROR", //ECR-CGA#A
+			/* ERROR[135] */ "ERROR ECOMM RETRIEVE",
+			/* ERROR[136] */ "ERROR ECOMM EXPLODE ",
+			// TSC-MOD2014-AMZ#BEG
+			/* ERROR[137] */ "NOT ALLOWED OFFLINE*",
+			/* ERROR[138] */ "** NOTE NOT FOUND **",
+			/* ERROR[139] */ "** NOTE ALR. USED **",
+			/* ERROR[140] */ "*** NOTE EXPIRED ***",
+			/* ERROR[141] */ "* NOTE AS CHANGE? **",
+			/* ERROR[142] */ " * PAYMENT ABORTED *",
+			/* ERROR[143] */ " * WARNING BLACKLST*",
+			/* ERROR[144] */ " PLEASE CLOSE SHIFT ",
+			/* ERROR[145] */ " URGENT CLOSE SHIFT ",
+			// TSC-MOD2014-AMZ#END
+			// TSC-ENH2014-1-AMZ#BEG
+			/* ERROR[146] */ "  Expired product   ",
+			// TSC-ENH2014-1-AMZ#END
 			/**************************************/
 	};
 
@@ -306,7 +341,7 @@ class Mnemo {
 			/**************************************/
 	};
 
-	static String getText(int ind) {
+	public static String getText(int ind) {
 		return mnemo_tbl[ind];
 	}
 
@@ -314,19 +349,19 @@ class Mnemo {
 		return super_tbl[ind];
 	}
 
-	static String getMenu(int ind) {
+	public static String getMenu(int ind) {
 		return menus_tbl[ind];
 	}
 
-	static String getInfo(int ind) {
+	public static String getInfo(int ind) {
 		return error_tbl[ind];
 	}
 
-	static String getHint(int ind) {
+	public static String getHint(int ind) {
 		return order_tbl[ind];
 	}
 
-	static String getDiag(int ind) {
+	public static String getDiag(int ind) {
 		return diags_tbl[ind];
 	}
 

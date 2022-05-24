@@ -314,7 +314,7 @@ public class PosGPE extends Action {
 		logger.info("ENTER ppp");
 
 		MessageToPosInterface toPOS;
-		PosGPEHandler gpeHandler = new PosGPEHandler();
+		PosGPEHandler gpeHandler = new PosGPEHandler(cmd);
 		String oldPrompt;
 
 		isActiveAnnulo = false;
@@ -617,7 +617,7 @@ public class PosGPE extends Action {
 
 			logger.info("active: " + active);
 			if (!active) {
-				panel.clearLink(Mnemo.getInfo(134), 1);
+				panel.clearLink(Mnemo.getInfo(130), 1);
 			}
 			panel.dspStatus(5, "PINPAD", true, !active);
 		}
@@ -642,14 +642,8 @@ public class PosGPE extends Action {
 			if (!active && withModal) {
 				panel.clearLink(Mnemo.getInfo(125), 1);
 			}
-			//msg = "W" + (active ? "ON" : "OFF");
 			panel.updateEpts(active);
 		}
-
-		/*if (msg.length() == 0) {
-			msg = " ----- ";
-		}
-		panel.dspStatus(4, msg, true, false);*/
 
 		logger.info("EXIT checkEptsUPB");
 	}
@@ -799,7 +793,7 @@ public class PosGPE extends Action {
 	 ** Hardware init
 	 */
 
-	int action0(int spec) {
+	public int action0(int spec) {
 		logger.info("ENTER action0");
 		logger.info("spec: " + spec);
 
@@ -825,13 +819,11 @@ public class PosGPE extends Action {
 			if (retv == 0) {
 				panel.clearLink(Mnemo.getMenu(101), 1);
 			} else {
-				//if (!ItalianOption.getFastIsFastLane()) {
-					panel.clearLink(Mnemo.getInfo(131), 1);
-					retv = 0;
-				//}
+				panel.clearLink(Mnemo.getInfo(131), 1);
+				retv = 0;
 			}
 		} else {
-			panel.clearLink(Mnemo.getInfo(134), 1);
+			panel.clearLink(Mnemo.getInfo(130), 1);
 		}
 
 		logger.info("retv: " + retv);
@@ -842,7 +834,7 @@ public class PosGPE extends Action {
 	/*
 	 ** Void
 	 */
-	int action1(int spec) {
+	public int action1(int spec) {
 		logger.info("ENTER action1");
 		logger.info("spec: " + spec);
 

@@ -1,7 +1,5 @@
 package com.ncr.wsLoyalty.data;
 
-import com.ncr.capillary.TransactionDetails.Customer;
-
 /**
  * Created by User on 07/02/2018.
  */

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="bb12f071-53a4-405e-a5c2-9186dea9aaa6" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/com/ncr/BlackList.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/com/ncr/CreditNote.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/com/ncr/GdTsc.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/com/ncr/QrCodeManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/com/ncr/qrcode/QrCodeItem.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/com/ncr/restclient/HttpClientFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../event/EVENT.LST" beforeDir="false" afterPath="$PROJECT_DIR$/../../event/EVENT.LST" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../event/EVENT.TBL" beforeDir="false" afterPath="$PROJECT_DIR$/../../event/EVENT.TBL" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base/com/ncr/GdPos.java" beforeDir="false" afterPath="$PROJECT_DIR$/../base/com/ncr/GdPos.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/Action.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/Action.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/ConIo.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/ConIo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/Constant.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/Constant.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/ECommerceManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/ECommerceManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/GdCashc.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/GdCashc.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/GdCusto.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/GdCusto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/GdMaint.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/GdMaint.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/GdPrice.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/GdPrice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/GdRegis.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/GdRegis.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/GdSales.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/GdSales.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/GdSigns.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/GdSigns.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/GdTndrs.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/GdTndrs.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/Itemdata.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/Itemdata.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/Itmdc.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/Itmdc.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/Mnemo.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/Mnemo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/Motor.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/Motor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/PosVersion.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/PosVersion.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/Struc.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/Struc.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/Table.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/Table.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/VeriFoneTerminal.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/VeriFoneTerminal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/ecommerce/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/ecommerce/Test.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/ecommerce/data/Basket.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/ecommerce/data/Basket.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/param.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/param.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/restclient/HttpClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/restclient/HttpClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com/ncr/restclient/HttpsClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/com/ncr/restclient/HttpsClient.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectId" id="1jBUMsvfMUKILSgzKTyp9BDvRR5" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="flattenPackages" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showVisibilityIcons" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="bb12f071-53a4-405e-a5c2-9186dea9aaa6" name="Default Changelist" comment="" />
+      <created>1603276933682</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1603276933682</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+</project>

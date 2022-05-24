@@ -15,8 +15,9 @@ public class SscoLanguageHandler {
 
     private String primaryLanguage = "default";
     private String customerLanguage = "default";
-    private List<String> languages = Arrays.asList(new String[] {"default", "0410", "0409", "040c", "0407", "0408", "0452"});
+    private List<String> languages = Arrays.asList(new String[] {"default", "0410", "0409", "040c", "0407", "0408", "0452", "0809"});
     private Map<String, Properties> messages;
+    private Map<String, Properties> dataNeededProps;
 
     public static SscoLanguageHandler getInstance() {
         if(instance == null) {
@@ -28,15 +29,25 @@ public class SscoLanguageHandler {
 
     private SscoLanguageHandler() {
         messages = new HashMap<String, Properties>();
-        try {
-            for (String language : languages) {
+        dataNeededProps = new HashMap<String, Properties>();
+        for (String language : languages) {
+            try {
+                logger.info("Loading Language: " + language);
                 Properties props = new Properties();
                 props.load(new FileInputStream(new File("conf/lang/Language_" + language + ".properties")));
                 messages.put(language, props);
+            } catch (Exception e) {
+                logger.error("Error: " + language, e);
             }
-        } catch (Exception e) {
-            // loggare
-            e.getMessage();
+
+            try {
+                logger.info("Loading Dataneeded Language: " + language);
+                Properties props = new Properties();
+                props.load(new FileInputStream(new File("conf/lang/DataNeeded_" + language + ".properties")));
+                dataNeededProps.put(language, props);
+            } catch (Exception e) {
+                logger.error("Error: " + language, e);
+            }
         }
     }
 
@@ -75,4 +86,7 @@ public class SscoLanguageHandler {
         return message;
     }
 
+    public Properties getDataNeededProperties(String language) {
+        return dataNeededProps.get(language);
+    }
 }

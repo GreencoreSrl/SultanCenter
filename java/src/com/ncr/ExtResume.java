@@ -1,73 +1,33 @@
 package com.ncr;
 
 import org.apache.log4j.Logger;
-
 import java.io.*;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Properties;
 
-/**
- * AMZ-2017#ADD -- entire module
- */
 public class ExtResume extends Action {
 
-    // AMZ-2017-002#BEG
     private static final Logger logger = Logger.getLogger(ExtResume.class);
-    private final static String extTenderPropertiesFilePath = "conf/extendedTender.properties";
-    private final static HashMap<String, Integer> extTenderMap = new HashMap<String, Integer>();
-    // AMZ-2017-002#END
     public static boolean enabled = false;
     public static boolean supervisor = false;
     private final static String flagFilePath = "extres.dat";
     private final static String logFilePath = "log/extres.log";
 
-    //DMA-FIX_EXTRESUME#A BEG
-
     public static void fileMove(String source, String dest) {
         logger.info("ENTER");
         logger.info("moving file >" + source + "< in >" + dest + "<");
-        InputStream inStream = null;
-        OutputStream outStream = null;
+        File sourceFile = new File(source);
 
         try {
+            sourceFile.renameTo(new File(dest));
 
-            File afile = new File(source);
-            File bfile = new File(dest);
-
-            inStream = new FileInputStream(afile);
-            outStream = new FileOutputStream(bfile);
-
-            byte[] buffer = new byte[1024];
-
-            int length;
-            //copy the file content in bytes
-            while ((length = inStream.read(buffer)) > 0) {
-                outStream.write(buffer, 0, length);
-            }
-
-
-            inStream.close();
-            outStream.close();
-
-            //delete the original file
-
-            String fileSource = afile.getPath();
-            if (afile.delete())
-                logger.info(fileSource + " deleted successful!");
-            else
-                logger.info(fileSource + " NOT DELETED!");
-
-            System.out.println("File is copied successful!");
-            logger.info("File is copied successful!");
-
+            logger.info("File successfully copied!");
         } catch (Exception e) {
-            logger.info("File move failed... e: " + e);
+            logger.error("File move failed... e: ", e);
         }
         logger.info("EXIT");
     }
-    public static void cleanTRA(){
 
+    public static void cleanTra() {
         String terminator = "\r\n";
         RandomAccessFile stra_file;
         File straPathfile = localFile("data", "S_TRA" + REG + ".DAT");
@@ -80,42 +40,41 @@ public class ExtResume extends Action {
             logger.info("Reading " + straPathfile.getName());
             stra_file = new RandomAccessFile(straPathfile, "r");
             stra_tmp = new RandomAccessFile(straTmpPathfile, "rw");
-            while((line = stra_file.readLine()) != null){
-                logger.info("line len:" + line.length() );
+            while ((line = stra_file.readLine()) != null) {
+                logger.info("line len:" + line.length());
                 logger.info("line: >" + line + "< ");
-                if (line.length() == 78 && line.startsWith(pattern)){
+                if (line.length() == 78 && line.startsWith(pattern)) {
                     logger.info("ok");
-                    stra_tmp.writeBytes(line+terminator);
+                    stra_tmp.writeBytes(line + terminator);
                     continue;
-                }else if (line.length() > 78){
+                } else if (line.length() > 78) {
                     try {
                         long position = stra_file.getFilePointer() - line.length() - terminator.length();
                         int start = line.indexOf(pattern);
                         String cleanedLine = line.substring(start, start + 78);
                         logger.info("cleanedLine: >" + cleanedLine + "< ");
                         stra_tmp.writeBytes(cleanedLine + terminator);
-                    }catch (Exception e){
-                        logger.info("e: " + e.getMessage());
+                    } catch (Exception e) {
+                        logger.error("error: ", e);
                         continue;
                     }
-                }else{
-                    logger.info("line too short : " + line.length());
+                } else {
+                    logger.info("line too short: " + line.length());
                 }
             }
             stra_file.close();
             stra_tmp.close();
             fileMove(straTmpPathfile.getAbsolutePath(), straPathfile.getAbsolutePath());
-        }catch (Exception e){
-            logger.info("exception in open file : " + straPathfile.getName());
+        } catch (Exception e) {
+            logger.error("exception opening file: " + straPathfile.getName(), e);
         }
     }
 
-    //DMA-FIX_EXTRESUME#A END
     public static void consolidateTra() {
         int rec;
         int nbr = 0;
 
-        ExtResume.cleanTRA(); //DMA-FIX_EXTRESUME#A
+        cleanTra(); //DMA-FIX_EXTRESUME#A
         lTRA.open("data", "S_TRA" + REG + ".DAT", 1);
         if (lTRA.getSize() > 0) {
             lTRA.read(1);
@@ -143,7 +102,6 @@ public class ExtResume extends Action {
             }
 
             Itmdc.IDC_write('F', trx_pres(), tra.spf3, "", tra.cnt, tra.amt);
-
             writeFlagFile(editHex(ctl.reg_nbr, 3) + editNum(ctl.tran, 4));
 
             for (rec = 0; lTRA.read(++rec) > 0; ) {
@@ -176,7 +134,6 @@ public class ExtResume extends Action {
         lTRA.close();
     }
 
-
     public static void writeFlagFile(String text) {
         try {
             File file = new File(flagFilePath);
@@ -184,12 +141,11 @@ public class ExtResume extends Action {
                 file.delete();
             }
             file.createNewFile();
-            FileWriter fw = new FileWriter(file.getAbsoluteFile());
-            BufferedWriter bw = new BufferedWriter(fw);
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file.getAbsoluteFile()));
             bw.write(text);
             bw.close();
-            fw.close();
         } catch (Exception e) {
+            logger.error("exception writing flag file: ", e);
         }
     }
 
@@ -211,6 +167,7 @@ public class ExtResume extends Action {
                 fr.close();
             }
         } catch (Exception e) {
+            logger.error("Error: ", e);
         }
         return ret;
     }
@@ -221,57 +178,7 @@ public class ExtResume extends Action {
             out.println(text);
             out.close();
         } catch (Exception e) {
+            logger.error("Error: ", e);
         }
     }
-
-    // AMZ-2017-002#BEG
-
-    public static void readExtendedTender() {
-        logger.debug("ENTER");
-        Properties extTenderParam = new Properties();
-        try {
-            extTenderParam.load(new FileInputStream(extTenderPropertiesFilePath));
-            for (String s : extTenderParam.stringPropertyNames()) {
-                String name = extTenderParam.getProperty(s);
-                int tnd = Integer.parseInt(s.split("\\.")[1]);
-                if (name.contains(";")) {
-                    String[] tokens = name.split(";");
-                    for (String token : tokens) {
-                        extTenderMap.put(token, tnd);
-                        logger.info("param " + s + " : tender = " + tnd + ", value = " + token);
-                    }
-                } else {
-                    extTenderMap.put(name, tnd);
-                    logger.info("param " + s + " : tender = " + tnd + ", value = " + name);
-                }
-            }
-            logger.info("test getExtTenderNumber(\"AMZ-TEST-23\") = " + getExtTenderNumber("AMZ-TEST-23", 100));
-            logger.info("test getExtTenderNumber(\"xxx\") = " + getExtTenderNumber("xxx", 100));
-        } catch (Exception e) {
-            logger.error("Exception: ", e);
-        }
-        logger.debug("EXIT");
-    }
-
-    public static int getExtTenderNumber(String tenderName, int defaultValue) {
-        logger.debug("ENTER");
-        Integer tnd;
-        if (tenderName != null) {
-            tnd = extTenderMap.get(tenderName);
-            if (tnd == null) {
-                logger.warn("Cannot find tender name = " + tenderName);
-                logger.warn("Returning tender default = " + defaultValue);
-                tnd = defaultValue;
-            }
-        } else {
-            logger.warn("Cannot find tender name = null");
-            logger.warn("Returning tender default = " + defaultValue);
-            tnd = defaultValue;
-        }
-        logger.debug("EXIT tender returned = " + tnd);
-        return tnd;
-    }
-
-    // AMZ-2017-002#END
-
 }

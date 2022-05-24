@@ -8,7 +8,7 @@ import java.awt.event.*;
  * the gui provider (normally the main panel) has to be set in FmtIo.gui.
  *
  *******************************************************************/
-interface Graphical {
+public interface Graphical {
 	/***************************************************************************
 	 * display the output data string
 	 *

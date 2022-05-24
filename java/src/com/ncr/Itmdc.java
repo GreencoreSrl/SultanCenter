@@ -3,10 +3,9 @@ package com.ncr;
 import com.ncr.gpe.GpeResult_ReceiptDataInterface;
 import org.apache.log4j.Logger;
 
-import java.awt.*;
 import java.text.SimpleDateFormat;
 
-abstract class Itmdc extends Basis {
+public abstract class Itmdc extends Basis {
 	private static final Logger logger = Logger.getLogger(Itmdc.class);
 	static void chk_local(Itemdata ptr) {
 		int rec = tra.vItems.size();
@@ -108,10 +107,11 @@ abstract class Itmdc extends Basis {
 	}
 
 	private static String mask(String serial) {
-		return serial.substring(0, serial.length() - 2) + "**";
+		//return serial.substring(0, serial.length() - 2) + "**";  //INTEGRATION-PHILOSHOPIC-CGA#D
+		return serial.length() >= 2 ? serial.substring(0, serial.length() - 2) + "**" : "";  //INTEGRATION-PHILOSHOPIC-CGA#A
 	}
 
-	static void IDC_write(char type, int code, int subc, String nbr, int cnt, long amt) {
+	public static void IDC_write(char type, int code, int subc, String nbr, int cnt, long amt) {
 		if (lTRA.getSize() < 1)
 			if (type != 'H' && type != 'F')
 				IDC_write('H', trx_pres(), tra.spf3, tra.number, tra.cnt, tra.rate);
@@ -360,15 +360,20 @@ abstract class Itmdc extends Basis {
 					.pushDec(cnt, 6).pushDec(amt, 10);
 		}
 		if (type == 'k') {
-			int index = Integer.valueOf(nbr);
-			Itemdata dci = tra.vItems.getElement(index - 1);
-			tra.vItems_k.addElement('S', dci);
-			lTRA.push(editNum(index, 4)).skip().push(editTxt(dci.number, 16)).skip().push(editNum(tra.code, 2))
-					.pushDec(cnt, 6).pushDec(amt, 10);
+			if (GdTsc.isEnabled()) {
+				lTRA.push(editNum(cus.getBranch(), 4))
+						.skip().push(editTxt(nbr, 16)).skip().push(editTxt(cus.getOriginal(), 16)).push("  ");
+			} else {
+				int index = Integer.valueOf(nbr);
+				Itemdata dci = tra.vItems.getElement(index - 1);
+				tra.vItems_k.addElement('S', dci.copy());
+				lTRA.push(editNum(index, 4)).skip().push(editTxt(dci.number, 16)).skip().push(editNum(tra.code, 2))
+						.pushDec(cnt, 6).pushDec(amt, 10);
+			}
 		}
 		// EMEA-UPB-DMA
 		if (type == 'u') {
-			if (nbr.length() > 16) {
+			if (GdPsh.getInstance().isUtility(itm)) {
 				lTRA.push(editKey(itm.dpt_nbr, 4)).skip().push(editTxt(nbr, 32)).push(":00");
 			} else {
 				lTRA.push(editKey(itm.dpt_nbr, 4)).skip().push(editTxt(nbr, 16)).push(':')
@@ -383,12 +388,12 @@ abstract class Itmdc extends Basis {
 			//SPINNEYS-2017-033-CGA#A BEG
 			if (GdSpinneys.getInstance().getFunctionLoyalty() >= 0) {
 				state = GdSpinneys.getInstance().getFunctionLoyalty();
-				String cusId = cus.cusId == null ? "" : cus.cusId;
-				lTRA.push(editTxt(cusId, 10)).skip().push(editTxt(cus.number, 10)).push(':')
-						.push(editTxt(cus.mobile, 16)).push(":" + state);
+				String cusId = cus.getCusId() == null ? "" : cus.getCusId();
+				lTRA.push(editTxt(cusId, 10)).skip().push(editTxt(cus.getNumber(), 10)).push(':')
+						.push(editTxt(cus.getMobile(), 16)).push(":" + state);
 			} else {  //SPINNEYS-2017-033-CGA#A END
-				lTRA.push(editNum(ctl.ckr_nbr, 4)).skip().push(editTxt(cus.number, 16)).push(':')
-						.push(editTxt(cus.mobile, 16)).push(":" + state);
+				lTRA.push(editNum(ctl.ckr_nbr, 4)).skip().push(editTxt(cus.getNumber(), 16)).push(':')
+						.push(editTxt(cus.getMobile(), 16)).push(":" + state);
 			}
 
 		}
@@ -402,8 +407,15 @@ abstract class Itmdc extends Basis {
 		}
 
 		if (type == 'b') {
-			lTRA.push(editKey(itm.cmp_nbr, 4)).skip().push(editTxt(nbr, 16)).skip().push(editNum(tra.code, 2))
-					.pushDec(cnt, 6).pushDec(amt, 10);
+			if (GdTsc.isEnabled()) {
+				lTRA.push("0000").skip().push(editTxt(nbr, 10)).skip()
+						.push(editNum(BlackList.getFound(), 1)).skip()
+						.push(editNum(BlackList.getStatus(), 1)).skip()
+						.push(editNum(cnt, 1)).skip().push("                  ");
+			} else {
+				lTRA.push(editKey(itm.cmp_nbr, 4)).skip().push(editTxt(nbr, 16)).skip().push(editNum(tra.code, 2))
+						.pushDec(cnt, 6).pushDec(amt, 10);
+			}
 		}
 
 		lTRA.write();

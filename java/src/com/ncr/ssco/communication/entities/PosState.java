@@ -4,7 +4,7 @@ package com.ncr.ssco.communication.entities;
  * Created by stefanobertarello on 01/03/17.
  */
 public enum PosState {
-    Inactive("Inactive"),
+    Inactive("inactive"),
     Active ("active"),
     Busy ("busy");
 

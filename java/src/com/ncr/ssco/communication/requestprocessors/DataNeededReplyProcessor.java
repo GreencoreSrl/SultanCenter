@@ -63,11 +63,13 @@ public class DataNeededReplyProcessor extends DefaultRequestProcessor {
 
         if (originalDataneededName.equalsIgnoreCase("CashierDisplayMessage") ||
                 originalDataneededName.equalsIgnoreCase("CashierDisplayMessageStore") ||
-                originalDataneededName.equalsIgnoreCase("SceltaOkCancel") ||
-                originalDataneededName.equalsIgnoreCase("SceltaOkCancelStore") ||
+                originalDataneededName.equalsIgnoreCase("OkCancel") ||
+                originalDataneededName.equalsIgnoreCase("OkCancelStore") ||
+                originalDataneededName.equalsIgnoreCase("OkCancelReceiptPrint") ||
                 originalDataneededName.equalsIgnoreCase("UPBConfirmError") ||
-                originalDataneededName.equalsIgnoreCase("UPBConfirm")) {
-            logger.info("Dataneeded SceltaOkCancel o CashierDisplayMessage o CashierDisplayMessageStore o UPBConfirm reply o UPBConfirmError");
+                originalDataneededName.equalsIgnoreCase("UPBConfirm") ||
+                originalDataneededName.equalsIgnoreCase("OkCancelDonation")) {
+            logger.info("Data needed name: " + originalDataneededName);
             logger.info("Type=" + type);
 
             int confirmation = requestFromSsco.getIntField("Confirmation");

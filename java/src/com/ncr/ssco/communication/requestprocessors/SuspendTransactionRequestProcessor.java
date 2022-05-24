@@ -18,9 +18,7 @@ public class SuspendTransactionRequestProcessor extends TransactionProcessor {
 
         this.id = requestFromSsco.getStringField("Id");
         logger.info("Id: " + id);
-
-        if (!getManager().suspendTransactionRequest(id)) logger.warn("-- Warning ");
-
+        getManager().suspendTransactionRequest(id);
         logger.debug("Exit");
     }
 

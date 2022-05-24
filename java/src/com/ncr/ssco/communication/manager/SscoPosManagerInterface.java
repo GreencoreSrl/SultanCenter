@@ -13,18 +13,21 @@ public interface SscoPosManagerInterface {
     void initialize (Component component, EventQueue queue, String reg);
 
     // Requests
-    boolean tenderRequest(SscoTender sscoTender);
+    void tenderRequest(SscoTender sscoTender);
     boolean signOnRequest(SscoCashier sscoCashier);
     boolean signOffRequest();
     boolean shuttingDownRequest();
     boolean itemRequest(SscoItem item);
-    boolean voidTransactionRequest(String id);
-    boolean suspendTransactionRequest(String id);
-    boolean enterTenderModeRequest();
-    boolean exitTenderModeRequest();
-    boolean voidItemRequest(SscoItem item);
-    boolean loyaltyRequest(SscoCustomer sscoCustomer);
-    boolean airMilesRequest(SscoCustomer sscoCustomer);
+    void voidTransactionRequest(String id);
+    void suspendTransactionRequest(String id);
+    void enterTenderModeRequest();
+    void exitTenderModeRequest();
+    void voidItemRequest(SscoItem item);
+    void loyaltyRequest(SscoCustomer sscoCustomer);
+    void airMilesRequest(SscoCustomer sscoCustomer);
+    void tenderInquiryRequest(SscoTender sscoTender);
+    void enterExitTrainingModeRequest();
+    void clearRequest();
     boolean eftSettleRequest();   //EFT-SETTLE-CGA#A
 
     // Responses
@@ -40,4 +43,6 @@ public interface SscoPosManagerInterface {
     void voidItemResponse();
     void loyaltyResponse();
     void eftSettleResponse();   //EFT-SETTLE-CGA#A
+    void tenderSelectedResponse();
+    void enterExitTrainingModeResponse();
 }

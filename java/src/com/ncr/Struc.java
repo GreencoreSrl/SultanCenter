@@ -1,190 +1,12 @@
 package com.ncr;
 
+import com.ncr.eft.EftPlugin;
+import com.ncr.eft.EftPluginManager;
+import com.ncr.eft.GeideaEftPlugin;
+import com.ncr.eft.MarshallEftPlugin;
+import com.ncr.struc.Customer;
+
 import java.util.*;
-
-/*******************************************************************
- * terminal control data
- *******************************************************************/
-class Terminal extends FmtIo {
-	/** terminal number 3hex **/
-	int reg_nbr = Integer.parseInt(REG, 16);
-	/** server number 3hex **/
-	int srv_nbr = Integer.parseInt(SRV, 16);
-	/** terminal group number 2hex + 0xF00 **/
-	int grp_nbr = Integer.parseInt(GRP, 16) + 0x0F00;
-	/** store number 4dec **/
-	int sto_nbr = Integer.parseInt(STO, 10);
-	/** accountability option 0=terminal, 1=cashier, (2=cashdrawer) **/
-	int ability = Integer.getInteger("ACCOUNTABILITY", 1).intValue();
-	/** checker number 001-799=cashier, 800-999=supervisor **/
-	int ckr_nbr;
-	/** secret number of operating checker **/
-	int ckr_sec;
-	/** date of birth yymmdd **/
-	int ckr_age;
-	/** lan (local area network) status 0=online, 1=offline, 2=mismatch, 3=standalone **/
-	int lan = 3;
-	/** record number of operating checker in CTL file **/
-	int ckr;
-	/** record number of authorizing supervisor in CTL file **/
-	int sup;
-	/** mode of operation 0=normal, 3=training, 4=re-entry **/
-	int mode;
-	/** current transaction number 4dec **/
-	int tran;
-	/** number of generations since CMOS reset (day count) **/
-	int zero;
-	/** current journal view 0=all transactions, 1=active transaction **/
-	int view;
-	/** checkers working time in seconds until start of transaction **/
-	int work;
-	/** current century 2dec cc **/
-	int cent;
-	/** current date 6dec yymmdd **/
-	int date;
-	/** current time 6dec hhmmss **/
-	int time;
-	/** current time milliseconds 3dec **/
-	int msec;
-	/** current day of week (1-7, 1=sunday) **/
-	int wday;
-	/** current day of year (1-365/366) **/
-	int yday;
-	/** current daily gross total **/
-	long gross;
-	/** cash drawer limit exceeded **/
-	boolean alert;
-	/** eod-blocking event **/
-	boolean block;
-
-	/** set current date, time, msec, wday, yday **/
-	void setDatim() {
-		Calendar c = sdf.getCalendar();
-		c.setTime(new Date());
-		cent = (c.get(c.YEAR) / 100);
-		date = (c.get(c.YEAR) % 100 * 100 + c.get(c.MONTH) + 1) * 100 + c.get(c.DATE);
-		time = (c.get(c.HOUR_OF_DAY) * 100 + c.get(c.MINUTE)) * 100 + c.get(c.SECOND);
-		msec = (c.get(c.MILLISECOND));
-		wday = (c.get(c.DAY_OF_WEEK));
-		yday = (c.get(c.DAY_OF_YEAR));
-	}
-
-	boolean tooYoung(int years, int birth) {
-		if (birth > date)
-			years -= 100;
-		return date < birth + years * 10000;
-	}
-}
-
-/*******************************************************************
- * transaction control data
- *******************************************************************/
-class Transact {
-	/** registry mode 0=money, 1=sales, 2=cancel, 5=inventory, 6=ledger, 7=layaway, 8=suspend **/
-	int mode;
-	/** action code 00=sales, 01=open, 02=close, etc **/
-	int code;
-	/** subcode (report type all, single, etc) **/
-	int subc;
-	/** index of title in text table (menu section) **/
-	int head;
-	/** negative transaction preselections (void, return) **/
-	int spf1;
-	/** discount preselections (employee, customer) **/
-	int spf2;
-	/** other preselections (tax exempt, surcharge, etc) **/
-	int spf3;
-	/** print preselections (no receipt, deferred receipt, slip instead **/
-	int slip;
-	/** prerequest copy of tenderization on slip **/
-	int tslp;
-	/** personalized sales (1=anonymous, 2=customer#, 3=in file) **/
-	int stat;
-	/** record number of salesperson in SLM data file **/
-	int slm;
-	/** record number of sales total line in GPO data file **/
-	int gpo;
-	/** transaction resumption mode **/
-	int res;
-	/** time of transaction start in seconds **/
-	int tim;
-	/** tenderization phase (1 after 1st tender) **/
-	int tnd;
-	/** customer's date of birth yymmdd **/
-	int age;
-	/** supervisor number closing a cashier **/
-	int who;
-	/** terminal number selected in reports **/
-	int comm;
-	/** rate of employee/customer discount (1 decimal place assumed) **/
-	int rate;
-	/** rate of surcharge on delivery (1 decimal place assumed) **/
-	int xtra;
-	/** salesperson short number **/
-	int slm_nbr;
-	/** salesperson employee number **/
-	int slm_prs;
-	/** signed count of items **/
-	int cnt;
-	/** signed amount of sales total **/
-	long amt;
-	/** signed count of items with surcharge **/
-	int chg_cnt;
-	/** signed amount of surcharge **/
-	long chg_amt;
-	/** signed amount of sales with possible surcharge **/
-	long chg_sls;
-	/** signed count of items with employee/customer discount **/
-	int dsc_cnt;
-	/** signed amount of employee/customer discount **/
-	long dsc_amt;
-	/** signed amount of sales with possible discount **/
-	long dsc_sls;
-	/** signed count of items with possible bonuspoints **/
-	int pnt_cnt;
-	/** signed amount of bonuspoints **/
-	int pnt;
-	/** signed amount of sales with possible bonuspoints **/
-	long pnt_sls;
-	/** signed count of items before latest subtotal **/
-	int sub_cnt;
-	/** signed amount of items before latest subtotal **/
-	long sub_amt;
-	/** signed amount of discount on totals (dept, si, tl) **/
-	long rbt_amt;
-	/** signed amount of all auto discounts on totals (rbt + dp) **/
-	long tld_amt;
-	/** signed balance due **/
-	long bal;
-	/** signed amount of total cashback **/
-	long csh_bck;
-	/** employee/customer or other id number **/
-	String number = "";
-	/** tax exemption permit number **/
-	String taxidn = "";
-
-	public int prpnt;	// PSH-ENH-001-SBE
-	public long gctnd;	// PSH-ENH-001-SBE
-
-	ItemVector vItems = new ItemVector();
-	ItemVector vItems_k = new ItemVector(); //DMA_VAT-DISTRIBUTION#A
-	ItemVector vTrans = new ItemVector();
-	// EMEA-UPB-DMA#A BEG
-	ArrayList<UPBTrans> itemsVsUPB = new ArrayList<UPBTrans>();
-	// EMEA-UPB-DMA#A END
-	boolean successRedeemPoint = true;
-	boolean successTransaction = true;
-	int bmpSequence = 0;
-
-	/***************************************************************************
-	 * check the transacton state
-	 * 
-	 * @return true=in progress, false=not begun
-	 ***************************************************************************/
-	boolean isActive() {
-		return slm_nbr > 0;
-	}
-}
 
 /*******************************************************************
  * electronic payment control data
@@ -211,6 +33,10 @@ class PayCards {
 	String cheque = "";
 	/** ec customer number **/
 	String custom = "";
+	// TSC-MOD2014-AMZ#BEG
+	/** credit card number --unused ? **/
+	String credit = "";
+	// TSC-MOD2014-AMZ#END
 }
 
 /*******************************************************************
@@ -327,50 +153,6 @@ class CshDenom {
 }
 
 /*******************************************************************
- * customer information data
- *******************************************************************/
-class Customer {
-	/** valid selection from menu of charge types (0=all) **/
-	int spec;
-	/** 01-09 = blocking reason, 10 - 99 = category **/
-	int branch;
-	/** employee/customer discount rate (1 decimal place assumed) **/
-	int rate;
-	/** rate of discount for cash (1 decimal place assumed) **/
-	int dscnt;
-	/** rate of surcharge on delivery (1 decimal place assumed) **/
-	int extra;
-	/** date-of-birth yymmdd **/
-	int age;
-	/** initial bonuspoints **/
-	int pnt;
-	/** check limit regarding CLS file data **/
-	long limchk;
-	/** charge limit regarding CLS file data **/
-	long limcha;
-	/** customer number **/
-	String number;
-	/** customer name **/
-	String name;
-	/** customer address (street and house number) **/
-	String adrs;
-	/** customer address (ZIP code and town) **/
-	String city;
-	/** customer company name **/
-	String nam2;
-	/** 30 characters reserved for customization issues **/
-	String dtbl;
-	/** 20 characters fiscal identification **/
-	String fiscalId;
-	/** customer telephone number **/
-	String mobile; // SARAWAT-ENH-20150507-CGA#A
-
-	String cusId;  //SPINNEYS-2017-033-CGA#A
-
-    String selfSellEANList; // AMZ-2017-003-006#BEG - articoli da vendere automaticamente  -- e' un elenco di EAN separati da virgola ','
-}
-
-/*******************************************************************
  * messages on receipt selected by mode/actioncode
  *******************************************************************/
 class MsgLines {
@@ -421,7 +203,7 @@ class EodTypes {
  *******************************************************************/
 public abstract class Struc extends FmtIo implements Constant {
 	static String dspBmap, dspSins;
-	static LinIo dspLine = new LinIo("DSP", 0, 20);
+	public static LinIo dspLine = new LinIo("DSP", 0, 20);
 	static LinIo oplLine = new LinIo("OPL", 0, 20);
 	static LinIo hdrLine = new LinIo("HDR", 0, 20);
 	static LinIo cusLine = new LinIo("CUS", 0, 20);
@@ -430,22 +212,19 @@ public abstract class Struc extends FmtIo implements Constant {
 	static LinIo idsLine = new LinIo("IDS", 0, 17);
 	public static LinIo prtLine = new LinIo("PRN", 1, 42);
 
-	static Terminal ctl = new Terminal();
-	static Transact tra = new Transact(), dct;
-	static Itemdata itm, pit, plu, ref, dci, dlu = new Itemdata();
+	public static Terminal ctl = new Terminal();
+	public static Transact tra = new Transact(), dct;
+	public static Itemdata itm;
+	static Itemdata pit;
+	static Itemdata plu;
+	static Itemdata ref;
+	static Itemdata dci;
+	static Itemdata dlu = new Itemdata();
 	static Customer cus;
 	static PayCards ecn = new PayCards();
 	static Monitors mon = new Monitors();
 
-    static VeriFoneTerminal verifone = new VeriFoneTerminal(); //VERIFONE-20160201-CGA#A
-
-	// TAMI-ENH-20140526-SBE#A BEG
-	static EftTerminal eftTerminalGeidea = new EftTerminalGeidea();
-	static EftTerminal eftTerminal = eftTerminalGeidea;
-	// TAMI-ENH-20140526-SBE#A END
-	//static EftTerminal eftTerminalToneTag = new EftTerminalToneTag();  //TONETAG-CGA#A   //1610 del
-	//static EftTerminal eftTerminalAlshaya = new EftTerminalAlshaya();  //1610 del
-	//static EftTerminal eftTerminalEyePay = new EftTerminalEyePay();  // EYEPAY-20161116-CGA#A    //1610 del
+	public static EftPluginManager eftPluginManager = EftPluginManager.getInstance();
 
 	/** CandC, xCaRd, copy2, etc **/
 	static int options[] = new int[40];
@@ -490,8 +269,8 @@ public abstract class Struc extends FmtIo implements Constant {
 	static String ean_weights = "31313131313131313131";
 	static String lbl_weights = "31731731731731731731";
 
-	static TaxRates vat[] = new TaxRates[8];
-	static TndMedia tnd[] = new TndMedia[40];
+	public static TaxRates vat[] = new TaxRates[8];
+	public static TndMedia tnd[] = new TndMedia[40];
 	static MsgLines mat[] = new MsgLines[5];
 	static SlpLines slp[] = new SlpLines[50];
 	static EodTypes eod[] = new EodTypes[10];
@@ -540,6 +319,7 @@ public abstract class Struc extends FmtIo implements Constant {
 	/** trans view column header **/
 	static String view_txt[] = { "Item.Description....   Quantity     Pric",
 			"e     Amount TagXXXXXXXXXXXXXXXXXXXXXXXX", };
+	static String specialHeader[][] = new String[10][10];
 
 	static {
 		TndMedia.tbl = tnd; /* for inner base reference */

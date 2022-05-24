@@ -9,58 +9,41 @@ import org.apache.log4j.Logger;
 public class PosVersion {
 	private static final Logger logger = Logger.getLogger(PosVersion.class);
 
-	private final static String BASE_NAME = "POS   JAVA";
+	private final static String BASE_NAME = "POS JAVA TSC";
 	private final static String BASE_VERSION = "3.01";
 	private final static String CUSTOMER_ID = "1";
-	private final static String CUSTOMER_BUILD = "7";
-	private final static String CUSTOMER_REVISION = "13";
-	private final static String BASE_DATE = "2020-07-16";
+	private final static String CUSTOMER_BUILD = "16";
+	private final static String CUSTOMER_REVISION = "1";
+	private final static String BASE_DATE = "2022-05-20";
 
 	private static String version = "";
 
-
-	public static boolean OriginalTitle(String[] cmd) {
-		if (cmd.length == 0) {
-
-			return false;
-		}
-		for (int i = 0; i < cmd.length; i++) {
-			if (cmd[i].startsWith("ORGTITLE")) {
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-
-	public static String WindowTitle() {
+	public static String windowTitle() {
 		String tmp = "";
 
-		tmp = BASE_NAME + " " + BASE_VERSION + "." + GetBaseRevision();
+		tmp = BASE_NAME + " " + BASE_VERSION + "." + getBaseRevision();
 		return tmp;
 	}
 
-	public static String GetBaseDate() {
+	public static String getBaseDate() {
 		logger.info("BASE_DATE: " + BASE_DATE);
 
 		return BASE_DATE;
 	}
 
-	public static String GetBaseVersion() {
+	public static String getBaseVersion() {
 		logger.info("BASE_VERSION: " + BASE_VERSION);
 
 		return BASE_VERSION;
 	}
 
-	public static String GetBaseName() {
+	public static String getBaseName() {
 		logger.info("BASE_NAME: " + BASE_NAME);
 
 		return BASE_NAME;
 	}
 
-	public static String GetBaseRevision() {
+	public static String getBaseRevision() {
 		logger.info("CUSTOMER_ID: " + CUSTOMER_ID);
 		logger.info("CUSTOMER_BUILD: " + CUSTOMER_BUILD);
 		logger.info("CUSTOMER_REVISION: " + CUSTOMER_REVISION);

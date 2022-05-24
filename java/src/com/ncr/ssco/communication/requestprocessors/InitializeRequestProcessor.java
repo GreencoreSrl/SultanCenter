@@ -75,7 +75,7 @@ public class InitializeRequestProcessor extends DefaultRequestProcessor {
     private void sendPOSMessagesTableMessage() {
         ResponseToSsco responseToSsco = getMessageHandler().createResponseToSsco("Table");
         responseToSsco.setStringField("Name", "POSMessages");
-        responseToSsco.setStringField("URL", "file:///c:/scot/scotconfig/POSMessages.xml");
+        responseToSsco.setStringField("URL", "file://c:/scot/config/POSMessages.xml");
         getMessageHandler().sendResponseToSsco(responseToSsco);
     }
 

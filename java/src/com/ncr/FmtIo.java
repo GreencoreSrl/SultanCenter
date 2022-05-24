@@ -48,7 +48,7 @@ public abstract class FmtIo extends Config {
 	/**
 	 * implementation of graphical user interface (main panel)
 	 **/
-	static Graphical gui = null;
+	public static Graphical gui = null;
 
 	/***************************************************************************
 	 * Extends a string to the right

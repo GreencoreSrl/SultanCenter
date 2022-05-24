@@ -1,13 +1,15 @@
 package com.ncr;
 
+import com.ncr.eft.EftPlugin;
+import com.ncr.eft.EftPluginManager;
+import com.ncr.eft.MarshallEftPlugin;
 import com.ncr.ssco.communication.entities.pos.SscoCashier;
 import com.ncr.ssco.communication.manager.SscoPosManager;
 import org.apache.log4j.Logger;
 
 import java.io.*;
 
-import static com.ncr.Itmdc.IDC_write;
-class GdSigns extends Action {
+public class GdSigns extends Action {
 	/**
 	 * enter and validate authorization
 	 **/
@@ -15,7 +17,7 @@ class GdSigns extends Action {
 	static private boolean isEod = false;	// FIX-20170413-CGA#A BEG
 	private static final Logger logger = Logger.getLogger(GdSigns.class);
 
-	static int chk_autho(String text) {
+	public static int chk_autho(String text) {
 		int nbr, rec, sts;
 
 		if (tra.res > 0)
@@ -42,6 +44,7 @@ class GdSigns extends Action {
 		for (rec = 0; lCTL.read(++rec, lCTL.LOCAL) > 0;) {
 			if (lCTL.key < 800 || lCTL.key > 999)
 				continue;
+			if (GdTsc.isEnabled()) continue;
 			dlg.add(9, editNum(lCTL.key, 3), " " + lCTL.text);
 		}
 		dlg.block = false;
@@ -239,14 +242,14 @@ class GdSigns extends Action {
 		group[9].exec();
 	}
 
-	int action0(int spec) {
+	public int action0(int spec) {
 		return 0;
 	}
 
 	/**
 	 * menu selection
 	 **/
-	int action1(int spec) {
+	public int action1(int spec) {
 		int code, line = event.read(event.nxt);
 
 		if (input.num == 0) {
@@ -256,8 +259,12 @@ class GdSigns extends Action {
 					for (code = event.next(line); event.key > 0; code = event.next(code)) {
 						if (event.min < 1)
 							continue;
-						input.rules[input.dky][event.min - 1] = event.act == 75 ? "T" + editNum(event.spc, 2)
-								: "M" + editNum(event.dec, 2);
+						//input.rules[input.dky][event.min - 1] = event.act == 75 ? "T" + editNum(event.spc, 2)
+						//		: "M" + editNum(event.dec, 2);  //TNDMORE-CGA#D
+
+						input.rules[input.dky][event.min - 1] = event.act == 75 ? "T" + editNum(event.spc, 3)
+								: "M" + editNum(event.dec, 3);  //TNDMORE-CGA#A
+
 					}
 					event.nxt = line;
 					return input.dky = 0;
@@ -296,8 +303,8 @@ class GdSigns extends Action {
 	/**
 	 * exit from PoS
 	 **/
-	int action2(int spec) {
-		if (input.pb.length() > 0) {
+	public int action2(int spec) {
+		if (SscoPosManager.getInstance().isEnabled() && input.pb.length() > 0) {
 			spec = Integer.parseInt(input.pb);
 			logger.debug("Setting spec to: " + spec);
 		}
@@ -314,6 +321,12 @@ class GdSigns extends Action {
 		if (SscoPosManager.getInstance().isEnabled()) {
 			SscoPosManager.getInstance().shuttingDownResponse();
 		}
+		// TSC-MOD2014-AMZ#BEG
+		if (spec == 0 && GdTsc.isCtrlExitEnabled()) {
+			event.nxt = event.alt;
+			return 0;
+		}
+		// TSC-MOD2014-AMZ#END
 
 		logger.debug("Exit - spec: " + spec);
 		return spec;
@@ -322,7 +335,7 @@ class GdSigns extends Action {
 	/**
 	 * operator open
 	 **/
-	int action3(int spec) {
+	public int action3(int spec) {
 		// AMZ-2017#BEG
 		int chk_sts = chk_broken();
 		if (chk_sts > 0) return chk_sts;
@@ -456,7 +469,7 @@ class GdSigns extends Action {
 			WinUpb.getInstance().start();
 			// EMEA-UPB-DMA END
 			// PSH-ENH-CHECKER-SBE#BEG
-			GdPsh.setCashierId(ctl.reg_nbr, ctl.ckr_nbr);
+			GdPsh.getInstance().setCashierId(ctl.reg_nbr, ctl.ckr_nbr);
 			// PSH-ENH-CHECKER-SBE#END
 		}
 		prtLine.init(' ').book(2);
@@ -528,7 +541,7 @@ class GdSigns extends Action {
 	/**
 	 * operator close
 	 **/
-	int action4(int spec) {
+	public int action4(int spec) {
 		if (ctl.mode > 0)
 			return 7;
 		if ((ctl.ckr = lCTL.find(ctl.ckr_nbr)) == 0)
@@ -586,7 +599,7 @@ class GdSigns extends Action {
 	/**
 	 * pause / lock
 	 **/
-	int action5(int spec) {
+	public int action5(int spec) {
 		lCTL.read(ctl.ckr, lCTL.LOCAL);
 		if (spec > 0) {
 			GdRegis.set_ac_ctl(spec);
@@ -638,7 +651,7 @@ class GdSigns extends Action {
 	/**
 	 * change password
 	 **/
-	int action6(int spec) {
+	public int action6(int spec) {
 		int ckr = ctl.ckr_nbr, sec, sts;
 
 		if (ctl.mode > 0)
@@ -690,7 +703,7 @@ class GdSigns extends Action {
 	/**
 	 * online EoD
 	 **/
-	int action7(int spec) {
+	public int action7(int spec) {
 		int nbr = 0, sec = 0, sts;
 
 		if (spec == 99) {
@@ -771,9 +784,12 @@ class GdSigns extends Action {
 			prtTitle(18);
 			EftIo.eftOrder(0);
 			//ECR-CGA#A BEG
-			if (PluginHandler.getInstance().isVerifonePluginEnabled() && verifone.isEnableSettle()) {
-				logger.info("call settle");
-				verifone.settle();
+			if (eftPluginManager.isPluginEnabled(EftPlugin.MARSHALL_TENDER_ID)) {
+				MarshallEftPlugin marshallEftPlugin = (MarshallEftPlugin) eftPluginManager.getPlugin(EftPlugin.MARSHALL_TENDER_ID);
+				if (marshallEftPlugin.isEnableSettle()) {
+					logger.info("call settle");
+					marshallEftPlugin.settle();
+				}
 			}
 			//ECR-CGA#A END
 			GdRegis.prt_trailer(2);
@@ -800,7 +816,7 @@ class GdSigns extends Action {
 	/**
 	 * declare defective
 	 **/
-	int action8(int spec) {
+	public int action8(int spec) {
 		int ckr = 0, sel, sts;
 
 		if (spec > 0) {
@@ -831,7 +847,7 @@ class GdSigns extends Action {
 	/**
 	 * standalone EoD
 	 **/
-	int action9(int spec) {
+	public int action9(int spec) {
 		int ind = -1, sel = ctl.lan < 3 ? 0 : LOCAL, sts;
 		int sc05 = reg.findTnd(0, 5), rec = 0;
 

@@ -1,3 +1,5 @@
+import com.ncr.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -287,9 +289,11 @@ class GdPos extends Border implements Graphical, ActionListener,
       return dlg.code;
    }
 
-   void innerVoice (int action)
-   {  if (modal != null) modal.quit ();
-      else postAction ("CODE" + action);
+   void innerVoice(int action) {
+      if (modal != null)
+         modal.quit();
+      else
+         postAction("CODE" + Integer.toHexString(action));
    }
 
    public void display (int line, String data)

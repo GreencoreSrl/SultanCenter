@@ -316,7 +316,7 @@ class Motor extends DatIo implements Runnable {
 				input.qrcode = cmd.substring(4);
 				logger.info("input.qrcode: " + input.qrcode);
 
-				cmd = itmsList[0];
+				cmd = (itmsList[0].contains(";")) ? (itmsList[0].split(";")[0]) : (itmsList[0]);
 				logger.info("cmd: " + cmd);
 			}
 			//QRCODE-SELL-CGA#A END

@@ -4,11 +4,13 @@ public class SscoCustomer {
     private String accountNumber;
     private String countryCode;
     private String entryMethod;
+    private int points;  //INTEGRATION-PHILOSHOPIC-CGA#A
 
-    public SscoCustomer(String accountNumber, String countryCode, String entryMethod) {
+    public SscoCustomer(String accountNumber, String countryCode, String entryMethod, int points) {
         this.accountNumber = accountNumber;
         this.countryCode = countryCode;
         this.entryMethod = entryMethod;
+        this.points = points;
     }
 
     public String getAccountNumber() {
@@ -33,5 +35,13 @@ public class SscoCustomer {
 
     public void setEntryMethod(String entryMethod) {
         this.entryMethod = entryMethod;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 }

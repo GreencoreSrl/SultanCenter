@@ -1,5 +1,6 @@
 package com.ncr;
 
+import com.ncr.eft.EftPlugin;
 import com.ncr.ssco.communication.manager.SscoPosManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -52,6 +53,10 @@ abstract class Param extends Table {
 					save_txt[ind] = txt;
 				if (key.equals("TEXT"))
 					mdac_txt[ind] = txt;
+				if (key.startsWith("HDR") && Character.isDigit(key.charAt(3))) {
+					int hdr = key.charAt(3) - '0';
+					specialHeader[hdr][ind] = txt;
+				}
 			} catch (Exception e) {
 				lPAR.error(e, false);
 			}
@@ -76,7 +81,7 @@ abstract class Param extends Table {
 			System.err.println("Error loading configuration file");
 		}
 
-		ExtResume.readExtendedTender(); // AMZ-2017-002#ADD
+		eftPluginManager.readExtendedTender(); // AMZ-2017-002#ADD
 		ECommerce.loadAMZNfile();  //AMAZON-COMM-CGA#A
 
 		tblInit();
@@ -93,8 +98,8 @@ abstract class Param extends Table {
 				int fld = 0, ind = lPAR.scanHex(1);
 				String txt = lPAR.pb.substring(lPAR.scan(':').index);
 				// TAMI-ENH-20140526-SBE#A BEG
-				if (key.equals("EFTT")) {
-					Struc.eftTerminal.loadEftTerminalParams(txt);
+				if (key.startsWith("EFT")) {
+					eftPluginManager.loadPluginParameters(key, ind, txt);
 				}
 				// TAMI-ENH-20140526-SBE#A END
 
@@ -265,9 +270,17 @@ abstract class Param extends Table {
 
 				// CHKINPUT-CGA#A BEG
 				if (key.equals("MEAP")) {
-					GdPrice.loadMEAPParams(txt);
+					ItemAuthManager.getInstance().setEnabled(Integer.parseInt(txt.substring(0, 2)));
+					ReceiptPrintManager.getInstance().loadParams(txt.substring(2, 12));
 				}
 				// CHKINPUT-CGA#A END
+
+				if (key.equals("SCPP")) {
+					SurchargeManager.getInstance().loadSCPParams(txt);
+				}
+				if (key.equals("DONP")) {
+					DonationManager.getInstance().loadDONParams(txt);
+				}
 
 				if (key.equals("CEOC") && ctl.srv_nbr != 0 || key.equals("CEOD") && ctl.srv_nbr == 0) {
 					while (fld < 10) {
@@ -303,20 +316,52 @@ abstract class Param extends Table {
 				}
 				if (key.equals("DYTX")) { // load com.ncr.Dynakey Description
 					for (fld = 0; fld < 8; fld++) {
-						ConIo.rules[ind][fld] = lPAR.scan(3);
+						//ConIo.rules[ind][fld] = lPAR.scan(3); //TNDMORE-CGA#D
+						ConIo.rules[ind][fld] = lPAR.scan(4); //TNDMORE-CGA#A
 					}
 				}
 				// SARAWAT-ENH-20150507-CGA#A END
 
                 //VERIFONE-20160201-CGA#A BEG
                 if (key.equals("VERI")) {
-                    Struc.verifone.loadVeriRow(txt);
+					eftPluginManager.loadPluginParameters("EFT" + EftPlugin.MARSHALL_TENDER_ID, ind, txt);
                 }
                 //VERIFONE-20160201-CGA#A END
 				if (key.equals("SSCO")) {
 					SscoPosManager.getInstance().loadSSCOParameters(
 							(lPAR.scan(lPAR.dataLen() - lPAR.fixSize)), ind);
 				}
+				// TSC-MOD2014-AMZ#BEG
+				if (key.equals("STND")) {
+					GdTsc.readSTND(txt);
+				}
+				if (key.equals("BTND")) {
+					BlackList.readBTND(txt);
+				}
+				if (key.equals("BTNP")) {
+					BlackList.readBTNP(txt);
+				}
+				if (key.startsWith("BTM")) {
+					int x = Integer.parseInt(key.substring(3));
+					BlackList.readBTM(txt, ind, x);
+				}
+				if (key.equals("VOOP")) {
+					while (fld < 20) {
+						Voucher.readVOOP(fld++, lPAR.scanHex(2));
+					}
+				}
+				if (key.equals("CNOP")) {
+					while (fld < 20) {
+						CreditNote.readCNOP(fld++, lPAR.scanHex(2));
+					}
+				}
+				if (key.equals("CNTX")) {
+					CreditNote.readCNTX(ind, txt);
+				}
+				if (key.equals("PTSC")) {
+					GdTsc.readPTSC(txt);
+				}
+				// TSC-MOD2014-AMZ#END
 
 			} catch (Exception e) {
 				lPAR.error(e, true);
@@ -349,33 +394,10 @@ abstract class Param extends Table {
 					continue;
 				TndMedia ptr = tnd[lPAR.scanNum(2)];
 				ptr.type = lPAR.scan(':').scan();
-				// TAMI-ENH-20140526-SBE#A BEG
-				if (ptr.type == 'J') {
-					// ptr.eftTerminal = true; //TAMI-ENH-20140526-CGA#D
-					ptr.eftTerminal = "J"; // TAMI-ENH-20140526-CGA#A
+				if (eftPluginManager.EFT_TENDER_IDS.indexOf(ptr.type) >= 0) {
+					ptr.eftPlugin = "" + ptr.type;
 				}
-				// TAMI-ENH-20140526-CGA#A BEG
-				else if (ptr.type == 'K') {
-					ptr.eftTerminal = "K";
-				}
-				// EYEPAY-20161116-CGA#A BEG
-				else if (ptr.type == 'N') {
-					ptr.eftTerminal = "N";
-				}
-				// EYEPAY-20161116-CGA#A END
-				// TONETAG-CGA#A BEG
-				else if (ptr.type == 'O') {
-					ptr.eftTerminal = "O";
-				}
-				// TONETAG-CGA#A END
-                //VERIFONE-20160201-CGA#A BEG
-                if (ptr.type == 'M')
-                    ptr.verifone = true;
-                //VERIFONE-20160201-CGA#A END
-
-				logger.info("ptr.eftTerminal >" + ptr.eftTerminal + "<");
-				// TAMI-ENH-20140526-CGA#A END
-				// TAMI-ENH-20140526-SBE#A END
+				logger.info("ptr.eftTerminal: " + ptr.eftPlugin);
 
 				ptr.tx20 = lPAR.scan(':').scan(20);
 				ptr.flag = lPAR.scan(':').scanHex(2);

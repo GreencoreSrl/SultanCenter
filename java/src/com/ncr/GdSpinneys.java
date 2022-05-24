@@ -54,7 +54,7 @@ public class GdSpinneys extends Action {
         return instance;
     }
 
-    int action0(int spec) {
+    public int action0(int spec) {
         logger.debug("Enter spec: " + spec);
 
         if (tra.isActive()) {
@@ -142,7 +142,7 @@ public class GdSpinneys extends Action {
     }
 
     // Card Replacement
-    int action1(int spec) {
+    public int action1(int spec) {
         logger.debug("Enter spec: " + spec);
         if (tra.isActive()) {
             return 7;
@@ -220,7 +220,7 @@ public class GdSpinneys extends Action {
     }
 
     // Update Mobile Number
-    int action2(int spec) {
+    public int action2(int spec) {
         logger.debug("Enter spec: " + spec);
         if (tra.isActive()) {
             return 7;
@@ -288,7 +288,7 @@ public class GdSpinneys extends Action {
     }
 
     //Identification by customer card
-    int action3(int spec) { //GET
+    public int action3(int spec) { //GET
         int sts = 0;
         if (tra.isActive() && (input.lck & 0x14) <= 0)
             return 1;
@@ -325,7 +325,7 @@ public class GdSpinneys extends Action {
     }
 
     //Identification by mobile
-    int action4(int spec) { //GET
+    public int action4(int spec) { //GET
         int sts = 0;
         if (tra.isActive() && (input.lck & 0x14) <= 0)
             return 1;
@@ -357,17 +357,17 @@ public class GdSpinneys extends Action {
     private void fillCustomerData() {
         logger.debug("Enter");
 
-        cus.number = service.getLoyaltyCustomer().getCardCode();
-        cus.mobile = service.getLoyaltyCustomer().getPhoneNumber();
-        cus.name = service.getLoyaltyCustomer().getFirstName();
-        cus.nam2 = service.getLoyaltyCustomer().getLastName();
-        cus.cusId = service.getLoyaltyCustomer().getCustomerCode();
+        cus.setNumber(service.getLoyaltyCustomer().getCardCode());
+        cus.setMobile(service.getLoyaltyCustomer().getPhoneNumber());
+        cus.setName(service.getLoyaltyCustomer().getFirstName());
+        cus.setNam2(service.getLoyaltyCustomer().getLastName());
+        cus.setCusId(service.getLoyaltyCustomer().getCustomerCode());
 
-        cus.adrs = "";
-        cus.city = "";
-        cus.dtbl = "";
-        cus.fiscalId = null;
-        cus.pnt = 0;
+        cus.setAdrs("");
+        cus.setCity("");
+        cus.setDtbl("");
+        cus.setFiscalId(null);
+        cus.setPnt(0);
 
         logger.debug("Exit");
     }
@@ -464,7 +464,7 @@ public class GdSpinneys extends Action {
     private int handleFunctionalityGet(String request, boolean rqsByPhone) {
         int sts = 0;
 
-        if (cus.number != null && cus.number.length() > 0) {
+        if (cus.getNumber() != null && cus.getNumber().length() > 0) {
             return 117;
         }
 
@@ -484,8 +484,8 @@ public class GdSpinneys extends Action {
             fillCustomerData();
 
             if (rqsByPhone) {
-                input.pb = cus.number;
-                input.num = cus.number.length();
+                input.pb = cus.getNumber();
+                input.num = cus.getNumber().length();
             }
 
             sts = GdCusto.getInstance().action1(9000);
@@ -507,25 +507,25 @@ public class GdSpinneys extends Action {
     }
 
     private void writeCustomerIdc(LoyaltyCustomer customer, int mode, int offline) {
-        cus.number = customer.getCardCode();
-        cus.mobile = phoneNumber.toString();
-        cus.cusId = service.getLoyaltyCustomer().getCustomerCode();
+        cus.setNumber(customer.getCardCode());
+        cus.setMobile(phoneNumber.toString());
+        cus.setCusId(service.getLoyaltyCustomer().getCustomerCode());
 
         functionLoyalty = mode;
 
         Itmdc.IDC_write('c', 0, offline, tra.number, tra.cnt, 0l);
 
         functionLoyalty = -1;
-        cus.number = "";
-        cus.mobile = "";
-        cus.cusId = "";
+        cus.setNumber("");
+        cus.setMobile("");
+        cus.setCusId("");
     }
 
     private int couponOperation(String code, String type, int retries) {
         if (SscoPosManager.getInstance().isTestEnvironment()) {
             return 0;
         }
-        RemoteCouponOperationRequest request = new RemoteCouponOperationRequest(type, String.valueOf(ctl.tran), cus.number, String.valueOf(ctl.sto_nbr), String.valueOf(ctl.reg_nbr), new Date(), code);
+        RemoteCouponOperationRequest request = new RemoteCouponOperationRequest(type, String.valueOf(ctl.tran), cus.getNumber(), String.valueOf(ctl.sto_nbr), String.valueOf(ctl.reg_nbr), new Date(), code);
 
         String url = service.getCouponWsBaseAddress();
 

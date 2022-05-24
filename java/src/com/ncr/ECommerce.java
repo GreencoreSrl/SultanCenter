@@ -1,27 +1,25 @@
 package com.ncr;
 
+import com.ncr.ecommerce.data.TenderProperties;
 import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.util.*;
 
-//AMAZON-COMM-CGA#A BEG
-public class ECommerce extends Action{
+public class ECommerce extends Action {
     private static final Logger logger = Logger.getLogger(ECommerce.class);
+    
     private static boolean isAutomaticAmazonItem = false;
     private static boolean isAutomaticVoidAmazonItem = false;
     private static boolean alreadyAmzCommCalc = false;
     private static int amtItem = 0;
-    private final static String AMAZON_FILENAME = "conf/charge.properties";
-    private final static Properties prop = new Properties();
-    private final static HashMap<Integer, Long> amazonItmMap = new HashMap<Integer, Long>();
-    private final static HashMap<Integer, Long> amazonModeMap = new HashMap<Integer, Long>();
-    private final static HashMap<Integer, Integer> amazonAmtMap = new HashMap<Integer, Integer>();
-    private final static HashMap<Integer, Integer> amtMaxMap = new HashMap<Integer, Integer>();
-    //INSTASHOP-SELL-CGA#A BEG
-    private final static HashMap<Integer, String> instashopChoiceMap = new HashMap<Integer, String>();
-    private final static HashMap<Integer, String> ddqCodeMap = new HashMap<Integer, String>();
-    private final static TreeMap<Integer, String> cardTypeMap = new TreeMap<Integer, String>();
+    private static final String AMAZON_FILENAME = "conf/charge.properties";
+    private static final Properties prop = new Properties();
+    private static final Map<Integer, TenderProperties> tenderProperties = new HashMap<Integer, TenderProperties>();
+    private static final HashMap<Integer, Integer> amtMaxMap = new HashMap<Integer, Integer>();
+    private static final HashMap<Integer, String> instashopChoiceMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> ddqCodeMap = new HashMap<Integer, String>();
+    private static final TreeMap<Integer, String> cardTypeMap = new TreeMap<Integer, String>();
     private static HashMap<Integer, Integer> automaticTndOnline = new HashMap<Integer, Integer>();
     private static HashMap<Integer, String> secondCopyDelivery = new HashMap<Integer, String>();
     private static HashMap<Integer, String> secondCopyDeliveryEnable = new HashMap<Integer, String>();   //qui second copy
@@ -35,20 +33,19 @@ public class ECommerce extends Action{
     private static int tndInstashop = 0;
     private static String account = "";
     private static String transactionResumed = "";
-    //INSTASHOP-SELL-CGA#A END
-    private static boolean isFinalizeInstashop = false; //INSTASHOP-FINALIZE-CGA#A
-    private static boolean isResumeInstashop = false; //INSTASHOP-FINALIZE-CGA#A
-    private static int cardTypeTnd = 0; //INSTASHOP-FINALIZE-CGA#A
-    private static String cardTypeDesc = ""; //INSTASHOP-FINALIZE-CGA#A
-    //INSTASHOP-SELL-CGA#A BEG
+    private static boolean isFinalizeInstashop = false;
+    private static boolean isResumeInstashop = false;
+    private static int cardTypeTnd = 0;
+    private static String cardTypeDesc = "";
     private static boolean isInstanshopResume = false;
     private static int numberTraResume = 0;
     private static String eanItemComm = "";
     private static long amountInstashop = 0;
     private static int tenderInstashopUsed = 0;
     private static String accountInstashop = "";
-    //INSTASHOP-SELL-CGA#A END
-
+    private static final int INPUT_TRANS_NUM = 0;
+    private static final int PAYMENT = 1;
+    
     public static void loadAMZNfile() {
         logger.debug("ENTER loadAMZNfile");
 
@@ -58,50 +55,50 @@ public class ECommerce extends Action{
 
                 for (Object element : prop.keySet()) {
                     String key = element.toString();
-                    int tnd = Integer.parseInt(key.split("\\.")[2]);
 
-                    if (key.startsWith("itm.charge")) {
-                        long value = Long.parseLong(prop.getProperty(key));
-                        amazonItmMap.put(tnd, value);
-                        logger.info("key " + key + " : tender = " + tnd + ", value = " + value);
-                    } else if (key.startsWith("mode.charge")) {
-                        long value = Long.parseLong(prop.getProperty(key));
-                        amazonModeMap.put(tnd, value);
-                        logger.info("key " + key + " : tender = " + tnd + ", value = " + value);
-                    } else if (key.startsWith("amt.charge")) {
-                        int value = Integer.parseInt(prop.getProperty(key));
-                        amazonAmtMap.put(tnd, value);
-                        logger.info("key " + key + " : tender = " + tnd + ", value = " + value);
+                    if (key.startsWith("commission")) {
+                        int tnd = Integer.parseInt(key.split("\\.")[1]);
+                        String[] tokens = prop.getProperty(key, "100,$,0").split(",");
+                        tenderProperties.put(tnd, new TenderProperties(tokens[0], tokens[1].charAt(0), Integer.parseInt(tokens[2])));
                     } else if (key.startsWith("choice")) {  //INSTASHOP-SELL-CGA#A BEG
+                        int tnd = Integer.parseInt(key.split("\\.")[2]);
                         vetKeyChoices.add(key);
                         logger.info("key " + key + " : tender = " + tnd);
                     } else if (key.startsWith("tnd.S.")) {
+                        int tnd = Integer.parseInt(key.split("\\.")[2]);
                         int value = Integer.parseInt(prop.getProperty(key));
                         automaticTndCash.put(tnd, value);
                         logger.info("key " + key + " : tender = " + tnd + ", value = " + value);
                     } else if (key.startsWith("tnd.SC.")) {
+                        int tnd = Integer.parseInt(key.split("\\.")[2]);
                         int value = Integer.parseInt(prop.getProperty(key));
                         automaticTndCard.put(tnd, value);
                         logger.info("key " + key + " : tender = " + tnd + ", value = " + value);
                     } else if (key.startsWith("tnd.F.")) {
+                        int tnd = Integer.parseInt(key.split("\\.")[2]);
                         int value = Integer.parseInt(prop.getProperty(key));
                         automaticTndOnline.put(tnd, value);
                         logger.info("key " + key + " : tender = " + tnd + ", value = " + value);
                     } else if (key.startsWith("secondcopy.delivery")) {
+                        int tnd = Integer.parseInt(key.split("\\.")[2]);
                         secondCopyDelivery.put(tnd, prop.getProperty(key));
                         logger.info("key " + key + " : tender = " + tnd + ", value = " + prop.getProperty(key));
                     } else if (key.startsWith("secondcopy.enable")) {    //qui second copy
+                        int tnd = Integer.parseInt(key.split("\\.")[2]);
                         secondCopyDeliveryEnable.put(tnd, prop.getProperty(key));
                         logger.info("key " + key + " : tender = " + tnd + ", value = " + prop.getProperty(key));
                     } else if (key.startsWith("amt.max")) {
+                        int tnd = Integer.parseInt(key.split("\\.")[2]);
                         int value = Integer.parseInt(prop.getProperty(key));
                         amtMaxMap.put(tnd, value);
                         logger.info("key " + key + " : tender = " + tnd + ", value = " + value);
                     } else if (key.startsWith("ddq.code")) {
+                        int tnd = Integer.parseInt(key.split("\\.")[2]);
                         String value = prop.getProperty(key);
                         ddqCodeMap.put(tnd, value);
                         logger.info("key " + key + " : tender = " + tnd + ", value = " + value);
                     } else if (key.startsWith("card.type")) {
+                        int tnd = Integer.parseInt(key.split("\\.")[2]);
                         String value = prop.getProperty(key);
                         cardTypeMap.put(tnd, value);
                         logger.info("key " + key + " : tender = " + tnd + ", value = " + value);
@@ -119,42 +116,22 @@ public class ECommerce extends Action{
         logger.debug("EXIT loadAMZNfile");
     }
 
-    //INSTASHOP-FINALIZE-CGA#A BEG
-    int action0(int spec) {
+    public int action0(int spec) {
         logger.info("ENTER amazon 0 - spec: " + spec);
 
+        switch (spec) {
+            case INPUT_TRANS_NUM:
+                dspLine.init(Mnemo.getMenu(100));
 
-        if (spec == 0) { //preme il tasto e va allo stato di inserimento num trans
-            dspLine.init(Mnemo.getMenu(100));
+                isFinalizeInstashop = true;
+                isResumeInstashop = true;
+                break;
+            case PAYMENT:
+                dspLine.init(' ');
 
-            isFinalizeInstashop = true;
-            isResumeInstashop = true;
-
-            return 0;
-        }
-
-        if (spec == 1) { //ha già inserito il numero transazione e andrà in pagamento
-            dspLine.init(' ');
-
-            isFinalizeInstashop = false;
-            isResumeInstashop = false;
-
-            /*logger.info("input.pb: " + input.pb);
-            if (GdTrans.searchInstashopSuspend(input.pb) < 0) {
-                logger.info("EXIT amazon0, return 8");
-                return 8;
-            }
-
-            tra.slm_nbr = 1;
-            tra.mode = 0;
-            itm.pos = tra.amt = -GdTrans.getAmountInstashop();
-            itm.tnd = GdTrans.getTenderInstashopUsed();
-            tra.bal = 0;
-
-            return Action.group[7].action3(0);*/
-
-            //tra.amt = tra.bal = GdTrans.getAmountInstashop();
-            //return Action.group[3].action3(0);
+                isFinalizeInstashop = false;
+                isResumeInstashop = false;
+                break;
         }
 
         logger.info("EXIT amazon0, return 0");
@@ -175,10 +152,8 @@ public class ECommerce extends Action{
     public static void setIsResumeInstashop(boolean isResumeInstashop) {
         ECommerce.isResumeInstashop = isResumeInstashop;
     }
-    //INSTASHOP-FINALIZE-CGA#A END
 
-    //INSTASHOP-EOD-CGA#A BEG
-    int action1(int spec) {
+    public int action1(int spec) {
         logger.info("ENTER amazon 1");
 
         int sts = 0;
@@ -225,7 +200,6 @@ public class ECommerce extends Action{
                 }
 
                 br.close();
-                //instanshopFile.delete();
             }
         } catch (Exception e) {
 
@@ -240,9 +214,7 @@ public class ECommerce extends Action{
         logger.info("EXIT amazon 1");
         return 0;
     }
-    //INSTASHOP-EOD-CGA#A END
 
-    //INSTASHOP-SELL-CGA#A BEG
     private static void orderListChoices() {
         logger.info("ENTER orderListChoices");
 
@@ -324,19 +296,6 @@ public class ECommerce extends Action{
     public static void setTndInstashop(int tndInstashop) {
         ECommerce.tndInstashop = tndInstashop;
     }
-    //INSTASHOP-SELL-CGA#A END
-
-    public static HashMap<Integer, Long> getAmazonItmMap() {
-        return amazonItmMap;
-    }
-
-    public static HashMap<Integer, Long> getAmazonModeMap() {
-        return amazonModeMap;
-    }
-
-    public static HashMap<Integer, Integer> getAmazonAmtMap() {
-        return amazonAmtMap;
-    }
 
     public static HashMap<Integer, Integer> getAmtMaxMap() {
         return amtMaxMap;
@@ -373,9 +332,9 @@ public class ECommerce extends Action{
     private static int calculateAmtAutomaticItem() {
         logger.debug("ENTER calculateAmtAutomaticItem");
 
-        amtItem = amazonAmtMap.get(itm.tnd);  //default value
+        amtItem = tenderProperties.get(itm.tnd).getCommissionValue();  //default value
 
-        if (amazonModeMap.get(itm.tnd) == 2) {  //perc
+        if (tenderProperties.get(itm.tnd).getCommissionType() == TenderProperties.PERCENTAGE) {  //perc
             amtItem = (int)((amtItem / 100) * tra.amt) / 100;
         }
 
@@ -425,10 +384,9 @@ public class ECommerce extends Action{
 
             isAutomaticAmazonItem = true;
             input.prompt = "";
+            input.qrcode = "";
 
-            eanAutomaticItm = ECommerce.getAmazonItmMap().get(itm.tnd);
-
-            input.reset(String.valueOf(eanAutomaticItm));
+            input.reset(ECommerce.tenderProperties.get(itm.tnd).getCommissionItem());
 
             String tmpDspLine = dspLine.toString();
             sts = group[5].action2(0);
@@ -454,8 +412,6 @@ public class ECommerce extends Action{
         isAutomaticVoidAmazonItem = true;
         input.prompt = "";
 
-        //eanAutomaticItm = ECommerce.getAmazonItmMap().get(itm.tnd);
-
         input.reset(String.valueOf(eanAutomaticItm));
 
         String tmpDspLine = dspLine.toString();
@@ -471,13 +427,10 @@ public class ECommerce extends Action{
         return sts;
     }
 
-    //INSTASHOP-FINALIZE-CGA#A BEG
     public static boolean chooseCardType() {
         logger.info("ENTER chooseCardType");
 
-        //input.prompt = Mnemo.getText(103);
         input.init(0x00, 1, 1, 0);
-        //panel.display(1, Mnemo.getText(103));
 
         Set keys = ECommerce.getCardTypeMap().keySet();
 
@@ -502,9 +455,7 @@ public class ECommerce extends Action{
         logger.info("EXIT chooseCardType - false");
         return false;
     }
-    //INSTASHOP-FINALIZE-CGA#A END
 
-    //INSTASHOP-SELL-CGA#A BEG
     public static boolean handleInstashopPayment() {
         logger.info("ENTER handleInstashopPayment");
 
@@ -551,7 +502,6 @@ public class ECommerce extends Action{
         logger.info("EXIT handleInstashopPayment - false");
         return false;
     }
-    //INSTASHOP-SELL-CGA#A END
 
     public static boolean isAlreadyAmzCommCalc() {
         return alreadyAmzCommCalc;
@@ -562,7 +512,6 @@ public class ECommerce extends Action{
         alreadyAmzCommCalc = false;
     }
 
-    //INSTASHOP-SELL-CGA#A BEG
     public static void writeInstashopSuspend() {
         logger.info("ENTER writeInstashopSuspend");
 
@@ -625,8 +574,7 @@ public class ECommerce extends Action{
         logger.info("EXIT searchInstashopSuspend, return -1");
         return -1;
     }
-    //INSTASHOP-SELL-CGA#A END
-    //INSTASHOP-EOD-CGA#A BEG
+    
     public static boolean checkFileInstashop() {
         logger.info("ENTER checkFileInstashop");
 
@@ -645,7 +593,6 @@ public class ECommerce extends Action{
             }
 
             br.close();
-            //instanshopFile.delete();
         } catch(Exception e) {
             logger.error("Error: ", e);
         }
@@ -653,42 +600,33 @@ public class ECommerce extends Action{
         logger.info("EXIT checkFileInstashop - return " + ctl.block);
         return ctl.block;
     }
-    //INSTASHOP-EOD-CGA#A END
 
-    //INSTASHOP-RESUME-CGA#A BEG
     public static void handleInstashopResume(int transaction) {
         logger.info("ENTER handleInstashopResume - transaction " + transaction);
 
-        String line = "";
-
         try {
-            File fileOld = new File("data//transactionsInstashop.txt");
-            File fileNew = new File("data//transactionsInstashop_new.txt");
+            BufferedReader br = new BufferedReader(new FileReader("data//transactionsInstashop.txt"));
+            StringBuffer sb = new StringBuffer("");
+            String line = "";
 
-            BufferedReader br = new BufferedReader(new FileReader(fileOld));
-            BufferedWriter bw = new BufferedWriter(new FileWriter(fileNew));
-
-            logger.info("start while");
-            while((line = br.readLine()) != null) {
-                logger.info("line " + line);
-
+            while ((line = br.readLine()) != null) {
                 if (!line.split("_")[0].trim().startsWith(String.valueOf(leftFill(transaction + "", 4, '0')))) {
                     logger.info("rewrite the line");
-                    bw.write(line + "\r\n");
+                    sb.append(line + "\n");
                 }
             }
-            logger.info("end while");
 
             br.close();
-            bw.close();
 
-            fileOld.delete();
-            logger.info("file deleted");
+            FileWriter fw = new FileWriter(new File("data//transactionsInstashop.txt"));
+            logger.info("file writer");
 
-            File fileDest = new File("data//transactionsInstashop.txt");
-            fileNew.renameTo(fileDest);
-            logger.info("file renamed");
-        } catch(Exception e) {
+            fw.write(sb.toString());
+            logger.info("write all");
+
+            fw.close();
+            logger.info("file closed");
+        } catch (Exception e) {
             logger.error("EXCEPTION: " + e.getMessage());
         }
 
@@ -709,14 +647,11 @@ public class ECommerce extends Action{
         logger.info("EXIT resetInstashop");
     }
 
-    //INSTASHOP-REPORT-CGA#A BEG
     public static void printInstashopReport() {
         try {
             File instanshopFile = new File("data//transactionsInstashop.txt");
 
-            if (!instanshopFile.exists()) {
-                return ;
-            } else {
+            if (instanshopFile.exists()) {
                 prtLine.init(' ').type(2);
                 prtLine.init("****Instashop Transactions**************").book(2);
 
@@ -742,10 +677,9 @@ public class ECommerce extends Action{
                 prtLine.init(' ').type(2);
             }
         } catch (Exception e) {
-
+            logger.error("Error: ", e);
         }
     }
-    //INSTASHOP-REPORT-CGA#A END
 
     public static String getEanItemComm() {
         return eanItemComm;
@@ -767,7 +701,7 @@ public class ECommerce extends Action{
         return numberTraResume;
     }
 
-    //INSTASHOP-RESUME-CGA#A END
-
+    public static Map<Integer, TenderProperties> getTenderProperties() {
+        return tenderProperties;
+    }
 }
-//AMAZON-COMM-CGA#A END

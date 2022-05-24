@@ -1,3 +1,5 @@
+import com.ncr.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -288,9 +290,11 @@ class GdPos extends Panel implements Graphical, ActionListener,
       return dlg.code;
    }
 
-   void innerVoice (int action)
-   {  if (modal != null) modal.quit ();
-      else postAction ("CODE" + action);
+   void innerVoice(int action) {
+      if (modal != null)
+         modal.quit();
+      else
+         postAction("CODE" + Integer.toHexString(action));
    }
 
    public void display (int line, String data)
@@ -381,7 +385,7 @@ class GdPos extends Panel implements Graphical, ActionListener,
       Config.logConsole (1, null, "client " + d.width + "x" + d.height);
 
 //    System.getProperties ().list (System.out);
-\\\}
+}
 
    //WINEPTS-CGA#A BEG
    public void updateEpts(boolean active) {

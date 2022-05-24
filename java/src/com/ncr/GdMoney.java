@@ -64,7 +64,7 @@ class GdMoney extends Action {
 	/**
 	 * money clear
 	 **/
-	int action0(int spec) {
+	public int action0(int spec) {
 		dspLine.init(Mnemo.getMenu(tra.head));
 		if (!tra.isActive())
 			event.nxt = event.alt;
@@ -75,7 +75,7 @@ class GdMoney extends Action {
 	/**
 	 * money type
 	 **/
-	int action1(int spec) {
+	public int action1(int spec) {
 		int key = lALU.getSize() > 0 ? 0xffff : 0, sts;
 
 		if (input.num == 0)
@@ -109,7 +109,7 @@ class GdMoney extends Action {
 	/**
 	 * account number
 	 **/
-	int action2(int spec) {
+	public int action2(int spec) {
 		int rec, sel, tran;
 
 		if (input.num == 13) {
@@ -168,7 +168,7 @@ class GdMoney extends Action {
 	/**
 	 * money amount
 	 **/
-	int action3(int spec) {
+	public int action3(int spec) {
 		itm.price = input.scanNum(input.num);
 
 		if (itm.price == 0)
@@ -190,7 +190,7 @@ class GdMoney extends Action {
 	/**
 	 * error correct
 	 **/
-	int action4(int spec) {
+	public int action4(int spec) {
 		if ((pit.flag & F_ONSLIP) > 0)
 			return 7;
 		if (TView.syncIndex(pit.index) != pit.index)
@@ -204,7 +204,7 @@ class GdMoney extends Action {
 	/**
 	 * collective sales
 	 **/
-	int action9(int spec) {
+	public int action9(int spec) {
 		int ic = spec / 10, sc = spec % 10, sts;
 		String nbr = editKey(ctl.reg_nbr, 3) + editNum(ctl.tran, 4);
 

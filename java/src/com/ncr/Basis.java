@@ -3,11 +3,11 @@ package com.ncr;
 /*******************************************************************
  * basic set of useful references and subroutines
  *******************************************************************/
-abstract class Basis extends Table {
+public abstract class Basis extends Table {
 	/** gui provider **/
-	static GdPos panel;
+	public static GdPos panel;
 	/** console input/echo control **/
-	static final ConIo input = new ConIo(20);
+	public static final ConIo input = new ConIo(20);
 	/** event table access **/
 	static final Motor event = new Motor("EVENT");
 	/** connection to server / a2a services **/
@@ -63,7 +63,7 @@ abstract class Basis extends Table {
 	 * @param menu
 	 *            index of message within MENUS table
 	 ***************************************************************************/
-	static void prtTitle(int menu) {
+	public static void prtTitle(int menu) {
 		String txt = Mnemo.getMenu(menu);
 		dspLine.init(txt);
 		prtDwide(ELJRN + 3, txt);
@@ -208,7 +208,7 @@ abstract class Basis extends Table {
 	 *
 	 * @return preselect code (empl/cust/void)
 	 ***************************************************************************/
-	static int trx_pres() {
+	public static int trx_pres() {
 		int code = (tra.spf1 & M_TRVOID) > 0 ? 4 : 0;
 		return code | tra.spf2;
 	}
@@ -286,7 +286,7 @@ abstract class Basis extends Table {
 	 *            amount to be edited
 	 * @return amount edited according to params and regional settings
 	 ***************************************************************************/
-	static String editMoney(int ind, long total) {
+	public static String editMoney(int ind, long total) {
 		int dec = tnd[ind].dec;
 		StringBuffer sb = new StringBuffer(editDec(total, 0));
 		if (dec > 0) {
@@ -344,16 +344,7 @@ abstract class Basis extends Table {
 					return 9;
 			for (int ind = 0; ind < 16; ind++) {
 				char c = rule.charAt(4 + ind);
-				if (c < ':') {
-					if (CapillaryService.getInstance().isEnabled() && type == 'C') {
-						int prepend = Integer.parseInt(rule.substring(2, 3));
-						if (c < '0' || c > '9' || ind + prepend >= 16 || rule.charAt(4 + ind + prepend) != 'N') {
-							continue;
-						}
-					} else {
-						continue;
-					}
-				}
+				if (c < ':') continue;
 				if (c == 'Z')
 					if (input.index == 0)
 						if (ean.charAt(ind) == '0')

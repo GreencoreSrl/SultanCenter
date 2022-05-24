@@ -34,7 +34,7 @@ public class TenderRequestProcessor extends TransactionProcessor {
         logger.info("tenderType: " + sscoTender.getTenderType());
         logger.info("amount: " + sscoTender.getAmount());
 
-        if (sscoTender.getAmount() == 0) {
+        if (sscoTender.getAmount() == 0 && TenderTypeEnum.Cash.equals(sscoTender.getTenderType())) {
             logger.info("Tender Amount 0: sending end of transaction");
             sendTenderAcceptedResponseToSsco(sscoTender);
             sendTotalsResponse(new SscoError());
@@ -46,8 +46,7 @@ public class TenderRequestProcessor extends TransactionProcessor {
             if (!tenderType.isHigherThanAmount() && sscoTender.getAmount() > getManager().getTotalsAmount().getBalanceDue()) {
                 sendResponses(new SscoError(SscoError.HIGHER_THAN_BALANCE, "Higher than balance"));
             } else {
-                //TODO: Add Bin Dawood functionality
-                if (!getManager().tenderRequest(sscoTender)) logger.warn("-- Warning ");
+                getManager().tenderRequest(sscoTender);
             }
         }
 
@@ -63,9 +62,7 @@ public class TenderRequestProcessor extends TransactionProcessor {
         if (sscoError.getCode() != SscoError.OK) {
             sendTenderExceptionResponseToSsco(sscoError);
             if (tenderType != null && tenderType.isAdditionalClear()) {
-                if (!getManager().clearRequest()) {
-                    logger.warn("-- Warning ");
-                }
+                getManager().clearRequest();
             }
         } else {
             sendTenderAcceptedResponseToSsco(getManager().getLastTender());
@@ -111,6 +108,11 @@ public class TenderRequestProcessor extends TransactionProcessor {
             tenderExceptionId = Integer.parseInt(processorsProperties.getProperty("TenderException." + sscoError.getCode() + ".Id"));
         } catch (Exception e) {
             logger.error("Error reading properties: ", e);
+        }
+
+        TenderType tenderType = TenderTypeManager.getInstance().getActionPOSByName(sscoTender.getTenderType());
+        if (tenderType.getGenericException() > 0) {
+            sscoError = new SscoError(tenderType.getGenericException());
         }
 
         responseToSsco.setIntField("ExceptionType", tenderExceptionType.getCode());
