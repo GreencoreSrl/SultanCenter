@@ -15,7 +15,7 @@ public class LinIo extends FmtIo {
 	/**
 	 * parse buffer reference (needs to be set before usage)
 	 **/
-	String pb;
+	public String pb;
 	/**
 	 * character position for parsing / editing
 	 **/
@@ -76,7 +76,7 @@ public class LinIo extends FmtIo {
 	 *
 	 * @return this LinIo object
 	 ***************************************************************************/
-	LinIo skip() {
+	public LinIo skip() {
 		return skip(1);
 	}
 
@@ -87,7 +87,7 @@ public class LinIo extends FmtIo {
 	 *            number of char positions
 	 * @return this LinIo object
 	 ***************************************************************************/
-	LinIo skip(int pos) {
+	public LinIo skip(int pos) {
 		index += pos;
 		return this;
 	}
@@ -101,7 +101,7 @@ public class LinIo extends FmtIo {
 	 *            char to be written
 	 * @return this LinIo object
 	 ***************************************************************************/
-	LinIo onto(int pos, char c) {
+	public LinIo onto(int pos, char c) {
 		index = pos;
 		return push(c);
 	}
@@ -115,7 +115,7 @@ public class LinIo extends FmtIo {
 	 *            String to be written
 	 * @return this LinIo object
 	 ***************************************************************************/
-	LinIo onto(int pos, String s) {
+	public LinIo onto(int pos, String s) {
 		index = pos;
 		return push(s);
 	}
@@ -129,7 +129,7 @@ public class LinIo extends FmtIo {
 	 *            String to be written
 	 * @return this LinIo object
 	 ***************************************************************************/
-	LinIo upto(int pos, String s) {
+	public LinIo upto(int pos, String s) {
 		if ((index = pos - s.length()) < 0) {
 			s = s.substring(-index);
 			index = 0;
@@ -144,7 +144,7 @@ public class LinIo extends FmtIo {
 	 *            char to be written
 	 * @return this LinIo object
 	 ***************************************************************************/
-	LinIo push(char c) {
+	public LinIo push(char c) {
 		data[inset + index++] = c;
 		return this;
 	}
@@ -156,7 +156,7 @@ public class LinIo extends FmtIo {
 	 *            String to be written
 	 * @return this LinIo object
 	 ***************************************************************************/
-	LinIo push(String s) {
+	public LinIo push(String s) {
 		int len = s.length();
 		int rem = data.length - inset - index;
 		if (len > rem)
@@ -175,7 +175,7 @@ public class LinIo extends FmtIo {
 	 *            the target length including the sign
 	 * @return this LinIo object
 	 ***************************************************************************/
-	LinIo pushDec(long value, int len) {
+	public LinIo pushDec(long value, int len) {
 		push(value < 0 ? '-' : '+');
 		if (value < 0)
 			value = -value;
@@ -375,7 +375,7 @@ public class LinIo extends FmtIo {
 	 * @param area
 	 *            window number (0 - 9 operator, 10 - 13 customer)
 	 ***************************************************************************/
-	void show(int area) {
+    public void show(int area) {
 		gui.display(area, toString());
 	}
 

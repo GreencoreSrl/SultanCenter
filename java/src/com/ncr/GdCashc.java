@@ -50,7 +50,7 @@ class GdCashc extends Action {
 	/**
 	 * cc item clear
 	 **/
-	int action0(int spec) {
+	public int action0(int spec) {
 
 		return spec > 0 ? cc_amt_dsp() : cc_cnt_dsp();
 	}
@@ -58,7 +58,7 @@ class GdCashc extends Action {
 	/**
 	 * start checker cash count
 	 **/
-	int action1(int spec) {
+	public int action1(int spec) {
 		int sts;
 
 		if (spec > 100) {
@@ -85,7 +85,7 @@ class GdCashc extends Action {
 	/**
 	 * abort cash count
 	 **/
-	int action2(int spec) {
+	public int action2(int spec) {
 		prtAbort(23);
 		accumReg(9, 3, 0, sec_diff(tra.tim));
 		return GdRegis.prt_trailer(1);
@@ -94,7 +94,7 @@ class GdCashc extends Action {
 	/**
 	 * count entry
 	 **/
-	int action3(int spec) {
+	public int action3(int spec) {
 		long limit = 100000000;
 
 		itm.qty = input.scanNum(input.num);
@@ -127,7 +127,7 @@ class GdCashc extends Action {
 	/**
 	 * amount entry
 	 **/
-	int action4(int spec) {
+	public int action4(int spec) {
 		long limit = 100000000;
 
 		itm.pos = input.scanNum(input.num);
@@ -164,7 +164,7 @@ class GdCashc extends Action {
 	/**
 	 * next denom/tender
 	 **/
-	int action5(int spec) {
+	public int action5(int spec) {
 		if (spec > 1) {
 			if (spec == 2) {
 				itm.spf1 = M_VOID;
@@ -200,7 +200,7 @@ class GdCashc extends Action {
 	/**
 	 * total/finish
 	 **/
-	int action6(int spec) {
+	public int action6(int spec) {
 		int rec;
 
 		prtLine.init(' ').book(2);
@@ -226,8 +226,14 @@ class GdCashc extends Action {
 				accumTnd(tra.stat, -lREG.block[0].items, -lREG.block[0].total);
 			}
 		}
-		dspLine.init(Mnemo.getText(24)).upto(20, editMoney(0, tra.amt = tra.bal));
-		prtLine.init(Mnemo.getText(24)).upto(40, editMoney(0, tra.amt)).book(3);
+		// TSC-MOD2014-AMZ#ADD
+		if (tra.code != 15) {
+			dspLine.init (Mnemo.getText (24)).upto (20, editMoney (0, tra.amt = tra.bal));
+			prtLine.init (Mnemo.getText (24)).upto (40, editMoney (0, tra.amt)).book (3);
+		} else {
+			tra.amt = tra.bal;
+		}
+		// TSC-MOD2014-AMZ#END
 		accumReg(9, 3, 0, sec_diff(tra.tim));
 		return GdRegis.prt_trailer(2);
 	}
@@ -235,7 +241,7 @@ class GdCashc extends Action {
 	/**
 	 * tender preselect by tender key
 	 **/
-	int action7(int spec) {
+	public int action7(int spec) {
 		int ind = tnd_tbl[spec];
 
 		if (ind < 1 || ind >= tnd.length)

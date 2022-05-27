@@ -224,11 +224,13 @@ class WinUpb extends Struc {
 
 		String scan(int len) {
 			index += len;
-			if (codepage != null)
+			if (codepage != null) {
 				try {
 					return new String(data, index - len, len, codepage);
 				} catch (IOException e) {
+					logger.error("Error: ", e);
 				}
+			}
 			return new String(data, index - len, len);
 		}
 
@@ -322,7 +324,7 @@ class WinUpb extends Struc {
 			sndMsg = new Message(2048);
 			sndMsg.dp = new DatagramPacket(sndMsg.data, 0, inet, port);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error: ", e);
 		}
 	}
 
@@ -330,9 +332,11 @@ class WinUpb extends Struc {
 	 * close communications and log
 	 ***************************************************************************/
 	void stop() {
-		if (port != 0)
-			sock.close();
-		// super.stop ();
+		try {
+			if (port != 0) sock.close();
+		} catch (Exception e) {
+			logger.error("Error: ", e);
+		}
 	}
 
 	private int upb_rcvAck() {

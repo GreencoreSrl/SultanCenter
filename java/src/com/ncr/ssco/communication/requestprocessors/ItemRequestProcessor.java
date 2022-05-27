@@ -113,7 +113,7 @@ public class ItemRequestProcessor extends TransactionProcessor {
                 sendItemException(sscoError);
             } else {
                 sendItemSold();
-                syncPromotions();
+                syncPromotions(itemResponse);
                 sendTotalsResponse(sscoError);
             }
             getMessageHandler().getResponses().add(addEndResponse());
@@ -215,7 +215,7 @@ public class ItemRequestProcessor extends TransactionProcessor {
         responseToSsco.setStringField("Description", itemResponse.getDescription().trim());
         if (itemResponse.getAdditionalDescription().length() != 0) {
             try {
-                String description = itemResponse.getDescription().trim() + "\n" + itemResponse.getAdditionalDescription().trim();
+                String description = itemResponse.getDescription().trim() + "\r\n" + itemResponse.getAdditionalDescription().trim();
                 responseToSsco.setByteArrayField("Description", description.getBytes(encoding));
             } catch (Exception e) {
                 logger.error("Error converting: ", e);

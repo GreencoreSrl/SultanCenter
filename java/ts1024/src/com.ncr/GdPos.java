@@ -1,11 +1,20 @@
 package com.ncr;
+
+import org.apache.log4j.Logger;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 
+
 class GdPos extends Border implements Graphical, ActionListener,
                                       AdjustmentListener, MouseWheelListener
-{  Frame frame;
+{
+   //ECOMMERCE-MSOUK#A BEG
+   private static final Logger logger = Logger.getLogger(GdPos.class);
+   //ECOMMERCE-MSOUK#A END
+
+   Frame frame;
    Modal modal;
    ConIo input = Action.input;
    Motor event = Action.event;
@@ -266,6 +275,13 @@ class GdPos extends Border implements Graphical, ActionListener,
 
    public int clearLink (String msg, int type)
    {  int line = type >> 4;
+
+      //ECOMMERCE-MSOUK#A BEG
+      if (ECommerceManager.getInstance().hidePopup()) {
+         logger.info("Not showing popup " + msg);
+         return 0;
+      }
+      //ECOMMERCE-MSOUK#A END
 
       DevIo.alert (0);
       if (! Thread.currentThread ().getName ().endsWith ("dispatch"))

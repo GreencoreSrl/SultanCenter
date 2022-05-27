@@ -13,6 +13,7 @@ public class ConIo extends LinIo {
 
 	String alpha, label, prompt;
 	String qrcode = "";  //QRCODE-SELL-CGA#A
+	String aux1 = ""; // TSC-ENH2014-1-AMZ#ADD -- extended EAN 128 info
 	static final char QR_CODE_SEPARATOR = ';';
 
 	static final int ABORT = 0x1B;
@@ -26,6 +27,7 @@ public class ConIo extends LinIo {
 	static final int PAUSE = 0xA8;
 	static final int POINT = 0x2E;
 	static final int SOUTH = 0x1F;
+	static final int TOTAL = 0x19;
 
 	static int optAuth = 0, posLock = 0;
 
@@ -169,6 +171,12 @@ public class ConIo extends LinIo {
 		if (!Character.isDigit(c))
 			ind++;
 		for (; ind < cmd.length(); num++) {
+			// TSC-ENH2014-1-AMZ#BEG
+			if (cmd.length() == 30 && num == 13) {
+				aux1 = cmd.substring(18, 30);
+				break;
+			}
+			// TSC-ENH2014-1-AMZ#END
 			if (num >= dataLen())
 				return 2;
 			pb += cmd.charAt(ind++);
@@ -321,7 +329,11 @@ public class ConIo extends LinIo {
 		if ((ecn.yymm = yymm) > 0) {
 			if (cmpDates(yymm * 100 + 31, Struc.ctl.date) < 0) {
 				logger.info("Dates: [" + ecn.yymm + "] [" + Struc.ctl.date + "]");
-				return 31;
+				// TSC-MOD2014-AMZ#ADD
+				if (!GdTsc.customerCardDateChk(pb)) {
+					return 31;
+				}
+				// TSC-MOD2014-AMZ#ADD
 			}
 		}
 		return 0;
@@ -457,14 +469,14 @@ public class ConIo extends LinIo {
 			/* state E */ { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
 			/* state F */ { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, };
 
-	static String rules[][] = { { " 00", " 00", " 00", " 00", " 00", " 00", " 00", "M57" },
-			{ "M21", "M27", "K05", "M03", "M19", "M43", "M51", "M50" },
-			{ "M73", "M74", "M52", "M75", "K23", "M77", "M49", "M48" },
-			{ "D01", "D02", "D03", "D04", "D05", "D06", "D07", "D08" },
-			{ "c01", "c02", "c03", "c04", "M59", "M61", "M60", "M62" },
-			{ " 00", " 00", "M52", " 00", "K35", " 00", "M78", "M79" },
-			{ "M00", "M00", "M00", "M00", "M00", "M00", "M00", "M00" },
-			{ "M37", "M22", "M23", " 00", "M45", " 00", "M24", "M25" }, };
+	static String rules[][] = { { " 000", " 000", " 000", " 000", " 000", " 000", " 000", "M057" },
+			{ "M021", "M027", "K005", "M003", "M019", "M043", "M051", "M050" },
+			{ "M073", "M074", "M052", "M075", "K023", "M077", "M049", "M048" },
+			{ "D001", "D002", "D003", "D004", "D005", "D006", "D007", "D008" },
+			{ "c001", "c002", "c003", "c004", "M059", "M061", "M060", "M062" },
+			{ " 000", " 000", "M052", " 000", "K035", " 000", "M078", "M079" },
+			{ "M000", "M000", "M000", "M000", "M000", "M000", "M000", "M000" },
+			{ "M037", "M022", "M023", " 000", "M045", " 000", "M024", "M025" }, };
 
 	static String GS1AIdent[] =
 	// * AINx=Application Identifier (x=length of identifier)

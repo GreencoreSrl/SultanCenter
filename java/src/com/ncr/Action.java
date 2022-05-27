@@ -1,5 +1,6 @@
 package com.ncr;
 
+import com.ncr.eft.MarshallEftPlugin;
 import com.ncr.ssco.communication.manager.SscoPosManager;
 
 import java.awt.event.*;
@@ -10,7 +11,7 @@ import java.io.*;
  *******************************************************************/
 public abstract class Action extends Basis {
 	/** all instances of appl classes with methods = actions **/
-	public static final Action group[] = new Action[19];    //ECOMMERCE-SBE#A
+	public static final Action group[] = new Action[20];    //ECOMMERCE-SBE#A
 	//WINEPTS-CGA#A BEG
 	private static long eptsCheckDeltaMilliSec = 0;
 	private static long milliSec = System.currentTimeMillis();
@@ -40,11 +41,11 @@ public abstract class Action extends Basis {
 		group[12] = new GdPsh(); // PSH-ENH-003-AMZ#ADD
 		group[13] = GdSpinneys.getInstance();
 		group[14] = GdUmniah.getInstance();
-		group[15] = new VeriFoneTerminal();  //ECR-CGA#A
+		group[15] = MarshallEftPlugin.getInstance();  //ECR-CGA#A
 		group[16] = new ECommerce();  //INSTASHOP-FINALIZE-CGA#A
 		group[17] = new PosGPE();   //WINEPTS-CGA#A
 		group[18] = ECommerceManager.getInstance();   //ECOMMERCE-SBE#A
-
+		group[19] = new GdTsc(); // TSC-MOD2014-AMZ#ADD
 
 		timeFormat = trl_line.substring(20, 35);
 		ctl.setDatim();
@@ -224,6 +225,10 @@ public abstract class Action extends Basis {
 			PosGPE.checkEptsUPB(false);
 		}
 		//WINEPTS-CGA#A END
+
+		//ECOMMERCE-SSAM#A BEG
+		ECommerceManager.getInstance().sendHeartBeatMessage();
+		//ECOMMERCE-SSAM#A END
 	}
 
 	/***************************************************************************
@@ -306,43 +311,43 @@ public abstract class Action extends Basis {
 		}
 	}
 
-	int action0(int spec) {
+	public int action0(int spec) {
 		return 0;
 	}
 
-	int action1(int spec) {
+	public int action1(int spec) {
 		return 0;
 	}
 
-	int action2(int spec) {
+	public int action2(int spec) {
 		return 0;
 	}
 
-	int action3(int spec) {
+	public int action3(int spec) {
 		return 0;
 	}
 
-	int action4(int spec) {
+	public int action4(int spec) {
 		return 0;
 	}
 
-	int action5(int spec) {
+	public int action5(int spec) {
 		return 0;
 	}
 
-	int action6(int spec) {
+	public int action6(int spec) {
 		return 0;
 	}
 
-	int action7(int spec) {
+	public int action7(int spec) {
 		return 0;
 	}
 
-	int action8(int spec) {
+	public int action8(int spec) {
 		return 0;
 	}
 
-	int action9(int spec) {
+	public int action9(int spec) {
 		return 0;
 	}
 
@@ -379,6 +384,7 @@ public abstract class Action extends Basis {
 	 *            score
 	 ***************************************************************************/
 	static void showPoints(int value) {
+		if (GdTsc.isStandardFidelity()) return;
 		int ind = (options[O_Custo] & 0x04) == 0 ? 39 : 0;
 		cusLine.init(Mnemo.getText(ind)).upto(20, editInt(value)).show(12);
 		panel.dspPoints(cusLine.toString());
@@ -504,19 +510,19 @@ public abstract class Action extends Basis {
 		LinIo info = new LinIo("INF", 0, 42);
 
 		panel.dspShopper(4, null);
-		info.init(Mnemo.getText(54)).upto(22, editNum(cus.spec, 2) + '/' + editNum(cus.branch, 2))
-				.onto(24, Mnemo.getText(20)).push(editRate(cus.rate));
+		info.init(Mnemo.getText(54)).upto(22, editNum(cus.getSpec(), 2) + '/' + editNum(cus.getBranch(), 2))
+				.onto(24, Mnemo.getText(20)).push(editRate(cus.getRate()));
 		panel.dspShopper(5, info.toString());
-		info.init(Mnemo.getText(52)).upto(22, editMoney(0, cus.limchk)).onto(24, Mnemo.getText(50))
-				.push(editRate(cus.dscnt));
+		info.init(Mnemo.getText(52)).upto(22, editMoney(0, cus.getLimchk())).onto(24, Mnemo.getText(50))
+				.push(editRate(cus.getDscnt()));
 		panel.dspShopper(6, info.toString());
-		info.init(Mnemo.getText(53)).upto(22, editMoney(0, cus.limcha)).onto(24, Mnemo.getText(51))
-				.push(editRate(cus.extra));
+		info.init(Mnemo.getText(53)).upto(22, editMoney(0, cus.getLimcha())).onto(24, Mnemo.getText(51))
+				.push(editRate(cus.getExtra()));
 		panel.dspShopper(7, info.toString());
-		panel.dspShopper(3, cus.city);
-		panel.dspShopper(2, cus.adrs);
-		panel.dspShopper(1, cus.nam2);
-		panel.dspShopper(0, cus.name);
+		panel.dspShopper(3, cus.getCity());
+		panel.dspShopper(2, cus.getAdrs());
+		panel.dspShopper(1, cus.getNam2());
+		panel.dspShopper(0, cus.getName());
 	}
 
 	/***************************************************************************
@@ -527,8 +533,14 @@ public abstract class Action extends Basis {
 	 ***************************************************************************/
 	static void showTotal(int cmd) {
 		int ind = (options[O_DWide] & 0x40) > 0 ? tnd_tbl[K_AltCur] : 0;
+		long tmp_bal = tra.bal; // TSC-MOD2014-AMZ#ADD
 		if (cmd > 0) /* start */
 		{
+			// TSC-MOD2014-AMZ#BEG
+			if (GdTsc.isRoundingEnabled()) {
+				tra.bal = GdTsc.roundDown(tra.bal, tnd[0].coin);
+			}
+			// TSC-MOD2014-AMZ#END
 			if (cmd == 24)
 				if ((tra.spf3 & 1) > 0)
 					cmd = 55;
@@ -556,6 +568,11 @@ public abstract class Action extends Basis {
 		} else
 			cusLine.init(mon.tot_txt);
 		cusLine.show(10);
+		// TSC-MOD2014-AMZ#BEG
+		if (GdTsc.isRoundingEnabled()) {
+			tra.bal = tmp_bal;
+		}
+		// TSC-MOD2014-AMZ#END
 	}
 
 	/***************************************************************************
@@ -603,7 +620,7 @@ public abstract class Action extends Basis {
 	 *            subcode (last 2 digits of access key to S_REG)
 	 * @return 0=ok, >0=error index
 	 ***************************************************************************/
-	static int sc_checks(int ic, int sc) {
+	public static int sc_checks(int ic, int sc) {
 		int rec = reg.find(ic, sc);
 		if (rec == 0)
 			return 7;

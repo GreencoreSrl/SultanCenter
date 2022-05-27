@@ -101,7 +101,7 @@ public class GdUmniah extends Action {
         return code;
     }
 
-    int action0(int spec) {
+    public int action0(int spec) {
         logger.debug("Enter spec: " + spec);
         int res = 0;
 
@@ -211,8 +211,8 @@ public class GdUmniah extends Action {
         amountAutoSellItem = calculateAmount(pinResponse);
         isAutoSellItem = true;
 
-        if (cus.number != null && !cus.number.equals("")) {
-            tra.number = cus.number;
+        if (cus.getNumber() != null && !cus.getNumber().equals("")) {
+            tra.number = cus.getNumber();
         }
 
         /*if (!tra.isActive()) {

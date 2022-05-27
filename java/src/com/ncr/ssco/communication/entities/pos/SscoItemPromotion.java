@@ -5,18 +5,18 @@ import com.ncr.Itemdata;
 public class SscoItemPromotion {
     private int itemNumber;
     private int discountAmount;
-    private int associateItemNumber;
+    private int associatedItemNumber;
     private String discountDescription1;
     private int showRewardPoints;
     private int rewardLocation;
     private Itemdata item;
     private boolean promoInviata = false;
 
-    public SscoItemPromotion(Itemdata item, int itemNumber, int discountAmount, int associateItemNumber, String discountDescription_1, int showRewardPoints, int rewardLocation) {// AMZ-FLANE#DISCOUNT#ADD
+    public SscoItemPromotion(Itemdata item, int itemNumber, int discountAmount, int associatedItemNumber, String discountDescription_1, int showRewardPoints, int rewardLocation) {// AMZ-FLANE#DISCOUNT#ADD
         this.item = item;
         this.itemNumber = itemNumber;
         this.discountAmount = discountAmount;
-        this.associateItemNumber = associateItemNumber;
+        this.associatedItemNumber = associatedItemNumber;
         discountDescription1 = discountDescription_1;
         this.showRewardPoints = showRewardPoints;
         this.rewardLocation = rewardLocation;
@@ -47,12 +47,12 @@ public class SscoItemPromotion {
         this.discountAmount = discountAmount;
     }
 
-    public int getAssociateItemNumber() {
-        return associateItemNumber;
+    public int getAssociatedItemNumber() {
+        return associatedItemNumber;
     }
 
-    public void setAssociateItemNumber(int associateItemNumber) {
-        this.associateItemNumber = associateItemNumber;
+    public void setAssociatedItemNumber(int associatedItemNumber) {
+        this.associatedItemNumber = associatedItemNumber;
     }
 
     public String getDiscountDescription1() {

@@ -62,7 +62,7 @@ public class CouponRequestProcessor extends ItemRequestProcessor {
                     sendCouponException(sscoError);
                 } else {
                     sendCouponResponse();
-                    syncPromotions();
+                    syncPromotions(getItemResponse());
                     sendTotalsResponse(sscoError);
                 }
                 getMessageHandler().getResponses().add(addEndResponse());

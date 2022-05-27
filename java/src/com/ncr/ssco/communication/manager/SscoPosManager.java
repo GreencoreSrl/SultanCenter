@@ -57,9 +57,9 @@ public class SscoPosManager implements SscoPosManagerInterface {
     private SscoTerminal terminal;
     private Properties processorProperties;
 
-    private int save_amt;
-    private int save_bal;
-    private int save_cont;
+    private int savedAmt;
+    private int savedBal;
+    private int savedCont;
     private boolean shutdownRequested = false;
 
     private SscoPosManager() {
@@ -86,7 +86,7 @@ public class SscoPosManager implements SscoPosManagerInterface {
         actionPosManager = ActionPOSManager.getInstance();
         terminal = new SscoTerminal(reg_nbr);
         messageHandler = new SscoMessageHandler(PROPERTIES, PROCESSORS_PROPERTIES, DATANEEDED_PROPERTIES);
-        Properties processorProperties = messageHandler.getProcessorsProperties();
+        processorProperties = messageHandler.getProcessorsProperties();
 
         Thread thread = new Thread(new SscoGSPSocketServer(6696, messageHandler, processorProperties.getProperty("Encoding", "UTF-8")));
         thread.start();
@@ -153,36 +153,38 @@ public class SscoPosManager implements SscoPosManagerInterface {
 
     public void sendDataneededEnter() {
         synchronized (dataneededReplyMutex) {
-            dataneededOkCancelKey = 2;
+            dataneededOkCancelKey = OK_CANCEL_ENTER;
         }
     }
 
     public void sendDataneededCorrettore() {
         synchronized (dataneededReplyMutex) {
-            dataneededOkCancelKey = 1;
+            dataneededOkCancelKey = OK_CANCEL_CLEAR;
         }
     }
 
-    public int waitForDataneededReply() {
-        int ret;
-        logger.info("waitForDataneededReply called");
+    public int waitForDataneededReply(int timeout) {
+        final int TICK = 100;
+        logger.info("waitForDataneededReply called. Timeout: " + timeout);
         synchronized (dataneededReplyMutex) {
             dataneededOkCancelKey = 0;
         }
-        while (true) {
+
+        while (timeout > 0) {
+            timeout -= TICK;
             try {
-                Thread.sleep(100);
+                Thread.sleep(TICK);
             } catch (Exception e) {
             }
             synchronized (dataneededReplyMutex) {
                 if (dataneededOkCancelKey != 0) {
-                    ret = dataneededOkCancelKey;
-                    break;
+                    logger.info("waitForDataneededReply returning " + dataneededOkCancelKey);
+                    return dataneededOkCancelKey;
                 }
             }
         }
-        logger.info("waitForDataneededReply return sts=" + ret);
-        return ret;
+        logger.info("driiin!! Returning " + OK_CANCEL_CLEAR);
+        return OK_CANCEL_CLEAR;
     }
 
     public void sendDataneededClose() {
@@ -261,12 +263,14 @@ public class SscoPosManager implements SscoPosManagerInterface {
     }
 
     public void setDonation(int amt) {
+        if (!isEnabled) return;
+
         logger.info("Updating donation to: " + amt);
         donation = amt;
     }
 
-    public void updateTotalAmount_fromSave() {
-        updateTotalAmount(save_amt, save_bal, save_cont, null);
+    public void updateTotalAmountFromSave() {
+        updateTotalAmount(savedAmt, savedBal, savedCont, 0);
     }
 
     public void setTicketAmount(int amount) {
@@ -277,48 +281,44 @@ public class SscoPosManager implements SscoPosManagerInterface {
         this.terminal.getTransaction().getTotalAmount().setGlutenFreeAmount(amount);
     }
 
-    public void updateTotalAmount(int amt, int bal, int cont, Integer changeDue) {
-        save_amt = amt;
-        save_bal = bal;
-        save_cont = cont;
-        this.terminal.getTransaction().getTotalAmount().setTotalAmount((int) (long) amt - transactionalDiscount - roundDiscount);
-        this.terminal.getTransaction().getTotalAmount().setBalanceDue((int) (long) bal - roundDiscount);
-
-        if (changeDue != null)
-            if (bal == 0 && changeDue != 0) {
-                this.terminal.getTransaction().getTotalAmount().setChangeDue(Math.abs(changeDue.intValue()) + roundDiscount);
-            }
-
-        this.terminal.getTransaction().getTotalAmount().setItemCount((int) (long) cont);
-
+    public void updateTotalAmount(int amt, int bal, int cont, int changeDue) {
         logger.info("amt=" + amt + ",bal=" + bal + ",cont=" + cont);
 
-        if (changeDue != null)
-            logger.info("changeDue=" + changeDue);
+        savedAmt = amt;
+        savedBal = bal;
+        savedCont = cont;
+        terminal.getTransaction().getTotalAmount().setTotalAmount(amt - transactionalDiscount);
+        terminal.getTransaction().getTotalAmount().setBalanceDue(bal);
+
+        if (bal == 0 && changeDue != 0) {
+            terminal.getTransaction().getTotalAmount().setChangeDue(Math.abs(changeDue + roundDiscount) - donation);
+        }
+
+        terminal.getTransaction().getTotalAmount().setItemCount((int) (long) cont);
+
+        logger.info("changeDue=" + changeDue);
 
         logger.info("roundDiscount=" + roundDiscount + ",transactionalDiscount=" + transactionalDiscount);
-        logger.info("getTotalAmount=" + this.terminal.getTransaction().getTotalAmount().getTotalAmount());
-        logger.info("getBalanceDue=" + this.terminal.getTransaction().getTotalAmount().getBalanceDue());
-        logger.info("getChangeDue=" + this.terminal.getTransaction().getTotalAmount().getChangeDue());
+        logger.info("getTotalAmount=" + terminal.getTransaction().getTotalAmount().getTotalAmount());
+        logger.info("getBalanceDue=" + terminal.getTransaction().getTotalAmount().getBalanceDue());
+        logger.info("getChangeDue=" + terminal.getTransaction().getTotalAmount().getChangeDue());
     }
 
-    public void sendDataNeeded(String dataNeededInfo) {
+    public DataNeeded sendDataNeeded(String dataNeededInfo) {
         if (dataNeededInfo.equals("Clear")) {
-
             if (messageHandler.isPendingResponses()) {
-                logger.info("---------------------------");
-                logger.info("---------------------------");
-                logger.info("-- Clear DataNeeded rejected due pending responses ");
-                logger.info("---------------------------");
+                logger.info("Clear DataNeeded rejected due pending responses ");
                 messageHandler.pendingResposeToResponse();
-                return;
+                return null;
             }
         }
-        this.processor.sendDataNeeded(new DataNeeded(dataNeededInfo, this.messageHandler.getDataneededProperties()));
+        DataNeeded dataNeeded = new DataNeeded(dataNeededInfo, messageHandler.getDataneededProperties());
+        processor.sendDataNeeded(dataNeeded);
+        return dataNeeded;
     }
 
     public void sendShutdownRequested() {
-        this.processor.sendShutdownRequested();
+        processor.sendShutdownRequested();
         shutdownRequested = true;
     }
 
@@ -330,11 +330,11 @@ public class SscoPosManager implements SscoPosManagerInterface {
     }
 
     public void sendDataNeeded(String dataNeededInfo, String message) {
-        this.processor.sendDataNeeded(new DataNeeded(dataNeededInfo, this.messageHandler.getDataneededProperties(), message));
+        processor.sendDataNeeded(new DataNeeded(dataNeededInfo, messageHandler.getDataneededProperties(), message));
     }
 
     public void sendDataNeeded(String dataNeededInfo, ArrayList<String> messages) {
-        this.processor.sendDataNeeded(new DataNeeded(dataNeededInfo, this.messageHandler.getDataneededProperties(), messages));
+        processor.sendDataNeeded(new DataNeeded(dataNeededInfo, messageHandler.getDataneededProperties(), messages));
     }
 
     public int getPriceInserted() {
@@ -368,11 +368,11 @@ public class SscoPosManager implements SscoPosManagerInterface {
     }
 
     public List<SscoItem> getItems() {
-        return terminal.getTransaction().getItems();
+        return terminal.getTransaction() == null ? null : terminal.getTransaction().getItems();
     }
 
     public SscoCustomer getCustomer() {
-        return terminal.getTransaction().getCustomer();
+        return terminal.getTransaction() == null ? null : terminal.getTransaction().getCustomer();
     }
 
     public SscoTransaction getTransaction() {
@@ -402,11 +402,11 @@ public class SscoPosManager implements SscoPosManagerInterface {
     }
 
     public int itemNumberSetting() {
-        return this.terminal.getTransaction().addItemNumber();
+        return terminal.getTransaction().addItemNumber();
     }
 
     public int getLastItemNumberSetting() {
-        return this.terminal.getTransaction().getLastItemNumber();
+        return terminal.getTransaction().getLastItemNumber();
     }
 
     public void setItemResponse(SscoItem responseBySSCO) {
@@ -425,6 +425,7 @@ public class SscoPosManager implements SscoPosManagerInterface {
         updateTransactionalDiscount(0);
         updateRoundDiscount(0);
         setTenderRounding(0);
+        setDonation(0);
         resetCurrentItemPromotions();
         logger.info("Exit " + terminal.getTransaction().getTransactionId());
         return terminal.getTransaction();
@@ -444,27 +445,43 @@ public class SscoPosManager implements SscoPosManagerInterface {
     }
 
     @Override
-    public boolean tenderRequest(SscoTender sscoTender) {
-        if (isUsed()) {
-            TenderType tender = TenderTypeManager.getInstance().getActionPOSByName(sscoTender.getTenderType());
-            currentSscoTender = sscoTender;
+    public void tenderRequest(SscoTender sscoTender) {
+        logger.debug("Enter");
+        TenderType tender = TenderTypeManager.getInstance().getActionPOSByName(sscoTender.getTenderType());
+        currentSscoTender = sscoTender;
 
-            String cmd = "SSCO::" + tender.getActionPOS();
+        String cmd = "SSCO::" + tender.getActionPOS();
+        postAction(cmd);
+
+        ActionPOS action = actionPosManager.getActionPOSByName("ENTER");
+        if (sscoTender.getUpc() != null) {
+            logger.info("Sending UPC: " + sscoTender.getUpc());
+            cmd = "SSCO:" + sscoTender.getUpc() + ":" + action.getCommand().get(0).getEvent();
             postAction(cmd);
-
-            ActionPOS action = actionPosManager.getActionPOSByName("ENTER");
-            if (sscoTender.getUpc() != null) {
-                cmd = "SSCO:" + sscoTender.getUpc() + ":" + action.getCommand().get(0).getEvent();
-                postAction(cmd);
-            }
+        }
+        if (sscoTender.getAmount() != 0) {
+            logger.info("Sending amount: " + sscoTender.getAmount());
             cmd = "SSCO:" + sscoTender.getAmount() + ":" + action.getCommand().get(0).getEvent();
             postAction(cmd);
-
-            return true;
-        } else {
-            logger.info("No logged user to process signOff!");
         }
-        return false;
+        logger.debug("Exit");
+    }
+
+    @Override
+    public void tenderInquiryRequest(SscoTender sscoTender) {
+        logger.debug("Enter");
+        TenderType tender = TenderTypeManager.getInstance().getActionPOSByName(sscoTender.getTenderType());
+        String cmd = "SSCO::" + tender.getActionPOS();
+        postAction(cmd);
+
+        clearRequest();
+        logger.debug("Exit");
+    }
+
+    @Override
+    public void enterExitTrainingModeRequest() {
+        ActionPOS action = actionPosManager.getActionPOSByName("TRAINING_MODE");
+        postAction("SSCO::" + action.getCommand().get(0).getEvent());
     }
 
     public void postAction(String cmd) {
@@ -506,6 +523,12 @@ public class SscoPosManager implements SscoPosManagerInterface {
         logger.debug("Enter");
 
         if (isUsed()) {
+            logger.info("Shutdown - Cashier is open");
+            if (transactionHasStarted()) {
+                logger.info("Shutdown - Transaction is open");
+                ActionPOS action = actionPosManager.getActionPOSByName("ABORT");
+                postAction("SSCO::" + action.getCommand().get(0).getEvent());
+            }
             ActionPOS action = actionPosManager.getActionPOSByName("SIGNOFF");
             postAction("SSCO::" + action.getCommand().get(0).getEvent());
         }
@@ -561,24 +584,18 @@ public class SscoPosManager implements SscoPosManagerInterface {
     }
 
     @Override
-    public boolean voidItemRequest(SscoItem item) {
-        if (isUsed()) {
-            sendVoid();
+    public void voidItemRequest(SscoItem item) {
+        sendVoid();
 
-            if (item.getUpc() != null && item.getUpc().length() > 0) {
-                if (item.isPriceChanged()) {
-                    itemPriceChange(item);
-                } else {
-                    sendItemCode(item);
-                }
+        if (item.getUpc() != null && item.getUpc().length() > 0) {
+            if (item.isPriceChanged()) {
+                itemPriceChange(item);
             } else {
-                sendDepartment(item);
+                sendItemCode(item);
             }
-            return true;
         } else {
-            logger.info("No user logged to process voidItemRequest");
+            sendDepartment(item);
         }
-        return false;
     }
 
     private void sendVoid() {
@@ -623,62 +640,37 @@ public class SscoPosManager implements SscoPosManagerInterface {
     //EFT-SETTLE-CGA#A END
 
     @Override
-    public boolean voidTransactionRequest(String id) {
+    public void voidTransactionRequest(String id) {
         logger.debug("Enter");
+        terminal.setIdTransactionVoided(id);
+        ActionPOS action = actionPosManager.getActionPOSByName("ABORT");
+        postAction("SSCO::" + action.getCommand().get(0).getEvent());
 
-        if (isUsed()) {
-            terminal.setIdTransactionVoided(id);
-            ActionPOS action = actionPosManager.getActionPOSByName("ABORT");
-            postAction("SSCO::" + action.getCommand().get(0).getEvent());
-
-            logger.debug("Exit");
-            return true;
-        }
-        logger.info("No user logged to process abort");
-        return false;
+        logger.debug("Exit");
     }
 
     @Override
-    public boolean suspendTransactionRequest(String id) {
+    public void suspendTransactionRequest(String id) {
         logger.debug("Enter");
-
-        if (isUsed()) {
-            ActionPOS action = actionPosManager.getActionPOSByName("SUSPEND");
-            postAction("SSCO::" + action.getCommand().get(0).getEvent());
-
-            logger.debug("Exit");
-            return true;
-        }
-        logger.info("No user logged to process suspend");
-        return false;
+        ActionPOS action = actionPosManager.getActionPOSByName("SUSPEND");
+        postAction("SSCO::" + action.getCommand().get(0).getEvent());
+        logger.debug("Exit");
     }
 
     @Override
-    public boolean enterTenderModeRequest() {
+    public void enterTenderModeRequest() {
         logger.debug("Enter");
-        if (isUsed()) {
-            ActionPOS action = actionPosManager.getActionPOSByName("TOTAL");
-            postAction("SSCO::" + action.getCommand().get(0).getEvent());
-
-            logger.debug("Exit");
-            return true;
-        }
-        logger.info("No user logged to process totalization");
-        return false;
+        ActionPOS action = actionPosManager.getActionPOSByName("TOTAL");
+        postAction("SSCO::" + action.getCommand().get(0).getEvent());
+        logger.debug("Exit");
     }
 
     @Override
-    public boolean exitTenderModeRequest() {
+    public void exitTenderModeRequest() {
         logger.debug("Enter");
-        if (isUsed()) {
-            ActionPOS action = actionPosManager.getActionPOSByName("CLEAR");
-            postAction("SSCO::" + action.getCommand().get(0).getEvent());
-
-            logger.debug("Exit");
-            return true;
-        }
-        logger.info("No user logged to process exit tenderization");
-        return false;
+        ActionPOS action = actionPosManager.getActionPOSByName("CLEAR");
+        postAction("SSCO::" + action.getCommand().get(0).getEvent());
+        logger.debug("Exit");
     }
 
     private String loyaltyInfoCompose(SscoCustomer sscoCustomer) {
@@ -691,48 +683,34 @@ public class SscoPosManager implements SscoPosManagerInterface {
     }
 
     @Override
-    public boolean loyaltyRequest(SscoCustomer sscoCustomer) {
-        if (isUsed()) {
-            ActionPOS action = actionPosManager.getActionPOSByName(sscoCustomer.getCountryCode().length() == 0 ? "CUSTOMER_CARD" : "CUSTOMER_MOBILE");
-            String cmd = "SSCO:" + loyaltyInfoCompose(sscoCustomer) + ":" + action.getCommand().get(0).getEvent();
-            postAction(cmd);
-
-            return true;
-        } else {
-            logger.info("No user logged to process loyaltyRequest");
-        }
-        return false;
+    public void loyaltyRequest(SscoCustomer sscoCustomer) {
+        logger.debug("Enter");
+        ActionPOS action = actionPosManager.getActionPOSByName(sscoCustomer.getCountryCode().length() == 0 ? "CUSTOMER_CARD" : "CUSTOMER_MOBILE");
+        String cmd = "SSCO:" + loyaltyInfoCompose(sscoCustomer) + ":" + action.getCommand().get(0).getEvent();
+        postAction(cmd);
+        logger.debug("Exit");
     }
 
-    public boolean airMilesRequest(SscoCustomer sscoCustomer) {
-        if (isUsed()) {
-            ActionPOS action = actionPosManager.getActionPOSByName("IDENT");
-            String cmd = "SSCO::" + action.getCommand().get(0).getEvent();
-            postAction(cmd);
+    @Override
+    public void airMilesRequest(SscoCustomer sscoCustomer) {
+        logger.debug("Enter");
+        ActionPOS action = actionPosManager.getActionPOSByName("IDENT");
+        String cmd = "SSCO::" + action.getCommand().get(0).getEvent();
+        postAction(cmd);
 
-            action = actionPosManager.getActionPOSByName("ENTER");
-            cmd = "SSCO:" + loyaltyInfoCompose(sscoCustomer) + ":" + action.getCommand().get(0).getEvent();
-            postAction(cmd);
-
-            return true;
-        } else {
-            logger.info("No user logged to process loyaltyRequest");
-        }
-        return false;
+        action = actionPosManager.getActionPOSByName("ENTER");
+        cmd = "SSCO:" + loyaltyInfoCompose(sscoCustomer) + ":" + action.getCommand().get(0).getEvent();
+        postAction(cmd);
+        logger.debug("Exit");
     }
 
-    public boolean clearRequest() {
-        if (isUsed()) {
-
-            ActionPOS action = actionPosManager.getActionPOSByName("CLEAR");
-
-            String cmd = "SSCO::" + action.getCommand().get(0).getEvent();
-            postAction(cmd);
-            return true;
-        } else {
-            logger.info("No user logged to process ExitTenderMode");
-        }
-        return false;
+    @Override
+    public void clearRequest() {
+        logger.debug("Enter");
+        ActionPOS action = actionPosManager.getActionPOSByName("CLEAR");
+        String cmd = "SSCO::" + action.getCommand().get(0).getEvent();
+        postAction(cmd);
+        logger.debug("Exit");
     }
 
     public String findUPCbyItemNumber(SscoItem item) {
@@ -768,6 +746,18 @@ public class SscoPosManager implements SscoPosManagerInterface {
 
     @Override
     public void tenderResponse() {
+        processor.sendResponses(new SscoError());
+    }
+
+    @Override
+    public void tenderSelectedResponse() {
+        if (processor instanceof RequestTotalRequestProcessor) {
+            processor.sendResponses(new SscoError());
+        }
+    }
+
+    @Override
+    public void enterExitTrainingModeResponse() {
         processor.sendResponses(new SscoError());
     }
 

@@ -15,11 +15,12 @@ public class PosGPEPaymentResult implements GpeResultProcessorInterface {
 	public void processResult(Map messageMap) {
 		logger.info("ENTER processResult");
 
-		PosGPE.sts = 2;
 		GpeResult_ReceiptDataInterface data = DefaultGpe.createPaymentResultData(messageMap);
-		Integer authorizedAmount = data.getAuthorizedAmount();
-
-		logger.info("authorizedAmount [" + authorizedAmount + "]");
+		if (!messageMap.containsKey("Failure")) {
+			PosGPE.sts = 2;
+			Integer authorizedAmount = data.getAuthorizedAmount();
+			logger.info("authorizedAmount [" + authorizedAmount + "]");
+		}
 
 		List receipt = data.getReceipt();
 		CreditCardVoucher lineToAdd = new CreditCardVoucher();
@@ -61,23 +62,26 @@ public class PosGPEPaymentResult implements GpeResultProcessorInterface {
 		DevIo.pushVirtualVoucherElements(lineToAddEnd);
 		logger.info("linedescr 4 [" + lineToAddEnd.getPrintedLineDescription() + "]");
 
-		DevIo.addVoucherCopyNumber(data.getCopiesToPrint().intValue());
+		if (!messageMap.containsKey("Failure")) {
+			DevIo.addVoucherCopyNumber(data.getCopiesToPrint().intValue());
 
-		PosGPE.setLastEptsReceiptData(data);
+			PosGPE.setLastEptsReceiptData(data);
+			if (PosGPE.getFlagEptsVoid()) {
+				logger.info("flagEptsVoid 2");
+				PosGPE.setAmountEptsVoid(data.getAuthorizedAmount().longValue());
+			}
 
-		if (PosGPE.getFlagEptsVoid()) {
-			logger.info("flagEptsVoid 2");
-			PosGPE.setAmountEptsVoid(data.getAuthorizedAmount().longValue());
+			logger.info("Epts Payment Info:");
+			logger.info("AuthAmount: " + data.getAuthorizedAmount().longValue());
+			logger.info("PosTenderId: " + data.getPosTenderId().intValue());
+			logger.info("Authoriz Code: " + data.getAuthorizationCode());
+			logger.info("Transaction Date: " + data.getTransactionDate());
+			logger.info("Transaction Time: " + data.getTransactionTime());
+			logger.info("Terminal Code: " + data.getTerminalCode());
+			logger.info("Card Number: " + data.getCardNumber());
+		} else {
+			DevIo.addVoucherCopyNumber(1);
 		}
-
-		logger.info("Epts Payment Info:");
-		logger.info("AuthAmount: " + data.getAuthorizedAmount().longValue());
-		logger.info("PosTenderId: " + data.getPosTenderId().intValue());
-		logger.info("Authoriz Code: " + data.getAuthorizationCode());
-		logger.info("Transaction Date: " + data.getTransactionDate());
-		logger.info("Transaction Time: " + data.getTransactionTime());
-		logger.info("Terminal Code: " + data.getTerminalCode());
-		logger.info("Card Number: " + data.getCardNumber());
 
 		logger.info("EXIT processResult");
 	}

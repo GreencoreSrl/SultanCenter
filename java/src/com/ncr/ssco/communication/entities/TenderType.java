@@ -9,6 +9,7 @@ public class TenderType {
     private String actionPOS;
     private boolean additionalClear;
     private boolean rounded;
+    private int genericException;
     private boolean higherThanAmount;
 
     public TenderType(TenderTypeEnum tenderTypeSSSCO, String actionPOS, boolean additionalClear) {
@@ -60,5 +61,13 @@ public class TenderType {
 
     public void setHigherThanAmount(boolean higherThanAmount) {
         this.higherThanAmount = higherThanAmount;
+    }
+
+    public int getGenericException() {
+        return genericException;
+    }
+
+    public void setGenericException(int genericException) {
+        this.genericException = genericException;
     }
 }

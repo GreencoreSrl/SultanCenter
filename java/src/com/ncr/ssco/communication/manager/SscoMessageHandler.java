@@ -93,6 +93,8 @@ public class SscoMessageHandler {
         addProcessor(AIR_MILES, new AirMilesRequestProcessor(this));
         addProcessor(ENTER_TENDER_MODE, new EnterTenderModeRequestProcessor(this));
         addProcessor(EXIT_TENDER_MODE, new ExitTenderModeRequestProcessor(this));
+        addProcessor(ENTER_TRAINING_MODE, new EnterTrainingModeRequestProcessor(this));
+        addProcessor(EXIT_TRAINING_MODE, new ExitTrainingModeRequestProcessor(this));
         addProcessor(DATA_NEEDED_REPLY, new DataNeededReplyProcessor(this));
         addProcessor(CUSTOM_ASSIST_MODE, new CustomAssistModeRequestProcessor(this));
         addProcessor(CUSTOM_ASSIST_TENDER_MODE, new CustomAssistModeTenderRequestProcessor(this));
@@ -225,7 +227,11 @@ public class SscoMessageHandler {
     }
 
     public synchronized Properties getDataneededProperties() {
-        return dataneededProperties;
+        Properties properties = SscoLanguageHandler.getInstance().getDataNeededProperties(getCustomerLanguage());
+        if (properties == null) {
+            properties = dataneededProperties;
+        }
+        return  properties;
     }
 
     private synchronized void setListField(ResponseToSsco responseToSsco, String name, List<String> values) {
@@ -255,7 +261,9 @@ public class SscoMessageHandler {
             responseToSsco.setIntField("Type", dataNeeded.getType().getCode());
             responseToSsco.setIntField("Id", dataNeeded.getId());
             responseToSsco.setIntField("Mode", dataNeeded.getMode());
-
+            if (dataNeeded.getTableName() != null) {
+                responseToSsco.setStringField("TableName", dataNeeded.getTableName());
+            }
             setListField(responseToSsco, "TopCaption", dataNeeded.getTopCaptionLines());
             setListField(responseToSsco, "TopCaptionSubstitutions", dataNeeded.getTopCaptionSubstitutionsLines());
             setListField(responseToSsco, "TopCaptionTableName", dataNeeded.getTopCaptionTableNameLines());
@@ -318,5 +326,13 @@ public class SscoMessageHandler {
 
     public synchronized void setCustomerLanguage(String lang) {
         languageManager.setCustomerLanguage(lang);
+    }
+
+    public synchronized String getPrimaryLanguage() {
+        return languageManager.getPrimaryLanguage();
+    }
+
+    public synchronized String getCustomerLanguage() {
+        return languageManager.getCustomerLanguage();
     }
 }

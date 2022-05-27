@@ -1,6 +1,7 @@
 package com.ncr.ssco.communication.requestprocessors;
 
 import com.ncr.ssco.communication.entities.pos.SscoError;
+import com.ncr.ssco.communication.entities.pos.SscoItem;
 import com.ncr.ssco.communication.entities.pos.SscoItemPromotion;
 import com.ncr.ssco.communication.entities.pos.SscoTotalAmount;
 import com.ncr.ssco.communication.manager.SscoMessageHandler;
@@ -44,6 +45,7 @@ public class TransactionProcessor extends DefaultRequestProcessor {
         ResponseToSsco responseToSsco = getMessageHandler().createResponseToSsco("EndTransaction");
         responseToSsco.setStringField("Id", idTransaction);
 
+        getManager().endTransaction();
         SscoStateManager.getInstance().setFutureState("Open");
         getMessageHandler().sendResponseToSsco(responseToSsco);
 
@@ -63,20 +65,20 @@ public class TransactionProcessor extends DefaultRequestProcessor {
         logger.debug("Exit");
     }
 
-    public void syncPromotions() {
+    public void syncPromotions(SscoItem itemResponse) {
         logger.debug("Enter");
 
         List<SscoItemPromotion> promotions = getManager().getTransaction().getPromotions();
         List<SscoItemPromotion> cursor = new ArrayList<SscoItemPromotion>(promotions);
         for (SscoItemPromotion promo : cursor) {
             if (!promo.isPromoInviata()) {
+                promo.setAssociatedItemNumber(itemResponse.getItemNumber());
                 if (promo.getDiscountAmount() > 0) {
-
                     ResponseToSsco responseToSsco = getMessageHandler().createResponseToSsco("ItemSold");
 
                     responseToSsco.setIntField("ItemNumber", promo.getItemNumber());
                     responseToSsco.setIntField("DiscountAmount", promo.getDiscountAmount());
-                    responseToSsco.setIntField("AssociateItemNumber", promo.getAssociateItemNumber());
+                    responseToSsco.setIntField("AssociatedItemNumber", promo.getAssociatedItemNumber());
                     responseToSsco.setStringField("DiscountDescription.1", promo.getDiscountDescription1());
                     responseToSsco.setIntField("ShowRewardPoints", promo.getShowRewardPoints());
                     responseToSsco.setIntField("RewardLocation", promo.getRewardLocation());
@@ -86,7 +88,7 @@ public class TransactionProcessor extends DefaultRequestProcessor {
                     logger.info("PROMOTION ADDED");
                     logger.info("ItemNumber: " + promo.getItemNumber());
                     logger.info("DiscountAmount: " + promo.getDiscountAmount());
-                    logger.info("AssociateItemNumber: " + promo.getAssociateItemNumber());
+                    logger.info("AssociatedItemNumber: " + promo.getAssociatedItemNumber());
                     logger.info("DiscountDescription.1: " + promo.getDiscountDescription1());
                     logger.info("ShowRewardPoints: " + promo.getShowRewardPoints());
                     logger.info("RewardLocation: " + promo.getRewardLocation());
@@ -94,7 +96,7 @@ public class TransactionProcessor extends DefaultRequestProcessor {
                     logger.info("PROMOTION REVERSAL ");
                     logger.info("ItemNumber: " + promo.getItemNumber());
                     logger.info("DiscountAmount: " + promo.getDiscountAmount());
-                    logger.info("AssociateItemNumber: " + promo.getAssociateItemNumber());
+                    logger.info("AssociatedItemNumber: " + promo.getAssociatedItemNumber());
                     logger.info("DiscountDescription.1: " + promo.getDiscountDescription1());
 
                     boolean found = false;
@@ -102,7 +104,8 @@ public class TransactionProcessor extends DefaultRequestProcessor {
 
                         if (promoReversal.getDiscountAmount() == -promo.getDiscountAmount()) {
                             if (promoReversal.getDiscountDescription1().equals(promo.getDiscountDescription1())) {
-                                if (promoReversal.getItem().index == promo.getItem().index) {
+                                //if (promoReversal.getItem().index == promo.getItem().index) {
+                                if (promoReversal.getAssociatedItemNumber() == promo.getAssociatedItemNumber()) {
                                     logger.info("PROMOTION REVERSAL FOUND -- same entryId = " + promo.getItem().index);
                                     ResponseToSsco responseToSsco = getMessageHandler().createResponseToSsco("ItemVoided");
                                     responseToSsco.setStringField("UPC", "0");

@@ -54,6 +54,8 @@ public final class ProcessorConstants {
     public static final String ENTER_ASSIST_MODE = "EnterAssistMode";
     public static final String EXIT_ASSIST_MODE = "ExitAssistMode";
     public static final String EFT_SETTLE = "EcrSettle";   //EFT-SETTLE-CGA#A
+    public static final String ENTER_TRAINING_MODE = "EnterTrainingMode";
+    public static final String EXIT_TRAINING_MODE = "ExitTrainingMode";
 
     // Choices Constants
     public static final String ENTER_EXIT_TRAINING = "16";

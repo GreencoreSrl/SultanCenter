@@ -1,0 +1,36 @@
+<component name="libraryTable">
+  <library name="libs">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/com.sun.jersey.jersey-core-1.4.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/gson.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/ARSBAPIv4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/ePos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/hk2-locator-2.3.0-b10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/hk2-api-2.3.0-b10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/comm.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/hk2-utils-2.3.0-b10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/google-collections.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/ECR_1_0_6 alshaya.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/ComponentVersion.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jersey-client.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jersey-common-2.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jspComm.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jssc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/log4j-1.2.17.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/NCRFrequentShopper.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/Serialio.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/xerces.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/utils.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-lang-2.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/EcrObject.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/EyePayWrapper.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/ToneTag_FAB ECR_Integration_V2.14.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/gpe.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mada_pro_v1.0.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jcl_editor.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jpos1135.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

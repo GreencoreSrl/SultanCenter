@@ -69,14 +69,15 @@ class GdSales extends Action {
     static void itm_collect(int code) {
         Itmdc.IDC_write('S', code, itm.stat, itm.number, itm.cnt, itm.amt - itm.pov - itm.pos);
         Itmdc.IDC_write('W', 0, itm.type, itm.eanupc, itm.index + 1, 0);
-        if (GdPsh.isGiftCard(itm)) // PSH-ENH-001-AMZ#ADD -- idc record g
+        if (GdPsh.getInstance().isGiftCard(itm)) // PSH-ENH-001-AMZ#ADD -- idc record g
             Itmdc.IDC_write('g', 0, itm.gCardTopup ? 1 : 0, itm.gCardSerial, 0, 0); // PSH-ENH-001-AMZ#ADD -- idc record g
         if (itm.prm >= 1)
             Itmdc.IDC_write('s', code, itm.stat, itm.number, itm.cnt, itm.originalPrice);
 
         //PSH-ENH-20151120-CGA#A BEG
-        if (GdPsh.isUtility(itm)) {
+        if (GdPsh.getInstance().isUtility(itm)) {
             Itmdc.IDC_write('u', 0, 0, itm.utilityTransaction, 0, 0);
+            Itmdc.IDC_write('u', 0, 1, itm.utilitySerial, 0, 0);
             logger.info("write record u into idc file");
         }
         //PSH-ENH-20151120-CGA#A END
@@ -92,7 +93,7 @@ class GdSales extends Action {
             itm_reason(code, itm.amt - itm.pos);
         if (tra.mode <= M_GROSS)
             if (cus_age[itm.ages] > 0) {
-                tra.age = cus.age;
+                tra.age = cus.getAge();
                 Itmdc.IDC_write('Q', trx_pres(), 2, editNum(ckr_age[itm.ages], 2) + editNum(cus_age[itm.ages], 2), 0,
                         tra.age);
             }
@@ -234,7 +235,7 @@ class GdSales extends Action {
         prtLine.upto(36, editMoney(0, itm.amt));
         if ((option & 2) == 0)
             prtLine.push(vat[itm.vat].text.substring(4, 6));
-        if ((option & 1) == 0)
+        if (!GdTsc.isEnabled() && (option & 1) == 0) // TSC-ENH2014-6-AMZ#ADD
             prtLine.onto(38, Mnemo.getText(58).substring(0, 1) + itm.sit);
         else
             prtLine.index = 40;
@@ -260,30 +261,23 @@ class GdSales extends Action {
             if (itm.prcom > 0)
                 prtLine.init(' ').push(marks.charAt(5)).push(editNum(itm.prcom, 8)).book(station & 3);
             if (itm.prpos != itm.prpov) {
-                lREG.read(reg.find(3, 1), lREG.LOCAL);
-                prtLine.init(lREG.text).onto(13, editReason(1)).onto(20, editPrice(itm.prpov)).skip()
-                        .push(marks.substring(8, 10)).book(station & 3);
+                if (!tra.cleanPo) {
+                    lREG.read(reg.find(3, 1), lREG.LOCAL);
+                    prtLine.init(lREG.text).onto(13, editReason(1)).onto(20, editPrice(itm.prpov)).skip()
+                            .push(marks.substring(8, 10)).book(station & 3);
+                }
             }
         }
-        if ((itm.flag & F_WEIGHT) > 0)
-            GdScale.book(station);
-        else if (itm.qty != 1 || itm.prm > 0 || itm.unit != 10 || (option & 0x80) > 0) {
-            prtLine.init(' ');
-            if (itm.prm == 0) {
-                if (itm.unit != 10) {
-                    prtLine.push(editTxt(itm.cnt, 4) + " x").upto(12, editDec(itm.unit, 1));
-                } else
-                    prtLine.push(editTxt(itm.cnt, 12));
-            } else
-                prtLine.upto(12, editDec(itm.dec, 3));
-            prtLine.upto(15, itm.ptyp).skip().push(itm.ext > 0 ? '/' : marks.charAt(0)).skip(3);
-            if (itm.ext == 0)
-                prtLine.push(editPrice(itm.prpos)).skip();
-            prtLine.push(marks.substring(10, 12));
-            prtLine.book(station);
+
+        if (!GdSarawat.getInstance().isItemSortLogic()) printQtyInfo(station, option, marks);
+
+        String number = itm.number;
+        if (GdTsc.isEnabled() && !number.equals(itm.eanupc)) {
+            number = itm.eanupc;
         }
-        if (itm.number.length() > 0) {
-            prtLine.init(editIdent(itm.number, (itm.flag & F_SPCSLS) > 0));
+
+        if (number.length() > 0) {
+            prtLine.init(editIdent(number, (itm.flag & F_SPCSLS) > 0));
             int msk = (option & 0x10) > 0 ? 1 : 7;
             if ((option & 0x20) > 0)
                 msk &= 6;
@@ -298,12 +292,13 @@ class GdSales extends Action {
             prtLine.push(itm.mark);
         else if (itm.prpov != itm.price)
             prtLine.push(marks.charAt(3));
-        if ((option & 0x20) > 0 && itm.number.length() > 0) {
+        if ((option & 0x20) > 0 && number.length() > 0) {
             prtLine.book(station & 6);
-            prtLine.onto(0, editIdent(itm.number, (itm.flag & F_SPCSLS) > 0));
+            prtLine.onto(0, editIdent(number, (itm.flag & F_SPCSLS) > 0));
             prtLine.book(station & 1);
         } else
             prtLine.book(station);
+        if (GdSarawat.getInstance().isItemSortLogic()) printQtyInfo(station, option, marks);
         if (itm.qual.length() > 0)
             prtLine.init(itm.qual).book(station);
         // EMEA-UPB-DMA
@@ -327,6 +322,26 @@ class GdSales extends Action {
             prtLine.init(Mnemo.getText(76) + itm.utilityTransaction).book(station);
         } */
         // PSH-ENH-20151120-CGA#A END
+    }
+
+    private static void printQtyInfo(int station, int option, String marks) {
+        if ((itm.flag & F_WEIGHT) > 0)
+            GdScale.book(station);
+        else if (itm.qty != 1 || itm.prm > 0 || itm.unit != 10 || (option & 0x80) > 0) {
+            prtLine.init(' ');
+            if (itm.prm == 0) {
+                if (itm.unit != 10) {
+                    prtLine.push(editTxt(itm.cnt, 4) + " x").upto(12, editDec(itm.unit, 1));
+                } else
+                    prtLine.push(editTxt(itm.cnt, 12));
+            } else
+                prtLine.upto(12, editDec(itm.dec, 3));
+            prtLine.upto(15, itm.ptyp).skip().push(itm.ext > 0 ? '/' : marks.charAt(0)).skip(3);
+            if (itm.ext == 0)
+                prtLine.push(editPrice(itm.prpos)).skip();
+            prtLine.push(marks.substring(10, 12));
+            prtLine.book(station);
+        }
     }
 
     static void itm_line() {
@@ -376,7 +391,13 @@ class GdSales extends Action {
             itm_reason(1, itm.pos);
         }
         itm.dsc = getDiscount();
-        Itmdc.IDC_write('C', 9, itm.sit, itm.number, itm.cnt, itm.dsc);
+
+        // SURCHARGEPRICE-SSAM#A BEG
+        if (!SurchargeManager.getInstance().isEnabledNetSurcharge()) {
+            Itmdc.IDC_write('C', 9, itm.sit, itm.number, itm.cnt, itm.dsc);
+        }
+        // SURCHARGEPRICE-SSAM#A END
+
         itm.idc = lTRA.getSize();
         if (itm.dsc != 0)
             itm_discount();
@@ -391,9 +412,18 @@ class GdSales extends Action {
         if ((itm.spf1 & 0xF0) == 0 && (itm.flag & F_DPOSIT) == 0)
             tra.cnt += itm.cnt;
         tra.amt += itm.amt;
-        itm_print(3);
+        //INTEGRATION-PHILOSHOPIC-CGA#A BEG
+        int stationSelfSellItem = 3;
+        if (GdPsh.getInstance().isEnabled() && !GdPsh.isEnabledPrintAllGiftItem()) {
+            if ((itm.flg2 & F_GRATIS) >0) {
+                logger.debug("Self sell items are not printed");
+                stationSelfSellItem = 1;
+            }
+        }
+        itm_print(stationSelfSellItem);
         if (itm.prpnt != 0) {
             Itemdata sav = itm;
+            //INTEGRATION-PHILOSHOPIC-CGA#A END
             itm = sav.copy();
             itm.text = Mnemo.getText(63);
             itm.pnt = itm.cnt * itm.prpnt;
@@ -452,7 +482,7 @@ class GdSales extends Action {
         DevIo.slpRemove();
     }
 
-    static void itm_ssco(Itemdata sscoItem, Itemdata sscoLinkedItem) {
+    static void itmSsco(Itemdata sscoItem, Itemdata sscoLinkedItem) {
         SscoItem item = new SscoItem();
         SscoPosManager sscoPosManager = SscoPosManager.getInstance();
 
@@ -462,9 +492,9 @@ class GdSales extends Action {
             Vector<Itemdata> itemPromotions = sscoPosManager.getCurrentItemPromotions();
            sscoPosManager.resetCurrentItemPromotions();
 
-            for (Itemdata sconto : itemPromotions) {
-                if (sconto.amt != 0) {
-                    SscoItemPromotion promo = new SscoItemPromotion(sconto, sscoPosManager.itemNumberSetting(), -(int) sconto.amt, item.getItemNumber(), sconto.text, 1, 1);
+            for (Itemdata discount : itemPromotions) {
+                if (discount.amt != 0) {
+                    SscoItemPromotion promo = new SscoItemPromotion(discount, sscoPosManager.itemNumberSetting(), -(int) discount.amt, item.getItemNumber(), discount.text, 1, 1);
                     sscoPosManager.addPromotion(promo);
                 }
             }
@@ -478,6 +508,9 @@ class GdSales extends Action {
                 if (sscoItem.IsWeightItem()) {
                     item.setWeight(sscoItem.dec);
                     item.setWeightPrice(sscoItem.prlbl);
+                } else if (sscoItem.IsDecimalQuantityItem()) {
+                    item.setWeight(sscoItem.dec);
+                    item.setWeightPrice(sscoItem.price);
                 }
 
                 item.setEntryId(itm.index + 1);
@@ -522,7 +555,7 @@ class GdSales extends Action {
             itm = pit;
         }
         itm_line();
-        itm_ssco(itm, ref);
+        itmSsco(itm, ref);
 
         if (tra.res > 0)
             return GdTrans.itm_clear();
@@ -568,13 +601,14 @@ class GdSales extends Action {
             tra.prpnt -= itm.prpnt;
         }
         // PSH-ENH-001-AMZ#END
-        prtLine.init(itm.text).onto(20, editPoints(itm.pnt, false)).book(3);
+        if (!Promo.isNoPrintPoints())    //NOPRINTPOINTS-CGA#A
+            prtLine.init(itm.text).onto(20, editPoints(itm.pnt, false)).book(3);
     }
 
     /**
      * item clear
      **/
-    int action0(int spec) {
+    public int action0(int spec) {
         if (tra.isActive()) {
             dspLine.init(' ');
             dspBmap = "DPT_0000";
@@ -587,16 +621,16 @@ class GdSales extends Action {
     /**
      * item preselect
      **/
-    int action1(int spec) {
+    public int action1(int spec) {
         int sts;
 
         // PSH-ENH-001-AMZ#BEG -- topup item preselect
         if (spec == 10) {
-            if (!GdPsh.isEnabled()) {
+            if (!GdPsh.getInstance().isEnabled()) {
                 return 7; // unavailable
             }
             // AMZ-2017-003-004#BEG
-            if (!GdPsh.isEnabledSMASH()) {
+            if (!GdPsh.getInstance().isSmashEnabled()) {
                 return 7; // unavailable
             }
             // AMZ-2017-003-004#END
@@ -670,7 +704,7 @@ class GdSales extends Action {
     /**
      * new price
      **/
-    int action2(int spec) {
+    public int action2(int spec) {
         int price = input.scanNum(input.num);
 
         if (price == 0)
@@ -685,7 +719,7 @@ class GdSales extends Action {
     /**
      * commission
      **/
-    int action3(int spec) {
+    public int action3(int spec) {
         int value = input.scanNum(input.num);
 
         if (value == 0)
@@ -697,7 +731,7 @@ class GdSales extends Action {
     /**
      * credit rate
      **/
-    int action4(int spec) {
+    public int action4(int spec) {
         int sc = sc_value(M_ITMDSC), sts;
         int rate = 0, limit = rbt[pit.sit].rate_item;
 
@@ -737,7 +771,7 @@ class GdSales extends Action {
     /**
      * credit amount
      **/
-    int action5(int spec) {
+    public int action5(int spec) {
         int sc = sc_value(M_ITMCRD), sts;
         int limit = rbt[pit.sit].rate_ival;
         long amt = Math.abs(pit.amt + pit.crd);
@@ -762,11 +796,10 @@ class GdSales extends Action {
     /**
      * repetition
      **/
-    int action6(int spec) {
-		if (GdPsh.isUtility(pit) || GdPsh.isGiftCard(pit)) {
+    public int action6(int spec) {
+		if (GdPsh.getInstance().isUtility(pit) || GdPsh.getInstance().isGiftCard(pit)) {
 			logger.info("inserted item code - the item is utility");
 			logger.info("code: " + pit.number);
-
 			return 7;
 		}
 
@@ -780,6 +813,11 @@ class GdSales extends Action {
             return 5;
         if ((pit.flag & F_WEIGHT) > 0)
             return 5;
+        // TSC-MOD2014-AMZ#BEG
+        if ((pit.flag & F_QTYPRH) > 0) {
+            return 5;
+        }
+        // TSC-MOD2014-AMZ#END
         if (pit.spec == 'P' || pit.spec == 'X')
             return 7;
         if (pit.qual.length() > 0)
@@ -807,7 +845,7 @@ class GdSales extends Action {
     /**
      * error correct
      **/
-    int action7(int spec) {
+    public int action7(int spec) {
         int ind = spec > 0 ? -1 : pit.index, sts;
 
         if ((ind = TView.syncIndex(ind)) < 0)
@@ -826,9 +864,9 @@ class GdSales extends Action {
             if ((sts = Match.chk_reason(8)) > 0)
                 return sts;
         // PSH-ENH-001-AMZ#BEG -- cancel gift card error correct
-        if (GdPsh.isGiftCard(ptr)) {
+        if (GdPsh.getInstance().isGiftCard(ptr)) {
             // for topup item too
-            if ((sts = GdPsh.cancelGiftCard(ptr)) > 0) {
+            if ((sts = GdPsh.getInstance().cancelGiftCard(ptr)) > 0) {
                 return sts;
             }
         }
@@ -845,10 +883,10 @@ class GdSales extends Action {
             return sts;
         }
         //PSH-ENH-20151120-CGA#A BEG
-        if (GdPsh.isUtility(ptr)) {
+        if (GdPsh.getInstance().isUtility(ptr)) {
             logger.info("error correct - delete item from list");
             // for topup item too
-            if ((sts = GdPsh.cancelBuyUtility(ptr)) > 0) {
+            if ((sts = GdPsh.getInstance().cancelBuyUtility(ptr)) > 0) {
                 logger.info("response from server: " + sts);
                 return sts;
             }
@@ -884,7 +922,7 @@ class GdSales extends Action {
     /**
      * slip validation
      **/
-    int action8(int spec) {
+    public int action8(int spec) {
         if (!DevIo.station(4))
             return 7;
         DevIo.slpInsert(0);
@@ -907,7 +945,7 @@ class GdSales extends Action {
     /**
      * quantity
      **/
-    int action9(int spec) {
+    public int action9(int spec) {
         int qty = itm.qty > 0 ? itm.qty : 1, sts;
         long dec = input.scanNum(input.num);
 

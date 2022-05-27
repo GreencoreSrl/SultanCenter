@@ -1491,6 +1491,27 @@ class BinIo extends DatIo {
 		open(null, "S_PLU" + id + ".DAT", 0);
 	}
 
+	//ECOMMERCE-SSAM#C BEG
+	/***************************************************************************
+	 * Constructor
+	 *
+	 * @param id
+	 *            String (3 chars) used as unique identification
+	 * @param keySize
+	 *            size of the record key in bytes
+	 * @param recSize
+	 *            record size in bytes including separators CR/LF
+	 * @param open
+	 * 	 *        if open or not the file
+	 ***************************************************************************/
+	BinIo(String id, int keySize, int recSize, boolean open) {
+		super(id, keySize, recSize);
+		if (open) {
+			open(null, "S_PLU" + id + ".DAT", 0);
+		}
+	}
+	//ECOMMERCE-SSAM#C END
+
 	/***************************************************************************
 	 * search by n iterative bisections (2 in the nth power = file size in records)
 	 *

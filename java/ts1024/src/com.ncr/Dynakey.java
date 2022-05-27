@@ -1,10 +1,10 @@
 package com.ncr;
 
-import com.ncr.Picture;
-
 import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
 
 public class Dynakey extends Picture
 {  int nbr;

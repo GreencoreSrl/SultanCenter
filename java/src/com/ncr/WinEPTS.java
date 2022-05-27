@@ -353,7 +353,7 @@ class WinEPTS extends EftIo {
 			return 1;
 		if (GdCusto.src_clu(input.pb, 1) > 0)
 			return 1;
-		if (type != cus.spec) {
+		if (type != cus.getSpec()) {
 			if (GdSigns.chk_autho(Mnemo.getInfo(38)) > 0)
 				return 1;
 		}

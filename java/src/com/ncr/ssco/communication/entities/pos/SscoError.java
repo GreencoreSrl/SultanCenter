@@ -11,8 +11,9 @@ public class SscoError {
     private int code;
     private String message = "";
     public static final int OK = 0;
-    public static final int ZERO_PRICED = 1005;
-    public static final int HIGHER_THAN_BALANCE = 1111;
+    public static final int ZERO_PRICED = 9005;
+    public static final int HIGHER_THAN_BALANCE = 9111;
+    public static final int CANT_SIGNOFF_NOW = 9112;
     public static final int DEFAULT = -99;
     public static final int ERROR = 9999;
 

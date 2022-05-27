@@ -183,12 +183,28 @@ public class Itemdata implements Cloneable {
 	public String utilityEnglishText = "";
     /** Utility arab text for print voucher **/
 	public String utilityArabText = "";
+	/** Utility pin **/
+	public String utilityPin = "";
     //PSH-ENH-20151120-CGA#A END
 	// SPINNEYS-ENH-DSC-SBE#A BEG
 	public boolean prchange = false;
 	// SPINNEYS-ENH-DSC-SBE#A END
 	public boolean coupon = false;
 	public int originalPrice;
+	// TSC-ENH2014-1-AMZ#BEG
+	/** Expiry date if present **/
+	String expdate = "";
+	// TSC-ENH2014-1-AMZ#END
+	public long round;
+	public int discountFlag;
+	public boolean qrcode;
+
+	//INTEGRATION-PHILOSHOPIC-CGA#A BEG
+	public String accountType = "";
+	public boolean accountNumberRequired;
+	//INTEGRATION-PHILOSHOPIC-CGA#A END
+
+	public EcommerceInfo ecommerceInfo = new EcommerceInfo();
 
 	/** set all signs depending on negative preselections **/
 	void sign() {
@@ -250,5 +266,35 @@ public class Itemdata implements Cloneable {
 
 	public boolean IsDecimalQuantityItem() {
 		return IsFlag(Struc.F_DECQTY);
+	}
+}
+
+class EcommerceInfo {
+	private int price;
+	private int unitPrice;
+	private int qty;
+
+	public int getPrice() {
+		return price;
+	}
+
+	public void setPrice(int price) {
+		this.price = price;
+	}
+
+	public int getUnitPrice() {
+		return unitPrice;
+	}
+
+	public void setUnitPrice(int unitPrice) {
+		this.unitPrice = unitPrice;
+	}
+
+	public int getQty() {
+		return qty;
+	}
+
+	public void setQty(int qty) {
+		this.qty = qty;
 	}
 }

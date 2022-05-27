@@ -34,7 +34,7 @@ public class VoidItemRequestProcessor extends TransactionProcessor {
                 sendResponses(new SscoError(SscoError.ZERO_PRICED, "Missing Price"));
             }
         }
-
+        getManager().sendAdditionalProcess(info, key);
         additionalProcessType = AdditionalProcessType.NONE;
         logger.debug("Exit");
     }
@@ -66,7 +66,7 @@ public class VoidItemRequestProcessor extends TransactionProcessor {
         logger.info("qta: " + qta);
         logger.info("scanned: " + scanned);
 
-        if (!getManager().voidItemRequest(itemRequest)) logger.warn("-- Warning ");
+        getManager().voidItemRequest(itemRequest);
 
         logger.debug("Exit");
     }
@@ -76,7 +76,7 @@ public class VoidItemRequestProcessor extends TransactionProcessor {
         logger.debug("Enter");
 
         if (sscoError.getCode() == SscoError.OK) {
-            syncPromotions();
+            syncPromotions(itemRequest);
             sendItemVoidedResponseToSsco(itemRequest, 0);
             sendTotalsResponse(sscoError);
         } else {

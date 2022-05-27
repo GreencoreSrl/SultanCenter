@@ -100,7 +100,7 @@ abstract class Magic extends Basis {
 					rcd_tbl[spf3 - 1] = lIDC.scanNum(2);
 			}
 			if (spf2 == 2)
-				cus.age = lIDC.skip(33).scanNum(8);
+				cus.setAge(lIDC.skip(33).scanNum(8));
 			break;
 		case 'S':
 		case 'I':

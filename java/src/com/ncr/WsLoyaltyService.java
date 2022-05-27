@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ncr.ssco.communication.manager.SscoPosManager;
+import com.ncr.struc.Customer;
 import com.ncr.wsLoyalty.data.BadCardResult;
 import com.ncr.wsLoyalty.data.CouponCode;
 import com.ncr.wsLoyalty.data.LoyaltyCustomer;
@@ -11,7 +12,6 @@ import com.ncr.wsLoyalty.data.PhoneCode;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import org.apache.log4j.Logger;
 
 import java.io.FileInputStream;
@@ -397,9 +397,9 @@ public class WsLoyaltyService {
             String[] tokens = layout.split(";");
             for (int index = 0; index < tokens.length; index++) {
                 if ("FirstName".equals(tokens[index])) {
-                    line.append(cus.name);
+                    line.append(cus.getName());
                 } else if ("LastName".equals(tokens[index])) {
-                    line.append(cus.nam2);
+                    line.append(cus.getNam2());
                 }
                 line.append(" ");
             }

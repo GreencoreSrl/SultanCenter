@@ -126,7 +126,8 @@ abstract class Clean extends Basis {
 					continue;
 				if (itm.pnt == 0)
 					continue;
-				prtLine.init(itm.text).onto(20, editPoints(itm.pnt, false)).book(2);
+				if (!Promo.isNoPrintPoints())    //NOPRINTPOINTS-CGA#A
+					prtLine.init(itm.text).onto(20, editPoints(itm.pnt, false)).book(2);
 			}
 			if (itm.id == 'Q') {
 				prtLine.init(itm.text).book(2);

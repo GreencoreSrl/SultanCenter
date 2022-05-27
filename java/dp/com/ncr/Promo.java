@@ -18,6 +18,8 @@ abstract class Promo extends Basis implements CONSTANT {
 
     private static final Logger logger = Logger.getLogger(Promo.class);
     private static List<clsFsRewardData> detailsList = new ArrayList<clsFsRewardData>();
+    private static boolean noPrintPoints = false;   //NOPRINTPOINTS-CGA#A
+
 
     static boolean isEnabled(int mask) {
         mask &= Integer.parseInt(fso_line.substring(0, 2), 16);
@@ -27,6 +29,12 @@ abstract class Promo extends Basis implements CONSTANT {
     static boolean isActive() {
         return active;
     }
+
+    //NOPRINTPOINTS-CGA#A BEG
+    static boolean isNoPrintPoints() {
+        return fso_line.substring(4, 6).equals("01");
+    }
+    //NOPRINTPOINTS-CGA#A END
 
     static void initialize() {
         if (!isEnabled(PROMO_FS)) return;
@@ -91,7 +99,7 @@ abstract class Promo extends Basis implements CONSTANT {
         clsFsCustomerData objFsCustomerData = new clsFsCustomerData();
         setCustomerData(objFsCustomerData);
         for (int ind = 0; ind < 10; ind++) {
-            if (rCLS.find("CV" + ind, cus.number) < 1) continue;
+            if (rCLS.find("CV" + ind, cus.getNumber()) < 1) continue;
             if (rCLS.block.items > 0) {
                 objFrequentShopper.SetInitialPromotionVariableValue(rCLS.block.items, rCLS.block.total);
                 logConsole(4, null, "PromoVar" + ind + " id="
@@ -210,37 +218,6 @@ abstract class Promo extends Basis implements CONSTANT {
     static void readTranDiscounts() {
         if (!isActive()) return;
 
-        //SARAWAT-ENH-20150507-CGA#A BEG
-        if (GdSarawat.getInstance().isAppliedDiscountPoints()) {
-            long valuePromoDiscount =  getPromovar(Long.parseLong("1" + CommunicationCapillaryForPoints.getInstance().getRedemptionPvDiscount()));
-            long promovarDiscount = Long.parseLong(CommunicationCapillaryForPoints.getInstance().getRedemptionPvDiscount());
-            long promovarPoints = Long.parseLong(CommunicationCapillaryForPoints.getInstance().getRedemptionPvPoints());
-
-            if(GdSarawat.getInstance().getDiscountPoints() != -valuePromoDiscount) {
-                Promo.setPromovar(promovarDiscount, 0);
-                Promo.setPromovar(promovarPoints, 0);
-            }
-        }
-        /*if (GdSarawat.getInstance().isAppliedDiscountCoupons()) {
-            ArrayList<RedeemCoupon> listCoupon = new ArrayList<RedeemCoupon>();
-            listCoupon = CommunicationCapillaryForCoupon.getInstance().getListCouponIsRedeemable();
-
-            for (int i = 0; i < listCoupon.size(); i++) {
-                long valuePromoCoupons = -com.ncr.Promo.getPromovar(Long.parseLong("4" + listCoupon.get(i).getCode()));
-
-                if (listCoupon.get(i).isApplied()) {
-                    logger.info("readTranDiscounts - coupon " + listCoupon.get(i).getCode() + " applied");
-
-                    if((!listCoupon.get(i).getDiscountType().equals("PERC") && listCoupon.get(i).getDiscount() != valuePromoCoupons) ||
-                            (listCoupon.get(i).getDiscountType().equals("PERC") && valuePromoCoupons == 0)) {
-
-                        com.ncr.Promo.setPromovar(Long.parseLong("1" + listCoupon.get(i).getCode()), 0);
-                    }
-                }
-            }
-        }  */
-        //SARAWAT-ENH-20150507-CGA#A END
-
         processComplexRewards(2);
     }
 
@@ -269,7 +246,7 @@ abstract class Promo extends Basis implements CONSTANT {
 
     private static void setCustomerData(clsFsCustomerData x) {
         int ind, pnts = 0;
-        String text = cus.name;
+        String text = cus.getName();
 
         if ((ind = text.indexOf(' ')) >= 0) {
             x.setTitle(text.substring(0, ind));
@@ -281,35 +258,35 @@ abstract class Promo extends Basis implements CONSTANT {
         }
         x.setLastName(text);
         if (WsLoyaltyService.getInstance().isWsLoyaltyEnabled()){
-            x.setFirstName(cus.name);
-            x.setLastName(cus.nam2);
+            x.setFirstName(cus.getName());
+            x.setLastName(cus.getNam2());
         }
-        text = cus.city;
+        text = cus.getCity();
         if ((ind = text.indexOf(' ')) >= 0) {
             x.setMainAddressZip(text.substring(0, ind));
             text = text.substring(ind).trim();
         }
         x.setMainAddressTown(text);
-        x.setMainAddressStreet(cus.adrs.trim());
-        x.setCustomerId(cus.number);
+        x.setMainAddressStreet(cus.getAdrs().trim());
+        x.setCustomerId(cus.getNumber());
         x.setEmployeeFlag(tra.spf2 == M_EMPDSC);
-        x.setMembershipLevel(cus.branch / 10);
+        x.setMembershipLevel(cus.getBranch() / 10);
         x.setCardStatus(0);
-        x.setCategory(cus.branch);
-        x.setCompanyName(cus.nam2.trim());
+        x.setCategory(cus.getBranch());
+        x.setCompanyName(cus.getNam2().trim());
         // Initialize the customer activity values
-        if (rCLS.find("C00", cus.number) > 0) {
+        if (rCLS.find("C00", cus.getNumber()) > 0) {
             text = editNum(rCLS.date, 6) + " " + editNum(rCLS.time, 6);
             x.setLastActivityDate(text);
             x.setTransactionCount(rCLS.block.trans);
         }
         clsFsAccumulationData objFsAccumulationData = new clsFsAccumulationData();
-        if (rCLS.find("CP0", cus.number) > 0) {
+        if (rCLS.find("CP0", cus.getNumber()) > 0) {
             objFsAccumulationData.setRewardCount(rCLS.block.items);
             objFsAccumulationData.setRewardAmount(rCLS.block.total);
         }
         for (ind = 5; ind < 9; ind++) {
-            if (rCLS.find("CP" + ind, cus.number) > 0) pnts += rCLS.block.items;
+            if (rCLS.find("CP" + ind, cus.getNumber()) > 0) pnts += rCLS.block.items;
         }
         objFsAccumulationData.setPromoPointsBalance(pnts);
         objFsAccumulationData.setPointsBalance(tra.pnt);
@@ -355,12 +332,6 @@ abstract class Promo extends Basis implements CONSTANT {
 
         boolean flag = itm.sit > 0;
 
-        // SARAWAT-ENH-20150507-CGA#A BEG
-        if (!CapillaryService.getInstance().isEnabled()) {
-            x.setDiscountableFlag(flag);
-            x.setMinimumOrderFlag(flag);
-        }
-        // SARAWAT-ENH-20150507-CGA#A END
         // SPINNEYS-ENH-DSC-SBE#A BEG
         if (GdSarawat.isEnableDsc()) {
             if (itm.prchange || (itm.spf1 & M_RETURN) > 0 || (itm.spf1 & M_TRRTRN) > 0) {
@@ -369,6 +340,11 @@ abstract class Promo extends Basis implements CONSTANT {
                 //x.setDiscountableFlag(false);
             }
         }
+//        if (cus.isNoPromo()) {
+//            x.setItemCode("9999999999999");
+//            x.setDepartment(Short.MAX_VALUE);
+//            x.setDiscountableFlag(false);
+//        }
         // SPINNEYS-ENH-DSC-SBE#A END
         if (itm.coupon) {
             x.setItemCode(itm.eanupc.trim().substring(0, 6));

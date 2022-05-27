@@ -49,6 +49,7 @@ public class DataNeeded {
     private int enableSecurity = 0;
     private int id = 0;
     private int mode = 0;
+    private int timeout;
 
     public class ClearDataNeeded extends DataNeeded {
         public ClearDataNeeded() {
@@ -110,10 +111,13 @@ public class DataNeeded {
 
             type = DataNeededType.valueOf(properties.getProperty(name + ".Type"));
             logger.debug("Type = " + type);
-            id = Integer.parseInt(properties.getProperty(name + ".Id").toString());
+            id = Integer.parseInt(properties.getProperty(name + ".Id"));
             logger.debug("Id = " + id);
-            mode = Integer.parseInt(properties.getProperty(name + ".Mode").toString());
+            mode = Integer.parseInt(properties.getProperty(name + ".Mode"));
             logger.debug("Mode = " + mode);
+            tableName = properties.getProperty(name + ".TableName");
+            timeout = Integer.parseInt(properties.getProperty(name + ".Timeout", "60000"));
+            logger.debug("Timeout = " + timeout);
 
             topCaptionLines = loadList(name, "TopCaption", properties);
             topCaptionSubstitutionsLines = loadList(name, "TopCaptionSubstitutions", properties);
@@ -483,5 +487,13 @@ public class DataNeeded {
 
     public void setHideInput(Integer hideInput) {
         this.hideInput = hideInput;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
 }

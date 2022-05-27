@@ -4,8 +4,9 @@ import com.ncr.ssco.communication.entities.AdditionalProcessType;
 import com.ncr.ssco.communication.manager.SscoPosManager;
 import org.apache.log4j.Logger;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 class GdPrice extends Action {
 
@@ -14,8 +15,8 @@ class GdPrice extends Action {
 	/* dlu / plu access */
 	/*                                                                 */
 	/*******************************************************************/
-	private static int enableCheckInput = 0;  // CHKINPUT-CGA#A
 	private static final Logger logger = Logger.getLogger(GdPrice.class);
+	final static SimpleDateFormat expDateParser = new SimpleDateFormat("ddMMyy"); // TSC-ENH2014-1-AMZ#ADD
 
     static int src_dlu(int key) {
 		if (lDLU.find(editKey(key, 4)) < 1)
@@ -53,7 +54,17 @@ class GdPrice extends Action {
 		return 0;
 	}
 
-	static int src_plu(String key) {
+	// TSC-ENH2014-1-AMZ#BEG
+	static int src_plu (String key){
+		int ret = src_plu_aux(key);
+
+		input.aux1 = "";
+		return ret;
+	}
+
+	static int src_plu_aux (String key) {
+	// TSC-ENH2014-1-AMZ#END
+	// static int src_plu (String key) // TSC-ENH2014-1-AMZ#DEL
 		for (plu.chaino = key;;) {
 			int sts = lPLU.find(key, rMNT.recno > 0);
 			if (sts < 1) {
@@ -79,13 +90,26 @@ class GdPrice extends Action {
             //10020048000000  00100000A1                            000 00001000
 			// PSH-ENH-001-AMZ#BEG
 			plu.gCard = lPLU.scan();
-			plu.xtra = lPLU.scan(9);
+			try {
+				plu.discountFlag = lPLU.scanHex(1);
+			} catch (Exception e) {
+				logger.error("Wrong field: ", e);
+			}
+			plu.xtra = lPLU.scan(8);
 			// PSH-ENH-001-AMZ#END
 			// plu.xtra = lPLU.scan (10); // PSH-ENH-001-AMZ#DEL
 			plu.flg2 = lPLU.scanHex(2);
 			plu.ages = lPLU.scanNum(1);
 			plu.spec = lPLU.scan();
 			plu.originalPrice = plu.price = lPLU.scanNum(8);
+			// TSC-ENH2014-1-AMZ#BEG
+			if (input.aux1.length() > 0) {
+				plu.price = Integer.parseInt(input.aux1.substring(0, 6));
+				plu.expdate = input.aux1.substring(6, 12);
+			} else {
+				plu.expdate = "";
+			}
+			// TSC-ENH2014-1-AMZ#END
 		} catch (NumberFormatException e) {
 			lPLU.error(e, false);
 			return 27;
@@ -116,7 +140,10 @@ class GdPrice extends Action {
 			if (sts > 0)
 				return sts;
 		}
-		if (!GdPsh.isGiftCard(plu)) // PSH-ENH-001-AMZ#ADD -- do not rely on past input price on gift cards
+
+		// SURCHARGEPRICE-SSAM#A BEG
+		if (!GdPsh.getInstance().isGiftCard(plu) || !SurchargeManager.getInstance().isEnabledNetSurcharge()) // PSH-ENH-001-AMZ#ADD -- do not rely on past input price on gift cards
+		// SURCHARGEPRICE-SSAM#A END
 			if (plu.price != 0)
 				Itmdc.chk_local(plu);
 
@@ -274,8 +301,23 @@ class GdPrice extends Action {
 		case '&':
 			info = (int) tnd[tnd_tbl[K_AltCur]].fc2hc(info);
 		case '$':
+			// TSC-MOD2014-AMZ#BEG
+			if (GdTsc.isQuantityCheckEnabled()) {
+				plu.flag |= F_QTYPRH;
+			}
+			// TSC-MOD2014-AMZ#END
+
+			//ECOMMERCE-SSAM#A BEG
+			// Setting for scale item barcode
+			if (plu.ecommerceInfo.getUnitPrice() != 0) {
+				plu.price = plu.ecommerceInfo.getPrice();
+				plu.prlbl = plu.ecommerceInfo.getUnitPrice();
+				break;
+			}
+			//ECOMMERCE-SSAM#A END
+
 			if ((plu.flag & F_WEIGHT + F_DECQTY) != F_WEIGHT + F_DECQTY) {
-				plu.prlbl = plu.price = info;
+				plu.prlbl = plu.price = plu.qrcode && plu.prpov != 0 ? plu.prpov : info;
 				break;
 			}
 			if ((plu.prlbl = plu.price) == 0)
@@ -283,6 +325,11 @@ class GdPrice extends Action {
 			plu.price = info;
 			break;
 		case '.':
+			// TSC-MOD2014-AMZ#BEG
+			if (GdTsc.isQuantityCheckEnabled()) {
+				plu.flag |= F_QTYPRH;
+			}
+			// TSC-MOD2014-AMZ#END
 			if (info > 0) {
 				if (plu.prm++ > 0)
 					return 4;
@@ -411,6 +458,13 @@ class GdPrice extends Action {
 			return 8;
 		if (tra.code == 7)
 			ptr.ext = 1;
+		// TSC-MOD2014-AMZ#BEG
+		if ((ptr.flag & F_QTYPRH) > 0) {
+			if (ptr.qty > 0) {
+				return 5;
+			}
+		}
+		// TSC-MOD2014-AMZ#END
 		if ((ptr.flag & F_WEIGHT) > 0) {
 			logger.info("spf1: " + ptr.spf1);
 			logger.info("flag: " + ptr.flag);
@@ -506,13 +560,14 @@ class GdPrice extends Action {
 					continue;
 				if ((sts = input.adjust(input.pnt)) > 0)
 					continue;
-				if (dat_valid(cus.age = input.scanDate(input.num))) {
+				cus.setAge(input.scanDate(input.num));
+				if (dat_valid(cus.getAge())) {
 					dspLine.show(1);
 					break;
 				}
 				sts = 8;
 			}
-			if (ctl.tooYoung(cus_age[ptr.ages], cus.age)) {
+			if (ctl.tooYoung(cus_age[ptr.ages], cus.getAge())) {
 				panel.display(2, ptr.text);
 				return 57;
 			}
@@ -613,17 +668,7 @@ class GdPrice extends Action {
 		return 0;
 	}
 
-	// CHKINPUT-CGA#A BEG
-	public static void loadMEAPParams(String txt) {
-		logger.debug("ENTER loadMEAPParams - txt: " + txt);
-
-		enableCheckInput = Integer.parseInt(txt.substring(0, 2));
-
-		logger.debug("EXIT loadMEAPParams - enableCheckInput: " + enableCheckInput);
-	}
-	// CHKINPUT-CGA#A END
-
-    //PSH-ENH-20151120-CGA#A BEG
+	//PSH-ENH-20151120-CGA#A BEG
     int menuUtility() {
         logger.debug("ENTER menuUtility");
 
@@ -743,7 +788,7 @@ class GdPrice extends Action {
     /**
 	 * view plu
 	 **/
-	int action0(int spec) {
+	public int action0(int spec) {
 		int sts;
 
 		if (input.num == 0)
@@ -808,13 +853,14 @@ class GdPrice extends Action {
 	/**
 	 * plu number
 	 **/
-	int action2(int spec) {
+	public int action2(int spec) {
 		int ind;
 
 		//QRCODE-SELL-CGA#A BEG
 		logger.info("input.qrcode: " + input.qrcode);
+		//if (spec == 0) input.qrcode = "29043361;48.20\r\n222695019154;19.15";
 		if (!input.qrcode.equals("")) {
-			handleQrCode();
+			QrCodeManager.getInstance().handleQrCode();
 
 			return 0;
 		}
@@ -833,7 +879,7 @@ class GdPrice extends Action {
         if (spec == 1) {
             logger.info("pressed utility key");
             // if (GdPsh.isEnabled()) { // AMZ-2017-003-004#DEL
-            if (GdPsh.isEnabled()&&GdPsh.isEnabledPXL()) { // AMZ-2017-003-004#ADD
+            if (GdPsh.getInstance().isEnabled() && GdPsh.getInstance().isPxlEnabled()) { // AMZ-2017-003-004#ADD
                 logger.info("isEnabled");
 
                 int ret = menuUtility();
@@ -875,6 +921,37 @@ class GdPrice extends Action {
 		}
 		if ((ind = src_plu(plu.number)) > 0)
 			return ind;
+
+		//ECOMMERCE-SSAM#A BEG
+		// Setting about item base on type
+		if (plu.ecommerceInfo.getUnitPrice() != 0) {
+			if ((plu.flag & F_WEIGHT) > 0)
+			{
+				plu.prlbl = plu.ecommerceInfo.getUnitPrice();
+				plu.price = plu.ecommerceInfo.getPrice();
+			}
+			else {
+				plu.qty = (plu.ecommerceInfo.getPrice() / plu.ecommerceInfo.getUnitPrice());
+				plu.prpov = plu.ecommerceInfo.getUnitPrice();
+			}
+		}
+		//ECOMMERCE-SSAM#A END
+
+		// TSC-ENH2014-1-AMZ#BEG
+		if (plu.expdate.length() > 0) {
+			try {
+				Date pluDate = expDateParser.parse(plu.expdate);
+				Date now = new Date();
+				Date posDate = expDateParser.parse(expDateParser.format(now));
+				if (posDate.after(pluDate)) {
+					return 146; // Expired product
+				}
+
+			} catch (Exception e) {
+				return 146; // Expired product
+			}
+		}
+		// TSC-ENH2014-1-AMZ#END
 		//AMAZON-COMM-CGA#A BEG
 		if (ECommerce.isAutomaticVoidAmazonItem()) {
 			plu.amt = ECommerce.getAmtAutomaticItem();
@@ -883,37 +960,8 @@ class GdPrice extends Action {
 		//AMAZON-COMM-CGA#A END
 
 		// CHKINPUT-CGA#A BEG
-		String ruleLbl = ean_special('P', plu.eanupc);
-		if (input.key != 0x4f4f && ruleLbl != null) {
-			int auth = 0;
-			switch(enableCheckInput) {
-				case 1:
-					auth = GdSigns.chk_autho(Mnemo.getInfo(38));
-					if (auth > 0)
-						return auth;
-
-					break;
-				case 2:
-					return 7;
-
-				case 3:
-					if (plu.price == 0) {
-						auth = GdSigns.chk_autho(Mnemo.getInfo(38));
-						if (auth > 0)
-							return auth;
-					}
-
-					break;
-				case 4:
-					if (plu.price == 0) {
-						return 7;
-					}
-
-					break;
-				default:
-					break;
-			}
-		}
+		int sts;
+		if ((sts = ItemAuthManager.getInstance().getItemAuth(input, plu)) > 0) return sts;
 		// CHKINPUT-CGA#A END
 
 		if (plu.dpt_nbr < 1)
@@ -928,8 +976,8 @@ class GdPrice extends Action {
 			if ((ind = chk_serial()) > 0)
 				return ind;
 		// PSH-ENH-001-AMZ#BEG -- gdprice.action2
-		if (GdPsh.isGiftCard(plu)) {
-			ind = GdPsh.readSerial32(plu);
+		if (GdPsh.getInstance().isGiftCard(plu)) {
+			ind = GdPsh.getInstance().readSerial32(plu);
 			if (ind == -1) {
 				event.nxt = event.alt; // do not ask the price cancelling operation
 				return 0; // no dialog box, cancel operation
@@ -945,7 +993,7 @@ class GdPrice extends Action {
 		// PSH-ENH-001-AMZ#END
 
         //PSH-ENH-20151120-CGA#A BEG
-        if (GdPsh.isUtility(plu)) {
+        if (GdPsh.getInstance().isUtility(plu)) {
             logger.info("inserted item code - the item is utility");
             logger.info("code: " + plu.number);
 
@@ -1007,12 +1055,17 @@ class GdPrice extends Action {
         }
         //PSH-ENH-20151120-CGA#A END
         dlu = itm;
+
+		// SURCHARGEPRICE-SSAM#A BEG
+        SurchargeManager.getInstance().applySurcharge(plu, cus);
+        // SURCHARGEPRICE-SSAM#A END
+
 		itm = plu;
 		if (ctl.mode == M_RENTRY || tra.code == 7)
 			itm.price = 0;
 		if ((itm.flg2 & F_GRATIS) == 0) {
 			if (itm.price == 0) {
-				if (!GdPsh.isNoAskPrice() || !GdPsh.isUtility(itm)) {
+				if ((!GdPsh.getInstance().priceAskDisabled() || !GdPsh.getInstance().isUtility(itm))){
 					if (SscoPosManager.getInstance().isUsed()) {
 						SscoPosManager.getInstance().getProcessor().setAdditionalProcessType(AdditionalProcessType.PRICE);
 						SscoPosManager.getInstance().getProcessor().additionalProcess();
@@ -1024,14 +1077,15 @@ class GdPrice extends Action {
 		if (itm.gCardTopup) // PSH-ENH-001-AMZ#ADD -- topup price request
 			return GdSales.itm_displ(); // PSH-ENH-001-AMZ#ADD -- topup price request
 		if ((tra.spf1 & M_TRRTRN) > 0 || (itm.spf1 & M_RETURN) > 0) {
-			if (chk_verify(40))
-		        return GdSales.itm_displ();
+			if (!tra.eCommerce)
+				if (chk_verify(40))
+		        	return GdSales.itm_displ();
 		} else if (tra.mode <= M_GROSS)
 			if (itm.prpov == 0 && itm.prpos == 0) {
 				if ((itm.flag & F_SKPSKU) > 0) {
 					itm.spf3 = 1; /* visual verify */
 					if (chk_verify(30))
-                            if(!GdPsh.isNoAskPrice() || !GdPsh.isUtility(itm)) // AMZ-2017-003-004#ADD
+                            if(!GdPsh.getInstance().priceAskDisabled() || !GdPsh.getInstance().isUtility(itm)) // AMZ-2017-003-004#ADD
 						        return GdSales.itm_displ();
 				}
 				if (itm.spec > ' ') {
@@ -1053,7 +1107,7 @@ class GdPrice extends Action {
 		}
 		event.nxt = event.alt;
 
-		if (GdPsh.isGiftCard(itm) && GdPsh.getUniqueTransactionId().equals("")){
+		if (GdPsh.getInstance().isGiftCard(itm) && GdPsh.getUniqueTransactionId().equals("")){
 			GdPsh.setUTID();
 		}
 
@@ -1063,7 +1117,7 @@ class GdPrice extends Action {
 	/**
 	 * dpt/sku/price label
 	 **/
-	int action3(int spec) {
+	public int action3(int spec) {
 		int ind, dpt_no;
 
 		// PSH-ENH-007-AMZ#BEG -- ext. topup
@@ -1110,7 +1164,7 @@ class GdPrice extends Action {
 	/**
 	 * keyed department
 	 **/
-	int action4(int spec) {
+	public int action4(int spec) {
 		int ind, dpt_no;
 
 		if ((ind = pre_valid(0x11)) > 0)
@@ -1176,7 +1230,7 @@ class GdPrice extends Action {
 	/**
 	 * department number
 	 **/
-	int action5(int spec) {
+	public int action5(int spec) {
 		int ind, dpt_no;
 
 		if ((ind = pre_valid(0x11)) > 0)
@@ -1213,7 +1267,7 @@ class GdPrice extends Action {
 	/**
 	 * sku
 	 **/
-	int action6(int spec) {
+	public int action6(int spec) {
 		if (input.num > 0) {
 			if (spec == 1)
 				itm.number = rightFill(input.pb, 16, ' ');
@@ -1227,7 +1281,7 @@ class GdPrice extends Action {
 	/**
 	 * item price
 	 **/
-	int action7(int spec) {
+	public int action7(int spec) {
 		int ind = 0;
 
 
@@ -1266,7 +1320,7 @@ class GdPrice extends Action {
 			itm.gCardTopup = false;
 
 			if ((itm.spf1 & M_VOID) > 0) {
-				ind = GdPsh.cancelRedemption(itm);
+				ind = GdPsh.getInstance().cancelRedemption(itm);
 			} else {
 				ind = GdPsh.pointsRedemption(itm);
 			}
@@ -1276,17 +1330,17 @@ class GdPrice extends Action {
 				return group[4].action0(0); // GdSales.action0 == ItmClear
 			}
 		}
-		if (GdPsh.isGiftCard(itm)) {
+		if (GdPsh.getInstance().isGiftCard(itm)) {
 			if ((itm.spf1 & M_RETURN) > 0) {
 				panel.clearLink(Mnemo.getInfo(7), 0x81);
 				return group[4].action0(0); // GdSales.action0 == ItmClear
 			}
 			if ((itm.spf1 & M_VOID) > 0) {
-				ind = GdPsh.cancelGiftCard(itm);
+				ind = GdPsh.getInstance().cancelGiftCard(itm);
 			} else {
 				ind = GdPsh.sellGiftCard(itm);
 				if (ind > 0 && itm.prpnt != 0) {
-					ind = GdPsh.cancelRedemption(itm);
+					ind = GdPsh.getInstance().cancelRedemption(itm);
 				}
 			}
 			if (ind > 0) {
@@ -1299,7 +1353,7 @@ class GdPrice extends Action {
         //PSH-ENH-20151120-CGA#A BEG
         logger.info("code: " + itm.number);
 
-        if (GdPsh.isUtility(itm)) {
+        if (GdPsh.getInstance().isUtility(itm)) {
             logger.info("item is utility");
 
             if ((itm.spf1 & M_RETURN) > 0) {
@@ -1311,7 +1365,7 @@ class GdPrice extends Action {
             if ((itm.spf1 & M_VOID) > 0) {
                 logger.info("void item");
 
-                ind = GdPsh.cancelBuyUtility(itm);
+                ind = GdPsh.getInstance().cancelBuyUtility(itm);
 
                 if (ind > 0) {
                     logger.info("response > 0 - error message to display");
@@ -1411,7 +1465,7 @@ class GdPrice extends Action {
 	/**
 	 * box/set number
 	 **/
-	int action8(int spec) {
+	public int action8(int spec) {
 		int cnt = tra.cnt, rec = 0, sts;
 		long amt = tra.amt;
 
@@ -1487,7 +1541,7 @@ class GdPrice extends Action {
 	/**
 	 * resume trans number
 	 **/
-	int action9(int spec) {
+	public int action9(int spec) {
 		int rec, sts = tid_reduce();
 		int ind = tra.spf1 > 0 ? 12 : 11;
 
@@ -1761,50 +1815,4 @@ class GdPrice extends Action {
 	}*/
 	//INSTASHOP-RESUME-CGA#A END
 
-	//QRCODE-SELL-CGA#A BEG
-	public void handleQrCode() {
-		logger.info("ENTER handleQrCode");
-		List<String> unsoldItems = new ArrayList<String>();
-		int sts = 0;
-		String[] itmList = input.qrcode.split("\\r?\\n");
-		logger.info("input.qrcode: " + input.qrcode);
-
-		input.qrcode = "";
-
-		int stItm = itm.spf1;
-
-		logger.info("itmlist size: " + itmList.length);
-		logger.info("itm spf1: " + itm.spf1);
-		for (String itmCurrent : itmList) {
-			itm.spf1 = stItm;
-
-			input.pb = itmCurrent;
-			logger.info("input pb: " + input.pb);
-
-			input.num = input.pb.trim().length();
-
-			if ((sts = action2(0)) != 0) {
-				logger.info("sts: " + sts);
-				if (SscoPosManager.getInstance().isUsed()) {
-					unsoldItems.add(input.pb.trim());
-				} else {
-					panel.clearLink(Mnemo.getInfo(sts), 1);
-				}
-			}
-		}
-		if (SscoPosManager.getInstance().isUsed() && unsoldItems.size() > 0) {
-			String separator = "";
-			String message = "";
-			for (String item : unsoldItems) {
-				message += separator + item;
-				separator = " - ";
-			}
-			SscoPosManager.getInstance().sendDataNeeded("QrCodeUnsoldItems", message);
-//			sts = SscoPosManager.getInstance().waitForDataneededReply();
-//			SscoPosManager.getInstance().sendDataneededClose();
-		}
-
-		logger.info("EXIT handleQrCode");
-	}
-	//QRCODE-SELL-CGA#A END
 }

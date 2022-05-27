@@ -7,14 +7,17 @@ import org.apache.log4j.Logger;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.Map;
 
 import static com.ncr.FmtIo.editKey;
 import static com.ncr.Table.dpt;
 import static com.ncr.Table.lDPT;
 
-class GdPos extends Panel implements Graphical, ActionListener, AdjustmentListener, MouseWheelListener {
+public class GdPos extends Panel implements Graphical, ActionListener, AdjustmentListener, MouseWheelListener {
+
+	//ECOMMERCE-MSOUK#A BEG
 	private static final Logger logger = Logger.getLogger(GdPos.class);
+	//ECOMMERCE-MSOUK#A END
+
 	Frame frame;
 	Modal modal;
 	ConIo input = Action.input;
@@ -299,6 +302,13 @@ class GdPos extends Panel implements Graphical, ActionListener, AdjustmentListen
 	public int clearLink(String msg, int type) {
 		int line = type >> 4;
 
+		//ECOMMERCE-MSOUK#A BEG
+		if (ECommerceManager.getInstance().hidePopup()) {
+			logger.info("Not showing popup " + msg);
+			return 0;
+		}
+		//ECOMMERCE-MSOUK#A END
+
 		DevIo.alert(0);
 		if (!Thread.currentThread().getName().endsWith("dispatch")) {
 			DevIo.oplDisplay(1, msg);
@@ -405,7 +415,10 @@ class GdPos extends Panel implements Graphical, ActionListener, AdjustmentListen
 	}
 
 	public static void main(String[] args) {
-		Frame f = new Frame("JPos++");
+		// TSC-MOD2014-AMZ#BEG
+		// Frame f = new Frame("JPos++");
+		Frame f = new Frame(PosVersion.windowTitle());
+		// TSC-MOD2014-AMZ#END
 		final GdPos panel = new GdPos(f);
 		Dimension d = Config.frameSize("MainFrame");
 
@@ -443,8 +456,9 @@ class GdPos extends Panel implements Graphical, ActionListener, AdjustmentListen
 		Config.logConsole(1, null, "client " + d.width + "x" + d.height);
 
 		// System.getProperties ().list (System.out);
-		Config.logConsole(1, null, PosVersion.WindowTitle());
+		Config.logConsole(1, null, PosVersion.windowTitle());
 	}
+
 	//WINEPTS-CGA#A BEG
 	public void updateEpts(boolean active) {
 		if (stsArea[5] != null) {

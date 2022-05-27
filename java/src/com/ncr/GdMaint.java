@@ -39,7 +39,7 @@ class GdMaint extends Action {
 	/**
 	 * start price mnt
 	 */
-	int action0(int spec) {
+	public int action0(int spec) {
 		GdRegis.set_ac_ctl(spec);
 		prtTitle(tra.head = event.dec);
 		return 0;
@@ -48,7 +48,7 @@ class GdMaint extends Action {
 	/**
 	 * change plu price
 	 */
-	int action1(int spec) {
+	public int action1(int spec) {
 		int dev = 2, ind, price = plu.price;
 
 		if (input.num > 0) {
@@ -81,8 +81,9 @@ class GdMaint extends Action {
 	/**
 	 * ready state monitor
 	 */
-	int action2(int spec) {
+	public int action2(int spec) {
 		int ind = mon.opd_sts, pause = options[O_Pause];
+		int sts = 0; // TSC-MOD2014-AMZ#ADD
 
 		if (ctl.ckr_nbr > 0) {
 			if (pause > 0)
@@ -112,8 +113,15 @@ class GdMaint extends Action {
 		if ((input.tic & 3) == 1)
 			hot_maint();
 
+		// TSC-MOD2014-AMZ#BEG
+		if ((sts = GdTsc.chkEod()) > 0) {
+			dspLine.init(Mnemo.getInfo(sts)).show(1);
+		} else if (sts < 0) {
+			return 0xcddc;
+		}
+		// TSC-MOD2014-AMZ#END
 		//ECOMMERCE-SBE#A BEG
-		if (ECommerceManager.getInstance().checkForNewBasket(editKey(ctl.reg_nbr, 3))) {
+		if (ECommerceManager.getInstance().checkForNewBasket(editKey(ctl.reg_nbr, 3), null)) {
 			return 0xabcd;
 		}
 		//ECOMMERCE-SBE#A END
@@ -123,7 +131,7 @@ class GdMaint extends Action {
 	/**
 	 * device services menu
 	 */
-	int action5(int spec) {
+	public int action5(int spec) {
 		String[] env = { "EFT", "BCR" };
 		int ind, sts = 0, sel = 0, tbl[] = new int[env.length];
 
@@ -209,7 +217,7 @@ class GdMaint extends Action {
 	/**
 	 * journal watch in supervisor ready state
 	 */
-	int action6(int spec) {
+	public int action6(int spec) {
 		int len, sts;
 
 		if (ctl.lan > 2)
@@ -269,7 +277,7 @@ class GdMaint extends Action {
 	/**
 	 * price inquiry in closed state
 	 */
-	int action7(int spec) {
+	public int action7(int spec) {
 		ModDlg dlg = new ModDlg(Mnemo.getMenu(spec));
 		dlg.block = false;
 		input.prompt = Mnemo.getText(9);
@@ -289,7 +297,7 @@ class GdMaint extends Action {
 	/**
 	 * start dpt key mnt
 	 */
-	int action8(int spec) {
+	public int action8(int spec) {
 		if (ctl.mode > 0)
 			return 7;
 		GdRegis.set_ac_ctl(spec);
@@ -301,7 +309,7 @@ class GdMaint extends Action {
 	/**
 	 * preset dpt / end
 	 */
-	int action9(int spec) {
+	public int action9(int spec) {
 		int dpt_no;
 
 		if (spec == 0) {

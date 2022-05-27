@@ -336,7 +336,7 @@ class GdSuper extends Action {
 	/**
 	 * AC20 checker list
 	 **/
-	int action0(int spec) {
+	public int action0(int spec) {
 		int rec = 0, sts;
 
 		if (sel_regnbr(0, spec) < 0)
@@ -358,7 +358,7 @@ class GdSuper extends Action {
 	/**
 	 * AC21/19 this checker
 	 **/
-	int action1(int spec) {
+	public int action1(int spec) {
 		int rec = 0, sts;
 
 		lCTL.read(ctl.ckr, lCTL.LOCAL);
@@ -432,14 +432,14 @@ class GdSuper extends Action {
 	/**
 	 * AC22 office report
 	 **/
-	int action2(int spec) {
+	public int action2(int spec) {
 		return 0;
 	}
 
 	/**
 	 * AC23 financial report
 	 **/
-	int action3(int spec) {
+	public int action3(int spec) {
 		int rec = 0, sts;
 
 		if (sel_regnbr(0, spec) < 0)
@@ -464,7 +464,7 @@ class GdSuper extends Action {
 	/**
 	 * AC24 activity report
 	 **/
-	int action4(int spec) {
+	public int action4(int spec) {
 		int grp, ind, prv = 0, rec = 0, sts = 0;
 		long major[] = new long[lACT.block.length];
 
@@ -497,7 +497,7 @@ class GdSuper extends Action {
 	/**
 	 * AC25 salesperson totals
 	 **/
-	int action5(int spec) {
+	public int action5(int spec) {
 		int grp, ind, prv = 0, rec = 0, sts = 0;
 		long major[] = new long[lSLM.block.length];
 
@@ -545,7 +545,7 @@ class GdSuper extends Action {
 	/**
 	 * AC26 department totals
 	 **/
-	int action6(int spec) {
+	public int action6(int spec) {
 		int grp, ind, prv = 0, rec = 0, sts = 0;
 		long major[] = new long[lDPT.block.length];
 
@@ -593,7 +593,7 @@ class GdSuper extends Action {
 	/**
 	 * AC27 ckr/reg responsability
 	 **/
-	int action7(int spec) {
+	public int action7(int spec) {
 		int ckr = 0, rec = 0, sts = 0;
 
 		if (ctl.ability > 0) {
@@ -661,7 +661,7 @@ class GdSuper extends Action {
 	/**
 	 * AC28 LAN status
 	 **/
-	int action8(int spec) {
+	public int action8(int spec) {
 		int rec = 0, sts;
 
 		if (sel_regnbr(0, spec) < 0)
@@ -706,7 +706,7 @@ class GdSuper extends Action {
 	/**
 	 * AC19/21 any checker
 	 **/
-	int action9(int spec) {
+	public int action9(int spec) {
 		int ckr = sel_ckrnbr(event.dec);
 
 		if (ckr < 1)

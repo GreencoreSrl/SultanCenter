@@ -4,7 +4,9 @@ import java.io.*;
 import java.util.Vector;
 
 import com.ncr.ssco.communication.manager.SscoPosManager;
+import com.sun.jna.StringArray;
 import jpos.*; // JavaPOS generics
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
 abstract class DevIo extends Struc {
@@ -87,7 +89,15 @@ abstract class DevIo extends Struc {
 	}
 
 	static void tpmLabel(int dev, String nbr) {
-		int len = nbr.length(), type = prin.PTR_BCS_Code128;
+		//PRINTBARCODE-CGA#A BEGAN
+		logger.info("Call tpmLabel(dev,nbr,110)");
+		tpmLabel(dev,nbr,prin.PTR_BCS_Code128);
+		//PRINTBARCODE-CGA#A END
+	}
+
+	static void tpmLabel(int dev, String nbr, int type) {
+		//int len = nbr.length(), type = prin.PTR_BCS_Code128;  //PRINTBARCODE-CGA#D
+		int len = nbr.length(); //PRINTBARCODE-CGA#A
 		logger.info("ENTER tpmLabel()");
 		if (!station(dev)) {
 			logger.info("EXIT tpmLabel() !station(dev)");
@@ -108,6 +118,12 @@ abstract class DevIo extends Struc {
 		}
 		if (type == prin.PTR_BCS_Code128)
 			nbr = "{B" + nbr;
+
+		//PRINTBARCODE-CGA#A BEG
+		if (type == prin.PTR_BCS_Code128_Parsed)
+			nbr = "{C" + nbr;
+		//PRINTBARCODE-CGA#A END
+
 		logger.info("CAll prin.label("+dev+", "+ type+", "+ nbr);
 		prin.label(dev, type, nbr);
 		logger.info("EXIT tpmLabel() ok");
@@ -166,6 +182,9 @@ abstract class DevIo extends Struc {
 			return;
 		prin.knife(prin_id);
 		if (prin.paperState(2))
+			//ECOMMERCE-SSAM#A BEG
+			if (!ECommerceManager.getInstance().abortTransaction())
+			//ECOMMERCE-SSAM#A END
 			gui.clearLink(Mnemo.getInfo(12), 1);
 		if (prin.logo.exists())
 			prin.write(2, "\u001b|1B");
@@ -488,22 +507,22 @@ abstract class DevIo extends Struc {
 		}
 
 		// Number of voucher copy to print
-		int NumberofVoucher, printtype = 0;
-		int maxNumberOfVoucher = 0;
+		int vouchersNumber, printtype = 0;
+		int maxVouchersNumber = 0;
 
-		NumberofVoucher = getVoucherCopyNumber(firstcopyonreceipt);
+		vouchersNumber = getVoucherCopyNumber(firstcopyonreceipt);
 		if (!firstcopyonreceipt) {
-			logger.info("NumberofVoucher = " + NumberofVoucher);
+			logger.info("vouchersNumber = " + vouchersNumber);
 			if (((tra.mode & M_CANCEL) > 0) || ((tra.mode & M_SUSPND) > 0)) {
-				NumberofVoucher = 2;
+				vouchersNumber = 2;
 			}
-			maxNumberOfVoucher = NumberofVoucher;
-			logger.info("NumberofVoucher = " + NumberofVoucher);
+			maxVouchersNumber = vouchersNumber;
+			logger.info("vouchersNumber = " + vouchersNumber);
 			printtype = PRINTNORMAL;
 		} else {
 			if (tra.mode != M_VOID && tra.mode != M_SUSPND) {
-				NumberofVoucher = 1;
-				maxNumberOfVoucher = NumberofVoucher;
+				vouchersNumber = 1;
+				maxVouchersNumber = vouchersNumber;
 				printtype = PRINTCOMMENTAFTERLOGO;
 
 				DevIo.tpmPrint(2, 0, "");
@@ -527,19 +546,19 @@ abstract class DevIo extends Struc {
 			nov++;
 		}
 		if (!firstcopyonreceipt) {
-			if (NumberofVoucher == 0) {
+			if (vouchersNumber == 0) {
 				logger.info("EXIT PrintCCV 2");
 
 				return (creditCardVoucher.size() > 0);
 			}
 		}
-		while ((NumberofVoucher--) > 0) {
+		while ((vouchersNumber--) > 0) {
 			for (int counter = 0; counter < tmp.size(); counter++) {
 				CreditCardVoucher ccv = (CreditCardVoucher) tmp.elementAt(counter);
 
 				logger.info("ccv.getTypeOfLine () = " + ccv.getTypeOfLine());
 				if (ccv.getPrintedLineDescription().equals("SKIP VOUCHER")) {
-					if ((!firstcopyonreceipt) && ((NumberofVoucher + 1) != maxNumberOfVoucher)) {
+					if ((!firstcopyonreceipt) && ((vouchersNumber + 1) != maxVouchersNumber)) {
 						break;
 					}
 				}
@@ -557,11 +576,8 @@ abstract class DevIo extends Struc {
 						break;
 
 					case 'E':
-						GdRegis.set_trailer();
-						/*if (printerObject.GetCapSlpPresent()) {
-							DevIo.tpmPrint(4, 0, prtLine.toString());
-							slpRemove();
-						} else {*/
+						GdRegis.set_trailer(-1);
+
 						if (!firstcopyonreceipt) {
 							DevIo.tpmPrint(2, 0, rightFill(prtLine.toString(), 41, ' '));
 							DevIo.tpmPrint(2, 0, rightFill(ccv.getPrintedLineDescription(), 41, ' '));
@@ -715,8 +731,14 @@ class PrnIo extends PosIo implements POSPrinterConst {
 			try {
 				logger.debug("Printing in dev: "  + dev + " data [" + data + "]");
 				prn1.printNormal(dev, data);
+
 				break;
 			} catch (JposException je) {
+				//ECOMMERCE-SSAM#A BEG
+				if ( ECommerceManager.getInstance().abortTransaction()) {
+					break;
+				}
+				//ECOMMERCE-SSAM#A END
 				error(je, false);
 				if (je.getErrorCodeExtended() == JPOS_EPTR_SLP_EMPTY) {
 					DevIo.slpInsert(0);
@@ -735,6 +757,11 @@ class PrnIo extends PosIo implements POSPrinterConst {
 				setQuality(PTR_S_RECEIPT, false);
 				break;
 			} catch (JposException je) {
+				//ECOMMERCE-SSAM#A BEG
+				if ( ECommerceManager.getInstance().abortTransaction()) {
+					break;
+				}
+				//ECOMMERCE-SSAM#A END
 				error(je, false);
 			}
 		}

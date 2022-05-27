@@ -23,7 +23,8 @@ public class LoyaltyRequestProcessor extends ItemRequestProcessor {
         setLoyaltyInfo(new SscoCustomer(
                 requestFromSsco.getStringField("AccountNumber"),
                 requestFromSsco.getStringField("CountryCode"),
-                requestFromSsco.getStringField("EntryMethod")
+                requestFromSsco.getStringField("EntryMethod"),
+                0  //INTEGRATION-PHILOSHOPIC-CGA#A
         ));
         getManager().loyaltyRequest(getSscoCustomer());
         logger.debug("Exit");

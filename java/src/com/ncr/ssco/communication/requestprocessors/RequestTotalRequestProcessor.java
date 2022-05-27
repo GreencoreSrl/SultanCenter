@@ -23,8 +23,13 @@ public class RequestTotalRequestProcessor extends DefaultRequestProcessor {
     @Override
     public void process(RequestFromSsco requestFromSsco) {
         logger.info("Enter");
-        sscoTender = new SscoTender(TenderTypeEnum.valueOf(requestFromSsco.getStringField("TenderType").replaceAll(" ", "")), 0);
-        sendResponses(new SscoError());
+        String tenderType = requestFromSsco.getStringField("TenderType").replaceAll(" ", "");
+        sscoTender = new SscoTender(TenderTypeEnum.valueOf(tenderType.length() > 0 ? tenderType : "None"), 0);
+        if (TenderTypeManager.getInstance().getActionPOSByName(sscoTender.getTenderType()).isRounded()) {
+            getManager().tenderInquiryRequest(sscoTender);
+        } else {
+            sendResponses(new SscoError());
+        }
         logger.info("Exit");
     }
 
@@ -65,6 +70,4 @@ public class RequestTotalRequestProcessor extends DefaultRequestProcessor {
 
         logger.info("Exit");
     }
-
 }
-

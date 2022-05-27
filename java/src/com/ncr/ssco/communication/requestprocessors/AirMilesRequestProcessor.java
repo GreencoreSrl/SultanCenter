@@ -18,7 +18,8 @@ public class AirMilesRequestProcessor extends LoyaltyRequestProcessor {
         setSscoCustomer(new SscoCustomer(
                 requestFromSsco.getStringField("AccountNumber"),
                 "",
-                requestFromSsco.getStringField("EntryMethod")
+                requestFromSsco.getStringField("EntryMethod"),
+                0  //INTEGRATION-PHILOSHOPIC-CGA#A
         ));
         getManager().airMilesRequest(getSscoCustomer());
         setCardType("AirMiles");
