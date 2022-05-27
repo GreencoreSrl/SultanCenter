@@ -1,0 +1,155 @@
+Guidelines to ensure supportability of AS@R source code modifications:
+
+ N  = no changes allowed, total replacement recommended when reasonable
+ 
+ A  = no changes allowed, alternative implementations already available
+
+ Y  = code sections recommended for special customer engineering
+
++/- = well behaved additions welcome / alterations undesired
+ 
+
+gui
+-------------------
+AbcDlg.class           modal dialog (alpha input)          N
+BarCode.class          Label-like Ean13/UpcA/Ean8/UpcE     N
+BcrDlg.class           modal dialog (monitor denom slots)  N 
+Border.class           3d lines, transparent on bg image   N
+Bouncer.class          image bouncing within one control   N
+CidIo.class            graphical customer info display     N
+ClrDlg.class           modal dialog (Clear/Enter/Abort)    N
+ConIo.class            input from keyboard, MSR, scanner   N
+com.ncr.Dynakey.class          Label-like description of F1 to F8  A
+com.ncr.DynakeyGroup.class     container for eight dynakeys        A
+GdElJrn.class          electronic journal window           N
+GdLabel.class          3 styles, enabled/alerted states    N
+com.ncr.GdPos.class            main frame setup / event dispath    A
+GdTView.class          transaction view panel              N
+Graphical.class        interface to gui implementation     N
+Ground.class           background image provider           N
+LanLdata.class         Load-mirror-image main method       N
+LanLdataPanel.class    Load-mirror-image operating panel   N
+LanMaint.class         Lan-maintenance maint method        N
+LanMaintPanel.class    Lan-maintenance operating panel     N
+Modal.class            base class for all modal dialogs    N
+ModDlg.class           modal dialog (solicited data input) N
+Motor.class            event table access methods          N
+Picture.class          Label-like text + image + bg image  N
+PluDlg.class           modal dialog (plu information)     +/- additional info fields
+SelDlg.class           modal dialog (selection list)       N
+SpyDlg.class           modal dialog (journal watch)        N
+TchDlg.class           modal dialog (touch table 4x5)      N
+TrxData.class          transaction view item-lines         N
+TrxList.class          transaction view list-box           N
+WghDlg.class           modal dialog (weight entry)         N
+UnDeco.class           show undecorated frame (dyna)       N
+
+base i/o
+-------------------
+BinIo.class            access local binary-search files    N
+Config.class           access configured environment       N
+FmtIo.class            field level editing + scanning      N
+LineMap.class          printline image for graphic output  N
+LinIo.class            line / record level format + parse  N
+Sales.class            sales total (item count, amount)    N
+
+file i/o
+-------------------
+A2aServer.class        interface to remote access service  N
+BmpIo.class            access to Bitmap files (*.bmp)      N
+DatIo.class            access to local files (oem data)    N
+HshIo.class            access to local/remote hash files   N
+LanIo.class            server connect as special program   N
+LocalACT.class         access hourly activity totals       N
+LocalCTL.class         access to cashier control file      N
+LocalDPT.class         access sales totals per department  N
+LocalLAN.class         access to cluster control file      N
+LocalPOS.class         access CMOS control totals          N
+LocalPOT.class         access cashier financial totals     N
+LocalREG.class         access register financial totals    N
+LocalSLM.class         access sales totals per salesman    N
+NetIo.class            connect to SRV/BUS as PoS (IDC)    +/- new a2a services
+RmoteCLS.class         access customer sales data          N
+RmoteHCA.class         access highorder customer account   N
+RmoteNEW.class         access to news/messages file        N
+RmoteSAR.class         access suspend/resume control data  N
+RmoteVNU.class         remote unique consecutive number    N
+SeqIo.class            access to local sequential files    N
+SlsIo.class            base class for sales data files     N
+Total.class            sales data (trans, items, amount)   N
+
+device i/o
+-------------------
+BcrIo.class            base class for BulkCashRecyclers    N
+BioIo.class            biometrics (fingerprint reader)     N
+CusIo.class            customer and operator display       A
+Device.class           peripheral device config structure  N
+DevIo.class            gateway of PoS to all device i/o    A
+EftIo.class            base class for ElectricFundTransfer N
+PosIo.class            common support of Opos controls     N
+PrnIo.class            printer (receipt, journal, slip)    A
+RdrIo.class            scanners on serial ports            A
+SafePay.class          BCR implementation (TCP/IP Gunnebo) Y
+Wedge.class            keyboard, lock, msr, scanner, tone  A
+WghIo.class            scale with single cable protocol    A
+ZVT0700.class          EFT implementation (G&D protocol)   Y
+WinEPTS.class          EFT implementation (by WinEPTS)     Y
+
+business logic
+-------------------
+Action.class           dispatch of actions and monitors    N
+Basis.class            basic set of useful subroutines     N
+BirIo.class            biometrics enrolment / verification N
+Clean.class            clean receipt combine / print       N
+Delta.class            delta totals records by transaction N
+ElJrn.class            electronic journal scroll/reprint   N
+FiscalId.class         accept and check Italian fiscal Id  N
+GdCashc.class [08]     actions: loan, pickup, cash count   Y
+GdCusto.class [02]     actions: customer id and discounts  Y  
+GdMaint.class [10]     actions: auto / manual maintenance  Y
+GdMoney.class [06]     actions: received-on-acct, paidout  Y
+GdPrice.class [05]     actions: item data entry functions  Y
+GdRegis.class [01]     actions: modes and actioncodes      Y
+GdSales.class [04]     actions: item preselect and credit  Y
+GdScale.class          get, edit, display, print weight    Y
+GdSigns.class [00]     actions: operator open/close, eods  Y
+GdSuper.class [09]     actions: local and remote reports   Y
+GdTndrs.class [07]     actions: tender media entries       Y
+GdTrans.class [03]     actions: transaction start/tl/end   Y
+HoCus.class            access highorder customer accounts  N
+HotCare.class          hot maintenance via LAN             N
+HotNote.class          monitoring news and confirmations   N
+HotProc.class          execute process on request          N
+Itmdc.class            item data collect write / inspect  +/- new record types
+Magic.class            transact. resume support functions  Y
+Match.class            mix-match, rebate, qualifications   Y
+Mnemo.class            menus, mnemo, error, super tables  +/- additional mnemonics
+Notes.class            hot maintenance / news / JRN watch  N
+Param.class            read/distribute text/params files  +/- additional params 
+com.ncr.Promo.class            void implementation of promotions   A
+TView.class            journal for line-item select/void  +/- new record types
+UpSet.class            set triggering / discounting        N
+
+data structures
+-------------------
+Constant.class         constants for access to strucrures  N
+CshDenom.class         denominations of home currency      N
+CustomerTransaction.class         customer individual information    +/- additional customer data
+EodTypes.class         list of reports generated in EoD    N
+com.ncr.Itemdata.class         sales item data                    +/- additional item data
+ItemVector.class       all items of current transaction    N
+Monitors.class         elements controlling the monitors  +/- additional monitors
+MsgLines.class         receipt lines by mode/action code   N
+PayCards.class         information from track 2 and 3     +/- additional track data
+SlpLines.class         slip print control info by ACs      N
+Struc.class            structures and flag definitions    +/- additional structures
+Table.class            access tables to sales data files  +/- additional tables
+TableDpt.class         access table to department totals   N
+TableMmt.class         mix match control table             N
+TableRbt.class         selective itemizers (customer %)    N
+TableReg.class         access table to financial totals    N
+TableSls.class         access tables to sales data files   N
+TaxRates.class         tax statement control table         N
+Terminal.class         terminal individual information    +/- additional terminal data
+TndMedia.class         tender / currency specifications   +/- additional tender data
+Transact.class         transaction control information    +/- additional transaction data

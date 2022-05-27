@@ -1,0 +1,7 @@
+
+CARD PAYMENT
+
+Beneficiary ID = $CC_NUMBER$
+amount = $AMOUNT$ 
+authorization = $AUTH_NUMBER$ 
+Card type = $SCHEME_NAME$

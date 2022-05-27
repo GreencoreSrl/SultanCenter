@@ -1,0 +1,81 @@
+
+
+   Proposal of partial (= line based) support of Arabic text.
+   ----------------------------------------------------------
+
+   Arabic text will be supported on line-level only.
+   A line consists of 40 characters based on Cp1256 in the flat files.
+   The full bi-directional support of the JVM is applied for graphic rendering.
+
+   Arabic text-fields cannot be put into lines with numbers or English text.
+   The re-ordering of fields with different run-directions,
+   in conjunction with various contextualisation features applied,
+   would certainly destroy the structure of receipt and report data lines.
+
+
+   Features to be delivered:
+   
+   - Graphical line data printed on thermal receipt paper
+   - Arabic text lines (Cp1256) in electronic receipt file
+   
+   - Arabic text lines in a new file for 2nd language support,
+     printed left-aligned before the structured English line.
+
+     Record layout like P_REGPAR, P_REGTXT, etc.
+     file name = P_REGDBL.DAT, record size=50,
+     file type = binary lookup (sorted), keysize=7
+
+     PtsTLac:Arabian.Score.of.Bonuspoints............
+     Roa0007:Arabian.Donation........................
+     SlsSTac:Sales.Subtotal..........................
+     SlsTLac:Sales.Total.............................
+     Tnd0001:Arabian.Cash............................
+     Tnd00??:Arabian.Tender.Text.of.Tender.??........
+     TndCHGE:Arabian.Change..........................
+     where ac = actioncode (00=sales 03=returns 05=roa 06=pdo)
+
+   - A few lines in P_REGTXT.DAT optionally Arabic: 
+     CMSGx:Advertizing.............................
+     CHDRx:Receipt.Header..........................
+
+   - Arabic PLU text in auxiliary PLU record (type E).
+
+   
+   Features not supported:
+
+   - Arabisation of the operator interface (GUI, operator display)
+   - JavaPos output of Arabic text to character-level devices
+     (the committee specified UniCode, so it is up to JavaPos
+      to provide bi-directional language support)
+   - direct output of Arabic text to any device based on oem character sets
+   - Arabic text in sales data files (ACT, DPT, REG, SLM)
+   - Arabic text fields in any lookup file except PLU record type E
+   - Arabic text in any parameter file, unless it is a complete printline.
+
+
+   Constraints and Restrictions                    
+   
+   Only thermal printers can print Arabic lines.
+   - Arabic lines will not be printed on slip stations.
+   - Arabic lines will print rubbish on impact printers.
+
+   CustomerTransaction linedisplays cannot show Arabic lines.
+   - Arabic advertizing (P_REGPAR.DAT CMSGx) will show rubbish.
+   - Arabic PLU text will not be shown, only the English text.
+
+   Arabic text at devices with OEM character sets cannot be supported.
+   - Pos scales will not be supplied with Arabic PlU text.
+   - EFT devices (receipts and messages) need to be all English.
+   - Cash-recyclers (status messages) need to be all English.
+   
+   Arabic text received from components cannot be merged
+   into structured non-Arabic receipt lines.
+   - DigitalPromotion discount/point rewards need to be all English.
+   - WinEPTS text fields need to be all English, except complete printlines.
+
+
+                                  >0    0    1    1    2    2    3    3    <
+                                  >0....5....0....5....0....5....0....5....<
+input from right to left:         >l5.0 retaW lareniM                      <
+stored in data file as  :         >                      Mineral Water 0.5l<
+rendered by JavaVM      :         >0.5l retaW lareniM                      <

@@ -1,0 +1,41 @@
+
+event table maintenance    record - descriptions
+
+
+
+
+input control section / event line
+-----                   -----
+
+line = line number of event line in event table
+       (in ascending and uninterrupted order)
+
+code = function code of keyboard key or pseudo 
+       code for msr / scanner / inner voice
+       (always > zero)
+
+ nxt = header line of section to follow
+       (action 001 requires menu control section)
+
+ alt = header line of alternate next section
+       (action may set event.nxt = event.alt)
+
+lock = valid keylock positions
+       (01 = N, 02 = X, 04 = S, 10 = authorized)
+       (80 = compare numerics with spec)
+
+ max = max. number of numerics incl. decimals
+       ('code' is a function key if max = zero)
+
+ min = min. number of numerics incl. decimals
+       ('code' is a put-away key if min > zero)
+
+ dec = max. number of digits after decimal point
+       (zero padding after decimal point input)
+
+spec = additional specification for the action
+       (such as actioncode, tender id etc.)
+
+ act = application action ccx to be executed
+       (cc = class number, x = action 0-9)
+       (000 = no action, 001 = menu processing)

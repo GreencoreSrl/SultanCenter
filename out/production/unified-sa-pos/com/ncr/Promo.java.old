@@ -1,0 +1,81 @@
+
+abstract class com.ncr.Promo extends Basis {
+	static final int PROMO_STD = 1;
+	static final int PROMO_FS = 2;
+	static final int PROMO_CMC = 4;
+
+	static boolean isEnabled(int mask) {
+		mask &= Integer.parseInt(fso_line.substring(0, 2), 16);
+		return mask > 0;
+	}
+
+	static void initialize() {
+		if (!isEnabled(PROMO_FS))
+			return;
+	}
+
+	static void checkForNewFile() { // monitor within the transaction ready state
+	}
+
+	static void terminate() {
+	}
+
+	static void error(String details) {
+		if (details != null) {
+			logConsole(0, Mnemo.getInfo(45), details);
+		}
+		gui.clearLink(Mnemo.getInfo(45), 0x81);
+	}
+
+	static void startTransaction() {
+	}
+
+	static void identifyCustomer() {
+	}
+
+	static void sellItem() {
+	}
+
+	static void updateItems(long value) { // manual discounts/credits on items
+	}
+
+	static void updateTotals(long value) { // manual discounts/credits on subtotal/total
+	}
+
+	static void setTransactionAmount(long total) { // check balance on transition from itemization to tenderization
+	}
+
+	static void bookComplexRewards() { // process complex non-monitary rewards
+	}
+
+	static void payTender() {
+	}
+
+	static void endTransaction() {
+	}
+
+	static void cancelTransaction() {
+	}
+
+	static void readItemDiscounts() { // process complex monitary rewards on item level
+	}
+
+	static void readTranDiscounts() { // process complex monitary rewards on transaction level
+	}
+
+	static String[] getItemRewardLines(boolean first, int item, boolean simple) { // read item related rewards
+																					// sequentially and return their
+																					// receipt lines
+		return null;
+	}
+	
+    static public long getPromovar(long param){
+    	return 0;
+    }
+    static public long setPromovar(long param, long par){
+    	return 0;
+    }
+    
+    
+
+}

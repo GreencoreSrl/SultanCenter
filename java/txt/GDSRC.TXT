@@ -1,0 +1,53 @@
+  subject: Abstract Class Relation Chart
+  package: com.ncr.GdPos (com.ncr.GdPos.env, EVENT.TBL, class\*.class)
+
+  public:  com.ncr.GdPos = PoS program
+
+                                  .................��������������Ŀ
+                                  :all derived     �GdTndrs       �
+                                  :from Action ................��Ĵ
+                                  :            ................   �
+                                  :       ��������������Ŀ.....   �
+                                  :       �GdSales       �.....   �
+                                  :   ��������������Ŀ��Ĵ.....����
+                                  :   �GdRegis       �   �.....   :
+��������������Ŀ ��������������Ŀ ��������������Ŀ��Ĵ   �.....   :
+�ConIo         �ڴMotor         �ڴGdSigns       �   �   �        :
+��������������Ĵ���������������Ĵ���������������Ĵ   �����        :
+�keyboard input�ٳevent         �ٳbusiness logic�   �            :
+�mouse / touch � �table access  � �execute action�����            :
+�vkey mappings � �read / update � �menu selection�                :
+���������������� ���������������� ����������������................:
+                                      ����������������Ŀ           
+��������������Ŀ ��������������Ŀ ��������������Ŀ ��������������Ŀ
+�RdrIo / Scale ÿ�DevIo         ÿ�Struc         � �Table         �
+��������������Ĵ���������������Ĵ���������������Ĵ ��������������Ĵ
+�serial readers�ôretail device �ôdata + control�ڴmemory tables �
+�serial scale  ���functions     ���structures    ���data files    � 
+���������������ٳ���������������ٳ���������������ٳ���������������� 
+��������������Ŀ���������������Ŀ���������������Ŀ���������������Ŀ
+�Wedge         ô�com.ncr.GdPos         �ٳMonitors      �ôDatIo         �
+��������������Ĵ���������������Ĵ ��������������Ĵ���������������Ĵ
+�keylock       ���main window   � �date / time   ���local params  �
+�mag stripe rdr���dynakey group � �advertizing   ���local lookup  �
+�wedge scanner ���cid window    � �cash drawer   ���local totals  �
+�tone indicator���init/shut down� �authorization ���local cmos    �
+�biometrics    ���event dispatch� �image ready   ���remote files  �
+���������������ٳ���������������� �inactivity    ������������������
+��������������Ŀ���������������Ŀ �scale state   ����������������Ŀ
+�PrnIo         ô�Modal         � �news alerts   ���NetIo (TCP/IP)�
+��������������Ĵ���������������Ĵ �alternate tl  � ��������������Ĵ
+�line printer  ���clear dialog  � �2by20 toggle  � �a2a services  �
+�cash drawers  ���weigh dialog  � �other journal � �mirror data   �
+���������������ٳ�selection list� �money in bcr  � �look for care �
+��������������Ŀ��plu price info� ���������������� �look for news �
+�CusIo         ô�data dialog   �                  ����������������
+��������������Ĵ��alpha input   �
+�operator 2x20 ���touch table   �
+�customer 4x20 ���journal watch �
+���������������ٳ�bcr slot view � utility classes 
+��������������Ŀ����������������� ��������������Ŀ ��������������Ŀ
+�EftIo / BcrIo ��                 �FmtIo         ÿ�LinIo         �
+��������������Ĵ                  ��������������Ĵ���������������Ĵ
+�electric cash �                  �field editing ���format/parse  �
+����������������                  ���������������� ����������������

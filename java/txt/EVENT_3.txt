@@ -1,0 +1,38 @@
+
+event table maintenance    record - descriptions
+
+
+
+
+menu control section / header line
+----                   ------     
+
+line = line number of header line in event table
+       (in ascending and uninterrupted order)
+
+code = section header identification
+       (always = zero)
+
+ nxt = first event line of chained events
+       (zero = end of section)
+
+ txt = text in mnemo.tbl for operator display
+       (code, type etc)
+
+flag = input control flag
+       (always 0xf? in menu control section)
+       (? = dynakey description nbr)
+
+ max = max. number of numerics incl. decimals
+
+ msk = number of asterisks in prompt
+       (zero = no prompt)
+
+ dec = number of asterisks after decimal point
+       (zero = no decimal point in prompt)
+
+help = help identification number
+       (MNUxxxx.00 is the access key to help)
+
+ hdr = text in menus.tbl for title display
+       (zero = no title on border)
