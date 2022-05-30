@@ -427,9 +427,9 @@ public class ECommerceManager extends Action {
         }
     }
 
-    public void sendHeartBeatMessage() {
+   /* public void sendHeartBeatMessage() {
         int errorCode = 0;
-        Timer timer = new Timer();
+       Timer timer = new Timer();
 
         try {
             if (isEnabled() && !(Struc.ctl.ckr_nbr == 0)) {
@@ -443,6 +443,24 @@ public class ECommerceManager extends Action {
 
                 timer.schedule(new HeartBeatTimerTask(editKey(ctl.reg_nbr, 3), errorCode),
                         Long.parseLong(props.getProperty("heartBeatSignal", "5000")));
+            }
+        } catch (Exception ex) {
+            logger.error("Error: ", ex);
+        }
+    }*/
+
+    public void sendHeartBeatMessage() {
+        int errorCode = 0;
+        try {
+            if (isEnabled() && !(Struc.ctl.ckr_nbr == 0)) {
+                if (panel.modal != null) {
+                    if (panel.modal instanceof ClrDlg) {
+                        ClrDlg dlg = (ClrDlg) panel.modal;
+                        if (dlg.info.text.toUpperCase(Locale.ENGLISH).contains("PRINTER")) errorCode = 102;
+                        else errorCode = 0;
+                    }
+                }
+               new HeartBeatTimerTask(editKey(ctl.reg_nbr, 3), errorCode).sendRequest();
             }
         } catch (Exception ex) {
             logger.error("Error: ", ex);

@@ -13,7 +13,7 @@ public abstract class Action extends Basis {
 	/** all instances of appl classes with methods = actions **/
 	public static final Action group[] = new Action[20];    //ECOMMERCE-SBE#A
 	//WINEPTS-CGA#A BEG
-	private static long eptsCheckDeltaMilliSec = 0;
+	private static long GenericCheckDeltaMilliSec = 0;
 	private static long milliSec = System.currentTimeMillis();
 	//WINEPTS-CGA#A END
 
@@ -150,7 +150,7 @@ public abstract class Action extends Basis {
 	static void idle() {
 		ctl.setDatim();
 		//WINEPTS-CGA#A BEG
-		eptsCheckDeltaMilliSec += (System.currentTimeMillis() - milliSec);
+		GenericCheckDeltaMilliSec += (System.currentTimeMillis() - milliSec);
 		milliSec = System.currentTimeMillis();
 		//WINEPTS-CGA#A END
 		if (netio.state != ctl.lan)
@@ -219,15 +219,16 @@ public abstract class Action extends Basis {
 		} else if (ctl.ckr_nbr == 0)
 			if (input.tic > 30)
 				panel.innerVoice(input.CLEAR);
-		//WINEPTS-CGA#A BEG
-		if (eptsCheckDeltaMilliSec > 5000) {
-			eptsCheckDeltaMilliSec = 0;
-			PosGPE.checkEptsUPB(false);
+
+		if (GenericCheckDeltaMilliSec > 5000) {
+			GenericCheckDeltaMilliSec = 0;
+			PosGPE.checkEptsUPB(false);		//WINEPTS-CGA#A
+			PosGPE.checkEcommerce(); 		//ECOMMERCE-SSAM#A
+
 		}
-		//WINEPTS-CGA#A END
 
 		//ECOMMERCE-SSAM#A BEG
-		ECommerceManager.getInstance().sendHeartBeatMessage();
+		//ECommerceManager.getInstance().sendHeartBeatMessage();
 		//ECOMMERCE-SSAM#A END
 	}
 
