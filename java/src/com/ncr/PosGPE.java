@@ -647,16 +647,6 @@ public class PosGPE extends Action {
 
 		logger.info("EXIT checkEptsUPB");
 	}
-	public static void checkEcommerce(){
-		logger.info("ENTER checkEcommerce");
-
-		if(ECommerceManager.getInstance().isEnabled()){
-			ECommerceManager.getInstance().sendHeartBeatMessage();
-		}
-
-		logger.info("EXIT checkEcommerce");
-
-	}
 
 	public static String getErrorDescription() {
 		return errorDescription;

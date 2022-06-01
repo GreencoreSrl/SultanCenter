@@ -32,6 +32,11 @@ public class HeartBeatTimerTask //extends TimerTask
         loadProperties();
     }
 
+    public HeartBeatTimerTask(String terminalId) {
+        this.terminalId = terminalId;
+        loadProperties();
+    }
+
     private void loadProperties() {
         try {
             props.load(new FileInputStream(HEARTBEAT_PROPERTIES));
@@ -52,7 +57,7 @@ public class HeartBeatTimerTask //extends TimerTask
         client.post(params, content);
         logger.debug("sendHeartBeatMessage to WS: TerminalID: " + terminalId + "- ErrorCode: " + errorCode);
     }*/
-    public void sendRequest() {
+    public void sendRequest(int errorCode) {
         TerminalItem item = new TerminalItem(terminalId, errorCode);
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("authorize", "false");

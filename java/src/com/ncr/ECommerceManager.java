@@ -35,7 +35,7 @@ public class ECommerceManager extends Action {
     private static final String SHOW_POPUP = "showPopupOnPOS";
     private static final String FINALIZE = "finalize";
     private static final String NOT_SOLD_WARNING = "notSoldWarning";
-
+    private HeartBeatTimerTask heartBeatTimerTask;
     private Gson gson = new GsonBuilder().serializeNulls().disableHtmlEscaping().setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
     private Properties props = new Properties();
     private Boolean transactionStarted = false;
@@ -52,6 +52,7 @@ public class ECommerceManager extends Action {
 
     private ECommerceManager() {
         loadProperties();
+        setHeartBeatTimerTask(new HeartBeatTimerTask(editKey(ctl.reg_nbr, 3)));
     }
 
     private void loadProperties() {
@@ -139,6 +140,14 @@ public class ECommerceManager extends Action {
 
     public void setBasket(Basket basket) {
         this.basket = basket;
+    }
+
+    public HeartBeatTimerTask getHeartBeatTimerTask() {
+        return heartBeatTimerTask;
+    }
+
+    public void setHeartBeatTimerTask(HeartBeatTimerTask heartBeatTimerTask) {
+        this.heartBeatTimerTask = heartBeatTimerTask;
     }
 
     public void savePrinterInfo(String data) {
@@ -450,6 +459,7 @@ public class ECommerceManager extends Action {
     }*/
 
     public void sendHeartBeatMessage() {
+        logger.debug("sendHeartBeatMessage Enter");
         int errorCode = 0;
         try {
             if (isEnabled() && !(Struc.ctl.ckr_nbr == 0)) {
@@ -460,11 +470,12 @@ public class ECommerceManager extends Action {
                         else errorCode = 0;
                     }
                 }
-               new HeartBeatTimerTask(editKey(ctl.reg_nbr, 3), errorCode).sendRequest();
+                heartBeatTimerTask.sendRequest(errorCode);
             }
         } catch (Exception ex) {
             logger.error("Error: ", ex);
         }
+        logger.debug("sendHeartBeatMessage Exit");
     }
 
     public boolean isEnabled() {
@@ -491,6 +502,17 @@ public class ECommerceManager extends Action {
     // OutPut:amt
     public BigDecimal removeDecimals(BigDecimal amt) {
         return amt.divide(new BigDecimal(Math.pow(10, tnd[0].dec)));
+    }
+
+    public static void checkEcommerce(){
+        logger.info("ENTER checkEcommerce");
+
+        if(ECommerceManager.getInstance().isEnabled()){
+            ECommerceManager.getInstance().sendHeartBeatMessage();
+        }
+
+        logger.info("EXIT checkEcommerce");
+
     }
 
 }

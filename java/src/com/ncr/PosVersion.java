@@ -13,8 +13,8 @@ public class PosVersion {
 	private final static String BASE_VERSION = "3.01";
 	private final static String CUSTOMER_ID = "1";
 	private final static String CUSTOMER_BUILD = "16";
-	private final static String CUSTOMER_REVISION = "3";
-	private final static String BASE_DATE = "2022-05-30";
+	private final static String CUSTOMER_REVISION = "4";
+	private final static String BASE_DATE = "2022-06-01";
 
 	private static String version = "";
 

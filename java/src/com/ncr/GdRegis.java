@@ -206,7 +206,7 @@ public class GdRegis extends Action {
 			if ((lREG.tflg & 1) == 0)
 				continue;
 			if (ind < 11) {
-				if (!Promo.isNoPrintPoints())    //NOPRINTPOINTS-CGA#A
+				//if (!Promo.isNoPrintPoints())    //NOPRINTPOINTS-CGA#A
 					prtBlock(2, save_txt, 10, ind = save_txt.length);
 			}
 

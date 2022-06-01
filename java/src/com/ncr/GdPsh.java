@@ -158,6 +158,7 @@ public class GdPsh extends Action implements GiftCardPluginInterface {
         logger.info("EXIT printBarcode() - call DevIo.tpmLabel(2, uniqueTransactionId);");
         //DevIo.tpmLabel(2, ctl.uniqueId);
         //PRINTBARCODE-CGA#A BEGAN
+        logger.info("newBarcode property= "+ isNewBarcode());
         if(isNewBarcode()){
             DevIo.tpmLabel(2,ctl.uniqueId,PTR_BCS_Code128_Parsed);
         }else{
