@@ -3,7 +3,7 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class Ecommerce : DbMigration
+    public partial class Init : DbMigration
     {
         public override void Up()
         {
@@ -26,8 +26,8 @@
                         TenderType = c.String(),
                         TenderId = c.String(),
                         ErrorCode = c.Int(nullable: false),
-                        CreatedDate = c.DateTime(nullable: false, defaultValueSql: "GETUTCDATE()"),
-                })
+                        CreatedDate = c.DateTime(nullable: false,defaultValueSql:"GETDATE()"),
+                    })
                 .PrimaryKey(t => t.ID);
             
             CreateTable(

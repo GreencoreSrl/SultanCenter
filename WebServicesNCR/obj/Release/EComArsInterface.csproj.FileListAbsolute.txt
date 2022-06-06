@@ -308,3 +308,6 @@ C:\Progetti\NCR\Ecommerce-ARS_Interface\WebServicesNCR\obj\Release\EComARSInterf
 C:\Progetti\NCR\Ecommerce-ARS_Interface\WebServicesNCR\obj\Release\EComARSInterface.csproj.CopyComplete
 C:\Progetti\NCR\Ecommerce-ARS_Interface\WebServicesNCR\obj\Release\EComArsInterface.dll
 C:\Progetti\NCR\Ecommerce-ARS_Interface\WebServicesNCR\obj\Release\EComArsInterface.pdb
+F:\Greencore Project Continue\NCR\ECOMMERCE\Sources\Ecommerce-ARS_Interface_SultanC\WebServicesNCR\obj\Release\EComARSInterface.csproj.CoreCompileInputs.cache
+F:\Greencore Project Continue\NCR\ECOMMERCE\Sources\Ecommerce-ARS_Interface_SultanC\WebServicesNCR\obj\Release\EComArsInterface.dll
+F:\Greencore Project Continue\NCR\ECOMMERCE\Sources\Ecommerce-ARS_Interface_SultanC\WebServicesNCR\obj\Release\EComArsInterface.pdb

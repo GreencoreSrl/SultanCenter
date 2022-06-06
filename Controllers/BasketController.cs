@@ -25,6 +25,8 @@ using System;
 using System.Web.UI.WebControls;
 using System.Data.Entity.Migrations;
 using System.Data.Common;
+using Z.BulkOperations;
+using Z.EntityFramework;
 
 namespace EComArsInterface
 {
@@ -58,10 +60,10 @@ namespace EComArsInterface
 
             if (basket == null)
             {
-                _log.Info("Basket not found!");
+                _log.Error("Basket not found!");
                 return NotFound();
             }
-
+            _log.Info("ECI forwards this basket JSON: " + JsonConvert.SerializeObject(basket));
             _log.Trace("GetBasketID - End");
 
             return Ok(basket);
@@ -72,18 +74,30 @@ namespace EComArsInterface
         [ResponseType(typeof(Basket))]
         public IHttpActionResult GetTerminal(string TerminalId)
         {
+
             _log.Trace("GetBasketID - Start");
             Basket basket = null;
 
-            //var tmp = db.Baskets.ToList();
-            basket = db.Baskets.Include(i => i.Items)
+            //TODO: Update Status =TerminalID
+
+            basket = db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Where(b => b.Status.Trim().Equals("Received")).FirstOrDefault();
+
+           /* var t = db.Baskets.Include(i => i.Items)
                                 .Include(i => i.SoldItems)
                                 .Include(i => i.NotSoldItems)
-                                .Where(b => b.Status.Trim().Equals("Received")).FirstOrDefault();
+                                .Where(b => b.Status.Trim().Equals("Received"))
+                  
+                                .UpdateFromQuery(x=>new Basket { Status =  "Processing" })
+                                
+
+
+
+                                ;//.First();*/
 
             if (basket == null)
             {
                 _log.Info("Basket not found!");
+                _log.Trace($"GetTerminal({TerminalId}) - End");
                 return NotFound();
             }
 
@@ -97,18 +111,13 @@ namespace EComArsInterface
                     db.SaveChanges();
                 }
             }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                _log.Error("DbUpdate Exception: " + ex.Message);
-                throw;
-            }
             catch(Exception e)
             {
                 _log.Error("Exception: " + e.Message);
                 throw;
             }
 
-
+            _log.Info("ECI forwards this basket JSON: " + JsonConvert.SerializeObject(basket));
             _log.Trace("GetBasketID - End");
 
             return Ok(basket);
@@ -124,7 +133,8 @@ namespace EComArsInterface
 
             if (!ModelState.IsValid)
             {
-                _log.Info("Bad request!");
+                _log.Error("Bad request!");
+                _log.Trace("PutBasket - End");
                 return BadRequest(ModelState);
             }
 
@@ -138,6 +148,7 @@ namespace EComArsInterface
             if (obj != null)
             {
                 _log.Info("Basket already exists!");
+                _log.Trace("PutBasket - End");
                 return BadRequest();
             }
 
@@ -168,9 +179,11 @@ namespace EComArsInterface
                         db.SaveChanges();
 
                     }
-                    catch (DbException de)
+                    catch (Exception de)
                     {
                         _log.Error("Cannot Reset List Items ,SoldItems, and NotSoldItems. Error: ", de.Message);
+                        _log.Error("Exception: " + de.InnerException);
+                        _log.Trace("PutBasket - End");
                     }
 
                     obj.Items = basket.Items;
@@ -197,19 +210,19 @@ namespace EComArsInterface
                     db.Entry(basket).State = EntityState.Added;                    
                 }
 
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                _log.Error("DbUpdate Exception: " + ex.Message);
-                throw;
+                db.SaveChangesAsync().Wait();
             }
             catch(Exception e)
             {
-                _log.Error("Exception: " + e.Message);
-                throw;
+               
+                _log.Error("Exception: " + e.InnerException);
+                _log.Trace("PutBasket - End");
+                return Content(HttpStatusCode.InternalServerError, InternalServerError());
+
+                //throw;
             }
 
+            _log.Info("ECI receives this basket JSON: " + JsonConvert.SerializeObject(basket));
             _log.Trace("PutBasket - End");
             return Ok(basket);
         }
@@ -350,19 +363,22 @@ namespace EComArsInterface
 
             if (!ModelState.IsValid)
             {
-                _log.Info("Bad request!");
+                _log.Error("Bad request!");
+                _log.Trace("PostBasket - End");
                 return BadRequest(ModelState);
             }
 
             if (!BasketExists(basket.BasketID, basket.Type))
             {
-                _log.Info("Basket not found!");
+                _log.Error("Basket not found!");
+                _log.Trace("PostBasket - End");
                 return NotFound();
             }
 
             if (basket.Status.Trim().Equals("Processing"))
             {
                 _log.Info("Basket status is Processing!");
+                _log.Trace("PostBasket - End");
                 return BadRequest();
             }
             else
@@ -395,7 +411,7 @@ namespace EComArsInterface
                     db.NotSoldItems.RemoveRange(objToUpdate.NotSoldItems);
                     try
                     {
-                        db.SaveChanges();
+                        db.SaveChangesAsync().Wait();
 
                     }
                     catch(DbException de)
@@ -429,19 +445,14 @@ namespace EComArsInterface
             try
             {
 
-                db.SaveChanges();
-            }
-            catch (DbUpdateException ex)
-            {
-                _log.Error("Exception: " + ex.Message);
-                throw;
+                db.SaveChangesAsync().Wait();
             }
             catch(Exception e)
             {
                 _log.Error("Exception: " + e.Message);
                 throw;
             }
-
+            _log.Info("ECI receives this basket JSON: " + JsonConvert.SerializeObject(basket));
             _log.Trace("PostBasket - End");
 
             return Ok(basket);
@@ -457,7 +468,7 @@ namespace EComArsInterface
                 Basket basket = db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Where(b=>(b.BasketID.Equals(basketId) && b.Type.Equals(type))).FirstOrDefault();
                 if (basket == null)
                 {
-                    _log.Info("Basket not found!");
+                    _log.Error("Basket not found!");
                     return BadRequest();
                 }
 
@@ -466,7 +477,7 @@ namespace EComArsInterface
                 db.Baskets.Remove(basket);
                 db.SaveChanges();
 
-                _log.Trace("Deleting basket successed");
+                _log.Info("Deleting basket successed");
                 _log.Trace("DeleteBasket - End");
                 return Content(HttpStatusCode.OK, JsonConvert.DeserializeObject<Basket>(jsonBasket));
             
@@ -486,7 +497,7 @@ namespace EComArsInterface
                     db.SaveChanges();
                 }
 
-                _log.Trace("All basket are deleted success");
+                _log.Info("All basket are deleted success");
                 _log.Trace("DeleteBasket - End");
                 return Content(HttpStatusCode.OK, JsonConvert.DeserializeObject<List<Basket>>(JsonBasketsList));
             }
