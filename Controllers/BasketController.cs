@@ -35,6 +35,8 @@ namespace EComArsInterface
         private readonly ARSDBContext db = new ARSDBContext();
         private static readonly NLog.Logger _log = NLog.LogManager.GetCurrentClassLogger();
         private readonly Hashtable tenderList = new Hashtable();
+        private static readonly string ProcessingStatus = "Processing";
+        private static readonly string ReceivedStatus = "Received";
         public BasketController()
         {
             tenderList = System.Configuration.ConfigurationManager.GetSection("tenderList") as Hashtable;
@@ -45,17 +47,24 @@ namespace EComArsInterface
         public IHttpActionResult GetBasket(string BasketId, string type = "")
         {
             _log.Trace("GetBasketID - Start");
+            Basket basket = null;
 
             if (string.IsNullOrEmpty(type))
             {
                 _log.Info("Type not supplied");
                 return BadRequest("Type not defined");
             }
-
-            Basket basket = db.Baskets.Include(i => i.Items)
-                                        .Include(i => i.SoldItems)
-                                        .Include(i => i.NotSoldItems)
-                                        .Where(b => b.BasketID.Trim().Equals(BasketId.Trim()) && b.Type.Trim().Equals(type.Trim())).FirstOrDefault();
+            try
+            {
+                basket = db.Baskets.Include(i => i.Items)
+                                       .Include(i => i.SoldItems)
+                                       .Include(i => i.NotSoldItems)
+                                       .Where(b => b.BasketID.Trim().Equals(BasketId.Trim()) && b.Type.Trim().Equals(type.Trim())).FirstOrDefault();
+            }
+            catch(Exception e){
+                _log.Error(e);
+            }
+           
 
 
             if (basket == null)
@@ -79,20 +88,25 @@ namespace EComArsInterface
             Basket basket = null;
 
             //TODO: Update Status =TerminalID
-
-            basket = db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Where(b => b.Status.Trim().Equals("Received")).FirstOrDefault();
-
-           /* var t = db.Baskets.Include(i => i.Items)
-                                .Include(i => i.SoldItems)
-                                .Include(i => i.NotSoldItems)
-                                .Where(b => b.Status.Trim().Equals("Received"))
-                  
-                                .UpdateFromQuery(x=>new Basket { Status =  "Processing" })
-                                
+           // basket = db.Baskets.Where(b => b.Status.Trim().Equals("Received") && string.IsNullOrEmpty(b.TerminalID))
+             //                   .FirstOrDefault();
 
 
+            try
+            {
+                db.Database.ExecuteSqlCommandAsync($"UPDATE DATA_BASKET SET TerminalID = '{TerminalId}' WHERE ID = (SELECT TOP 1 ID FROM DATA_BASKET WHERE Status = 'Received' AND (TerminalID IS NULL OR TerminalID = '')  ORDER BY ID )").Wait();
+            }
+            catch(Exception e)
+            {
+                _log.Error(e);
+            }
 
-                                ;//.First();*/
+            basket = db.Baskets.Where(b => b.TerminalID.Trim().Equals(TerminalId.Trim()) && b.Status.Trim().Equals("Received"))
+                    .Include(i => i.Items)
+                    .Include(si => si.SoldItems)
+                    .Include(ni => ni.NotSoldItems)
+                    .FirstOrDefault();
+
 
             if (basket == null)
             {
@@ -229,133 +243,6 @@ namespace EComArsInterface
 
 
         // SYNTAX POST: api/Basket
-        /* [ResponseType(typeof(Basket))]
-        public IHttpActionResult PostBasket(Basket basket)
-        {
-            _log.Trace("PostBasket - Start");
-
-            if (!ModelState.IsValid)
-            {
-                _log.Info("Bad request!");
-                return BadRequest(ModelState);
-            }
-
-            if (!BasketExists(basket.BasketID, basket.Type))
-            {
-                _log.Info("Basket not found!");
-                return NotFound();
-            }
-
-            if (basket.Status.Trim().Equals("Processing"))
-            {
-                _log.Info("Basket status is Processing!");
-                return BadRequest();
-            }
-            else
-            {
-                 Basket objToUpdate = db.Baskets.Include(i => i.Items)
-                                                .Include(i => i.SoldItems)
-                                                .Include(i => i.NotSoldItems)
-                                                .Where(b => b.BasketID.Trim().Equals(basket.BasketID.Trim()) && b.Type.Trim().Equals(basket.Type.Trim())).FirstOrDefault();
-
-
-
-                if (objToUpdate != null)
-                {
-
-                    objToUpdate.Status = basket.Status;
-                    objToUpdate.TerminalID = basket.TerminalID;
-                    objToUpdate.CustomerID = basket.CustomerID;
-                    objToUpdate.BarcodeId = basket.BarcodeId;
-                    objToUpdate.EarnedLoyaltyPoints = basket.EarnedLoyaltyPoints;
-                    objToUpdate.OriginBasketId = basket.OriginBasketId;
-                    objToUpdate.Type = basket.Type;
-                    objToUpdate.TenderType = basket.TenderType;
-                     objToUpdate.TenderId = tenderList.ContainsKey(basket.TenderType) ? tenderList[basket.TenderType].ToString() : null;
-                    objToUpdate.TotalAmount = basket.TotalAmount;
-                    objToUpdate.TransactionId = basket.TransactionId;                  
-                    objToUpdate.ErrorCode = basket.ErrorCode;
-                    objToUpdate.Receipt = basket.Receipt;
-                     db.Items.RemoveRange(objToUpdate.Items);
-                     db.SoldItems.RemoveRange(objToUpdate.SoldItems);
-                     db.NotSoldItems.RemoveRange(objToUpdate.NotSoldItems);
-                     db.SaveChanges();
-                    foreach (Item item in basket.Items)
-                    {
-
-                        Item current = objToUpdate.Items.Where(i => i.Code == item.Code).FirstOrDefault();
-
-                        if (current == null)
-                        {
-                            objToUpdate.Items.Add(item);
-                        }
-                        else
-                        {
-                            current.Code = item.Code;
-                            current.Barcode = item.Barcode;
-                            current.Qty = item.Qty;
-                            current.Price = item.Price;
-                            current.UnitPrice = item.UnitPrice;
-                        }
-                    }
-
-                    foreach (SoldItem item in basket.SoldItems)
-                    {
-                        SoldItem current = objToUpdate.SoldItems.Where(i => i.Code == item.Code).FirstOrDefault();
-                        if (current == null)
-                        {
-                            objToUpdate.SoldItems.Add(item);
-                        }
-                        else
-                        {
-                            current.Code = item.Code;
-                            current.Barcode = item.Barcode;
-                            current.Qty = item.Qty;
-                            current.Price = item.Price;
-                            current.UnitPrice = item.UnitPrice;
-                        }
-
-                    }
-
-                    foreach (NotSoldItem item in basket.NotSoldItems)
-                    {
-                        NotSoldItem current = objToUpdate.NotSoldItems.Where(i => i.Code == item.Code).FirstOrDefault();
-
-                        if (current == null)
-                        {
-                            objToUpdate.NotSoldItems.Add(item);
-                        }
-                        else
-                        {
-                            current.Code = item.Code;
-                            current.Barcode = item.Barcode;
-                            current.Qty = item.Qty;
-                            current.Price = item.Price;
-                            current.UnitPrice = item.UnitPrice;
-                        }
-
-                    }
-
-                }
-            }
-            try
-            {
-
-                db.SaveChanges();
-            }
-            catch (DbUpdateException ex)
-            {
-                _log.Error("Exception: " + ex.Message);
-                throw;
-            }
-
-            _log.Trace("PostBasket - End");
-
-            return Ok(basket);
-         }*/
-
-
-        // SYNTAX POST: api/Basket
         [ResponseType(typeof(Basket))]
         public IHttpActionResult PostBasket(Basket basket, string fromSource)
         {
@@ -407,21 +294,12 @@ namespace EComArsInterface
                     objToUpdate.ErrorCode = basket.ErrorCode;
                     objToUpdate.Receipt = basket.Receipt;
                     db.Items.RemoveRange(objToUpdate.Items);
+                    objToUpdate.Items.Clear();
                     db.SoldItems.RemoveRange(objToUpdate.SoldItems);
+                    objToUpdate.SoldItems.Clear();
                     db.NotSoldItems.RemoveRange(objToUpdate.NotSoldItems);
-                    try
-                    {
-                        db.SaveChangesAsync().Wait();
+                    objToUpdate.NotSoldItems.Clear();
 
-                    }
-                    catch(DbException de)
-                    {
-                        _log.Error("Cannot Reset List Items ,SoldItems, and NotSoldItems. Error: ",de.Message);
-                    }
-                    catch(Exception e)
-                    {
-                        _log.Error("Exception: ", e.Message);
-                    }
                     objToUpdate.Items = basket.Items;
 
                     if (fromSource.Trim().Equals("POS"))
@@ -436,7 +314,6 @@ namespace EComArsInterface
                         objToUpdate.Receipt = "";
                        
                     }
-                 
 
                     db.Baskets.AddOrUpdate(objToUpdate);
 
