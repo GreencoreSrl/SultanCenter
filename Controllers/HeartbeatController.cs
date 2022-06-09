@@ -27,11 +27,11 @@ namespace EComArsInterface.Controllers
         [ResponseType(typeof(Terminal))]
         public async Task<IHttpActionResult> PostHeartbeat(Terminal terminal)
         {
-            _log.Trace("PostHeartbeat - Start");
+            _log.Trace($"PostHeartbeat: Method - PostHeartbeat(terminal = { terminal.TerminalId}) - Start");
 
             if (!ModelState.IsValid)
             {
-                _log.Info("Bad request!");
+                _log.Error("PostHeartbeat: Method - PostHeartbeat(terminal = { terminal.TerminalId}). Result: Bad request!");
                 return BadRequest(ModelState);
             }
 
@@ -57,7 +57,7 @@ namespace EComArsInterface.Controllers
                 throw;
             }
 
-            _log.Trace("PostHeartbeat - End");
+            _log.Trace($"PostHeartbeat: Method - PostHeartbeat(terminal = { terminal.TerminalId}) - End");
             return Ok(terminal);
         }
 

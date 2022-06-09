@@ -37,6 +37,7 @@ namespace EComArsInterface
         private readonly Hashtable tenderList = new Hashtable();
         private static readonly string ProcessingStatus = "Processing";
         private static readonly string ReceivedStatus = "Received";
+        private static readonly string CanceledStatus = "Canceled";
         public BasketController()
         {
             tenderList = System.Configuration.ConfigurationManager.GetSection("tenderList") as Hashtable;
@@ -46,13 +47,13 @@ namespace EComArsInterface
         [ResponseType(typeof(Basket))]
         public IHttpActionResult GetBasket(string BasketId, string type = "")
         {
-            _log.Trace("GetBasketID - Start");
+            _log.Trace($"GetBasketID: Method - GetBasket(BasketId = {BasketId}, type = {type} )  - Start");
             Basket basket = null;
 
             if (string.IsNullOrEmpty(type))
             {
-                _log.Info("Type not supplied");
-                return BadRequest("Type not defined");
+                _log.Error("Type not supplied");
+                return BadRequest($"GetBasket(BasketId = {BasketId}, type = {type} ) . Result: Type not defined");
             }
             try
             {
@@ -64,16 +65,15 @@ namespace EComArsInterface
             catch(Exception e){
                 _log.Error(e);
             }
-           
 
 
             if (basket == null)
             {
-                _log.Error("Basket not found!");
+                _log.Error($"GetBasket(BasketId = {BasketId}, type = {type} ) . Result:Basket not found!");
                 return NotFound();
             }
             _log.Info("ECI forwards this basket JSON: " + JsonConvert.SerializeObject(basket));
-            _log.Trace("GetBasketID - End");
+            _log.Trace($"GetBasketID: Method - GetBasket(BasketId = {BasketId}, type = {type} ) - End");
 
             return Ok(basket);
         }
@@ -84,7 +84,7 @@ namespace EComArsInterface
         public IHttpActionResult GetTerminal(string TerminalId)
         {
 
-            _log.Trace("GetBasketID - Start");
+            _log.Trace($"GetBasketID: Method - GetTerminal(TerminalId = {TerminalId}) - Start");
             Basket basket = null;
 
             //TODO: Update Status =TerminalID
@@ -101,7 +101,7 @@ namespace EComArsInterface
                 _log.Error(e);
             }
 
-            basket = db.Baskets.Where(b => b.TerminalID.Trim().Equals(TerminalId.Trim()) && b.Status.Trim().Equals("Received"))
+            basket = db.Baskets.Where(b => b.TerminalID.Trim().Equals(TerminalId.Trim()) && b.Status.Trim().Equals(ReceivedStatus))
                     .Include(i => i.Items)
                     .Include(si => si.SoldItems)
                     .Include(ni => ni.NotSoldItems)
@@ -110,7 +110,7 @@ namespace EComArsInterface
 
             if (basket == null)
             {
-                _log.Info("Basket not found!");
+                _log.Error($"GetBasketID: Method - GetTerminal(TerminalId = {TerminalId}) - Result: Basket not found!");
                 _log.Trace($"GetTerminal({TerminalId}) - End");
                 return NotFound();
             }
@@ -119,7 +119,7 @@ namespace EComArsInterface
             {
                 if (basket != null)
                 {
-                    basket.Status = "Processing";
+                    basket.Status = ProcessingStatus;
 
                     db.Entry(basket).State = EntityState.Modified;
                     db.SaveChanges();
@@ -132,7 +132,7 @@ namespace EComArsInterface
             }
 
             _log.Info("ECI forwards this basket JSON: " + JsonConvert.SerializeObject(basket));
-            _log.Trace("GetBasketID - End");
+            _log.Trace($"GetBasketID: Method - GetTerminal(TerminalId = {TerminalId}) - Start - End");
 
             return Ok(basket);
         }
@@ -143,12 +143,12 @@ namespace EComArsInterface
         public IHttpActionResult PutBasket(Basket basket)
         {
 
-            _log.Trace("PutBasket - Start");
+            _log.Trace($"PutBasket: Method - PutBasket(basket = {basket.BasketID}) - Start");
 
             if (!ModelState.IsValid)
             {
-                _log.Error("Bad request!");
-                _log.Trace("PutBasket - End");
+                _log.Error($"PutBasket: Method - PutBasket(basket = {basket.BasketID}) Bad request!");
+                _log.Trace($"PutBasket: Method - PutBasket(basket = {basket.BasketID}) - End");
                 return BadRequest(ModelState);
             }
 
@@ -161,18 +161,18 @@ namespace EComArsInterface
                                     .FirstOrDefault();
             if (obj != null)
             {
-                _log.Info("Basket already exists!");
-                _log.Trace("PutBasket - End");
+                _log.Info($"Basket {basket.BasketID} already exists!");
+                _log.Trace($"PutBasket: Method - PutBasket(basket = {basket.BasketID}) - End");
                 return BadRequest();
             }
 
             // Set necessary field to send response
             try
             {
-                if (obj != null && obj.Status == "Canceled")
+                if (obj != null && obj.Status == CanceledStatus)
                 {
-                    obj.Status = "Received";
-                    basket.Status = "Received";
+                    obj.Status = ReceivedStatus;
+                    basket.Status = ReceivedStatus;
                     obj.TerminalID = basket.TerminalID;
                     obj.CustomerID = basket.CustomerID;
                     obj.BarcodeId = basket.BarcodeId;
@@ -197,7 +197,7 @@ namespace EComArsInterface
                     {
                         _log.Error("Cannot Reset List Items ,SoldItems, and NotSoldItems. Error: ", de.Message);
                         _log.Error("Exception: " + de.InnerException);
-                        _log.Trace("PutBasket - End");
+                        _log.Trace($"PutBasket: Method - PutBasket(basket = {basket.BasketID}) - End");
                     }
 
                     obj.Items = basket.Items;
@@ -207,7 +207,7 @@ namespace EComArsInterface
                 }
                 else
                 {
-                    basket.Status = "Received";
+                    basket.Status = ReceivedStatus;
                     basket.TerminalID = "";
                     basket.Receipt = "";
                     basket.TotalAmount = 0.0M;
@@ -230,14 +230,14 @@ namespace EComArsInterface
             {
                
                 _log.Error("Exception: " + e.InnerException);
-                _log.Trace("PutBasket - End");
+                _log.Trace($"PutBasket: Method - PutBasket(basket = {basket.BasketID}) - End");
                 return Content(HttpStatusCode.InternalServerError, InternalServerError());
 
                 //throw;
             }
 
             _log.Info("ECI receives this basket JSON: " + JsonConvert.SerializeObject(basket));
-            _log.Trace("PutBasket - End");
+            _log.Trace($"PutBasket: Method - PutBasket(basket = {basket.BasketID}) - End");
             return Ok(basket);
         }
 
@@ -246,78 +246,86 @@ namespace EComArsInterface
         [ResponseType(typeof(Basket))]
         public IHttpActionResult PostBasket(Basket basket, string fromSource)
         {
-            _log.Trace("PostBasket - Start");
+            _log.Trace($"PotBasket: Method - PotBasket(basket = {basket.BasketID}, fromSource={fromSource}) - Start");
 
             if (!ModelState.IsValid)
             {
-                _log.Error("Bad request!");
-                _log.Trace("PostBasket - End");
+                _log.Error($"PostBasket: Method -  PostBasket{basket.BasketID}, fromSource={fromSource}. Result: Bad request!");
+                _log.Trace($"PotBasket: Method - PotBasket(basket = { basket.BasketID}, fromSource ={ fromSource}) - End");
                 return BadRequest(ModelState);
             }
 
             if (!BasketExists(basket.BasketID, basket.Type))
             {
-                _log.Error("Basket not found!");
-                _log.Trace("PostBasket - End");
+                _log.Error($"PostBasket: Method -  PostBasket{basket.BasketID}, fromSource={fromSource}. Result: Basket not found!");
+                _log.Trace($"PotBasket: Method - PotBasket(basket = { basket.BasketID}, fromSource ={ fromSource}) - End");
                 return NotFound();
             }
 
-            if (basket.Status.Trim().Equals("Processing"))
+            if (basket.Status.Trim().Equals(ProcessingStatus))
             {
-                _log.Info("Basket status is Processing!");
-                _log.Trace("PostBasket - End");
+                _log.Info($"PostBasket: Method -  PostBasket{basket.BasketID}, fromSource={fromSource}. Result: Basket status is Processing!");
+                _log.Trace($"PotBasket: Method - PotBasket(basket = { basket.BasketID}, fromSource ={ fromSource}) - End");
                 return BadRequest();
             }
             else
             {
-                Basket objToUpdate = db.Baskets.Include(i => i.Items)
-                                               .Include(i => i.SoldItems)
-                                               .Include(i => i.NotSoldItems)
-                                               .Where(b => b.BasketID.Trim().Equals(basket.BasketID.Trim()) && b.Type.Trim().Equals(basket.Type.Trim())).FirstOrDefault();
-
-
-
-                if (objToUpdate != null)
+                try
                 {
+                    Basket objToUpdate = db.Baskets.Include(i => i.Items)
+                                                                   .Include(i => i.SoldItems)
+                                                                   .Include(i => i.NotSoldItems)
+                                                                   .Where(b => b.BasketID.Trim().Equals(basket.BasketID.Trim()) && b.Type.Trim().Equals(basket.Type.Trim())).FirstOrDefault();
 
-                    objToUpdate.Status = basket.Status;
-                    objToUpdate.TerminalID = basket.TerminalID;
-                    objToUpdate.CustomerID = basket.CustomerID;
-                    objToUpdate.BarcodeId = basket.BarcodeId;
-                    objToUpdate.EarnedLoyaltyPoints = basket.EarnedLoyaltyPoints;
-                    objToUpdate.OriginBasketId = basket.OriginBasketId;
-                    objToUpdate.Type = basket.Type;
-                    objToUpdate.TenderType = basket.TenderType;
-                    objToUpdate.TenderId = tenderList.ContainsKey(basket.TenderType) ? tenderList[basket.TenderType].ToString() : null;
-                    objToUpdate.TotalAmount = basket.TotalAmount;
-                    objToUpdate.TransactionId = basket.TransactionId;
-                    objToUpdate.ErrorCode = basket.ErrorCode;
-                    objToUpdate.Receipt = basket.Receipt;
-                    db.Items.RemoveRange(objToUpdate.Items);
-                    objToUpdate.Items.Clear();
-                    db.SoldItems.RemoveRange(objToUpdate.SoldItems);
-                    objToUpdate.SoldItems.Clear();
-                    db.NotSoldItems.RemoveRange(objToUpdate.NotSoldItems);
-                    objToUpdate.NotSoldItems.Clear();
 
-                    objToUpdate.Items = basket.Items;
 
-                    if (fromSource.Trim().Equals("POS"))
+                    if (objToUpdate != null)
                     {
-                        objToUpdate.SoldItems = basket.SoldItems;
-                        objToUpdate.NotSoldItems = basket.NotSoldItems;
-                     
-                    }
-                    else
-                    {
-                        objToUpdate.Status = basket.Status = "Received";
-                        objToUpdate.Receipt = "";
-                       
-                    }
 
-                    db.Baskets.AddOrUpdate(objToUpdate);
+                        objToUpdate.Status = basket.Status;
+                        objToUpdate.TerminalID = basket.TerminalID;
+                        objToUpdate.CustomerID = basket.CustomerID;
+                        objToUpdate.BarcodeId = basket.BarcodeId;
+                        objToUpdate.EarnedLoyaltyPoints = basket.EarnedLoyaltyPoints;
+                        objToUpdate.OriginBasketId = basket.OriginBasketId;
+                        objToUpdate.Type = basket.Type;
+                        objToUpdate.TenderType = basket.TenderType;
+                        objToUpdate.TenderId = tenderList.ContainsKey(basket.TenderType) ? tenderList[basket.TenderType].ToString() : null;
+                        objToUpdate.TotalAmount = basket.TotalAmount;
+                        objToUpdate.TransactionId = basket.TransactionId;
+                        objToUpdate.ErrorCode = basket.ErrorCode;
+                        objToUpdate.Receipt = basket.Receipt;
+                        db.Items.RemoveRange(objToUpdate.Items);
+                        objToUpdate.Items.Clear();
+                        db.SoldItems.RemoveRange(objToUpdate.SoldItems);
+                        objToUpdate.SoldItems.Clear();
+                        db.NotSoldItems.RemoveRange(objToUpdate.NotSoldItems);
+                        objToUpdate.NotSoldItems.Clear();
 
+                        objToUpdate.Items = basket.Items;
+
+                        if (fromSource.Trim().Equals("POS"))
+                        {
+                            objToUpdate.SoldItems = basket.SoldItems;
+                            objToUpdate.NotSoldItems = basket.NotSoldItems;
+
+                        }
+                        else
+                        {
+                            objToUpdate.Status = basket.Status = ReceivedStatus;
+                            objToUpdate.Receipt = "";
+
+                        }
+
+                        db.Baskets.AddOrUpdate(objToUpdate);
+
+                    }
                 }
+                catch(Exception e)
+                {
+                    _log.Error("Exception: " + e.Message);
+                }
+
             }
             try
             {
@@ -330,7 +338,7 @@ namespace EComArsInterface
                 throw;
             }
             _log.Info("ECI receives this basket JSON: " + JsonConvert.SerializeObject(basket));
-            _log.Trace("PostBasket - End");
+            _log.Trace($"PotBasket: Method - PotBasket(basket = { basket.BasketID}, fromSource ={ fromSource}) - End");
 
             return Ok(basket);
         }
@@ -363,7 +371,7 @@ namespace EComArsInterface
             {
 
                 string JsonBasketsList = string.Empty;
-                List<Basket> basketList = db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Where(b => b.Status == "Received").ToList<Basket>();
+                List<Basket> basketList = db.Baskets.Include(i => i.Items).Include(i => i.SoldItems).Include(i => i.NotSoldItems).Where(b => b.Status == ReceivedStatus).ToList<Basket>();
                 if (basketList != null && basketList.Count > 0)
                 {
                     JsonBasketsList = JsonConvert.SerializeObject(basketList);
