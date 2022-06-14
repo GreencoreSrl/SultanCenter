@@ -223,7 +223,6 @@ public abstract class Action extends Basis {
 		if (genericCheckDeltaMilliSec > 5000) {
 			genericCheckDeltaMilliSec = 0;
 			PosGPE.checkEptsUPB(false);		//WINEPTS-CGA#A
-			//PosGPE.checkEcommerce(); 		//ECOMMERCE-SSAM#A
 			ECommerceManager.getInstance().sendHeartBeatMessage(); 		//ECOMMERCE-SSAM#A
 
 		}

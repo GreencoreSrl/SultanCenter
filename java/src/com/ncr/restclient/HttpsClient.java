@@ -20,6 +20,7 @@ public class HttpsClient implements IHttpClient {
 
     public HttpsClient(String url, int timeout, HashMap<String, String> headers) {
         client = Client.create(setAuthorize(Boolean.valueOf(headers.get("authorize"))));
+        client.setConnectTimeout(timeout);
         webResource = client.resource(url);
     }
 

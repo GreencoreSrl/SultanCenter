@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.TimerTask;
 
-public class HeartBeatTimerTask //extends TimerTask
+public class HeartBeatTimerTask
 {
     private static final Logger logger = Logger.getLogger(HeartBeatTimerTask.class);
     private static final String HEARTBEAT_PROPERTIES = "conf/heartbeat.properties";
@@ -45,9 +45,7 @@ public class HeartBeatTimerTask //extends TimerTask
         }
     }
 
-
-   /* @Override
-    public void run() {
+    public void sendRequest() {
         TerminalItem item = new TerminalItem(terminalId, errorCode);
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("authorize", "false");
@@ -55,16 +53,5 @@ public class HeartBeatTimerTask //extends TimerTask
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         String content = gson.toJson(item);
         client.post(params, content);
-        logger.debug("sendHeartBeatMessage to WS: TerminalID: " + terminalId + "- ErrorCode: " + errorCode);
-    }*/
-    public void sendRequest(int errorCode) {
-        TerminalItem item = new TerminalItem(terminalId, errorCode);
-        HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put("authorize", "false");
-        IHttpClient client = new HttpClientFactory().getClient(props);
-        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        String content = gson.toJson(item);
-        client.post(params, content);
-        logger.debug("sendHeartBeatMessage to WS: TerminalID: " + terminalId + "- ErrorCode: " + errorCode);
     }
 }

@@ -32,6 +32,7 @@ public class ECommerceManager extends Action {
     private static final String TENDER = "tender.";
     private static final String TENDER_DEFAULT = "tender.Default";
     private static final String PRINTERCOPIESNUMBER = "printedCopiesNumber";
+    private static final String CHECKNEWBASKET_PROP="checkNewBasketTimer";
     private static final String SHOW_POPUP = "showPopupOnPOS";
     private static final String FINALIZE = "finalize";
     private static final String NOT_SOLD_WARNING = "notSoldWarning";
@@ -42,6 +43,7 @@ public class ECommerceManager extends Action {
     private Basket basket;
     private int indexPrinterLine = 0;
     private boolean enabled = false;
+    private int checkNewBasketTimer;
 
     public static ECommerceManager getInstance() {
         if (instance == null) {
@@ -59,6 +61,8 @@ public class ECommerceManager extends Action {
         try {
             props.load(new FileInputStream(ECOMMERCE_PROPERTIES));
             enabled = Boolean.parseBoolean(props.getProperty(ENABLED, "false"));
+            setCheckNewBasketTimer(Integer.parseInt(props.getProperty(CHECKNEWBASKET_PROP, "5000")));
+
         } catch (Exception e) {
             logger.error("Error: " + e.getMessage());
         }
@@ -124,6 +128,7 @@ public class ECommerceManager extends Action {
                 MultivaluedMap<String, String> params = new MultivaluedMapImpl();
                 params.add("fromSource", "POS");
                 String response = client.post(params, gson.toJson(basket).toString()).getEntity(String.class);
+                logger.debug("POST Response : "+response);
                 result = true;
             }
         } catch (Exception e) { //ECOMMERCE-TSC Handling all exceptions
@@ -470,7 +475,9 @@ public class ECommerceManager extends Action {
                         else errorCode = 0;
                     }
                 }
-                heartBeatTimerTask.sendRequest(errorCode);
+                heartBeatTimerTask.sendRequest();
+                logger.debug("sendHeartBeatMessage to WS: TerminalID: " + ctl.reg_nbr + "- ErrorCode: " + errorCode);
+
             }
         } catch (Exception ex) {
             logger.error("Error: ", ex);
@@ -490,6 +497,14 @@ public class ECommerceManager extends Action {
         return (isEnabled() && !Boolean.parseBoolean(props.getProperty(SHOW_POPUP, "true")) && Struc.ctl.ckr_nbr > 0);
     }
 
+    public int getCheckNewBasketTimer() {
+        return checkNewBasketTimer;
+    }
+
+    public void setCheckNewBasketTimer(int checkNewBasketTimeout) {
+        this.checkNewBasketTimer = checkNewBasketTimeout;
+    }
+
     // TODO: Method addDecimals  Math.pow(10, tnd[0].dec)
     // Input :amt
     // OutPut:amt
@@ -504,15 +519,5 @@ public class ECommerceManager extends Action {
         return amt.divide(new BigDecimal(Math.pow(10, tnd[0].dec)));
     }
 
-    public static void checkEcommerce(){
-        logger.info("ENTER checkEcommerce");
-
-        if(ECommerceManager.getInstance().isEnabled()){
-            ECommerceManager.getInstance().sendHeartBeatMessage();
-        }
-
-        logger.info("EXIT checkEcommerce");
-
-    }
 
 }

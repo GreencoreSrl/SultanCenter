@@ -15,6 +15,7 @@ public class HttpClient implements IHttpClient{
     public HttpClient(String url, int timeout, HashMap<String, String> headers)
     {
         client=Client.create();
+        client.setConnectTimeout(timeout);
         webResource = client.resource(url);
     }
 

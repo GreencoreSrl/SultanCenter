@@ -3,6 +3,9 @@ package com.ncr;
 import java.io.*;
 
 class GdMaint extends Action {
+	private static long genericCheckDeltaMilliSec = 0;
+	private static long milliSec = System.currentTimeMillis();
+
 	static boolean hot_maint(DatIo io) {
 		File f = io.pathfile, hot = localFile("hot", f.getName());
 		if (!hot.exists())
@@ -84,7 +87,8 @@ class GdMaint extends Action {
 	public int action2(int spec) {
 		int ind = mon.opd_sts, pause = options[O_Pause];
 		int sts = 0; // TSC-MOD2014-AMZ#ADD
-
+		genericCheckDeltaMilliSec += (System.currentTimeMillis() - milliSec);
+		milliSec = System.currentTimeMillis();
 		if (ctl.ckr_nbr > 0) {
 			if (pause > 0)
 				if (input.tic > pause * 60) {
@@ -121,8 +125,11 @@ class GdMaint extends Action {
 		}
 		// TSC-MOD2014-AMZ#END
 		//ECOMMERCE-SBE#A BEG
-		if (ECommerceManager.getInstance().checkForNewBasket(editKey(ctl.reg_nbr, 3), null)) {
-			return 0xabcd;
+		if (genericCheckDeltaMilliSec > ECommerceManager.getInstance().getCheckNewBasketTimer()) {
+			genericCheckDeltaMilliSec = 0;
+			if (ECommerceManager.getInstance().checkForNewBasket(editKey(ctl.reg_nbr, 3), null)) {
+				return 0xabcd;
+			}
 		}
 		//ECOMMERCE-SBE#A END
 		return 0;
