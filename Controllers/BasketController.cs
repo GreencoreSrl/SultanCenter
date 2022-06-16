@@ -84,12 +84,12 @@ namespace EComArsInterface
         public IHttpActionResult GetTerminal(string TerminalId)
         {
 
-            _log.Trace($"GetBasketID: Method - GetTerminal(TerminalId = {TerminalId}) - Start");
+            _log.Trace($"GetTerminal: Method - GetTerminal(TerminalId = {TerminalId}) - Start");
             Basket basket = null;
 
             //TODO: Update Status =TerminalID
-           // basket = db.Baskets.Where(b => b.Status.Trim().Equals("Received") && string.IsNullOrEmpty(b.TerminalID))
-             //                   .FirstOrDefault();
+            basket = db.Baskets.Where(b => b.Status.Trim().Equals("Received") && string.IsNullOrEmpty(b.TerminalID))
+                                .FirstOrDefault();
 
 
             try
@@ -101,16 +101,16 @@ namespace EComArsInterface
                 _log.Error(e);
             }
 
-            basket = db.Baskets.Where(b => b.TerminalID.Trim().Equals(TerminalId.Trim()) && b.Status.Trim().Equals(ReceivedStatus))
+           /* basket = db.Baskets.Where(b => b.TerminalID.Trim().Equals(TerminalId.Trim()) && b.Status.Trim().Equals(ReceivedStatus))
                     .Include(i => i.Items)
                     .Include(si => si.SoldItems)
                     .Include(ni => ni.NotSoldItems)
-                    .FirstOrDefault();
+                    .FirstOrDefault();*/
 
 
             if (basket == null)
             {
-                _log.Error($"GetBasketID: Method - GetTerminal(TerminalId = {TerminalId}) - Result: Basket not found!");
+                _log.Error($"GetTerminal: Method - GetTerminal(TerminalId = {TerminalId}) - Result: Basket not found!");
                 _log.Trace($"GetTerminal({TerminalId}) - End");
                 return NotFound();
             }
@@ -132,7 +132,7 @@ namespace EComArsInterface
             }
 
             _log.Info("ECI forwards this basket JSON: " + JsonConvert.SerializeObject(basket));
-            _log.Trace($"GetBasketID: Method - GetTerminal(TerminalId = {TerminalId}) - Start - End");
+            _log.Trace($"GetTerminal: Method - GetTerminal(TerminalId = {TerminalId}) - Start - End");
 
             return Ok(basket);
         }
@@ -185,25 +185,27 @@ namespace EComArsInterface
                     obj.TransactionId = basket.TransactionId;
                     obj.ErrorCode = basket.ErrorCode;
                     obj.Receipt = basket.Receipt;
-                    db.Items.RemoveRange(obj.Items);
-                    db.SoldItems.RemoveRange(obj.SoldItems);
-                    db.NotSoldItems.RemoveRange(obj.NotSoldItems);
-                    try
+                    if (obj.Items != null && basket.Items != null)
                     {
-                        db.SaveChanges();
-
+                        db.Items.RemoveRange(obj.Items);
+                        obj.Items.Clear();
+                        obj.Items = basket.Items;
                     }
-                    catch (Exception de)
+                    if (obj.SoldItems != null && basket.SoldItems != null)
                     {
-                        _log.Error("Cannot Reset List Items ,SoldItems, and NotSoldItems. Error: ", de.Message);
-                        _log.Error("Exception: " + de.InnerException);
-                        _log.Trace($"PutBasket: Method - PutBasket(basket = {basket.BasketID}) - End");
+                        db.SoldItems.RemoveRange(obj.SoldItems);
+                        obj.SoldItems.Clear();
+                        obj.SoldItems = basket.SoldItems;
+                    }
+                    if (obj.NotSoldItems != null && basket.NotSoldItems != null)
+                    {
+                        db.NotSoldItems.RemoveRange(obj.NotSoldItems);
+                        obj.NotSoldItems.Clear();
+                        obj.NotSoldItems = basket.NotSoldItems;
                     }
 
-                    obj.Items = basket.Items;
-                    obj.SoldItems = basket.SoldItems;
-                    obj.NotSoldItems = basket.NotSoldItems;
-                    db.Baskets.AddOrUpdate(obj);
+                    db.Entry(obj).State = EntityState.Modified;
+
                 }
                 else
                 {
