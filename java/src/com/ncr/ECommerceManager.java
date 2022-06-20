@@ -32,7 +32,7 @@ public class ECommerceManager extends Action {
     private static final String TENDER = "tender.";
     private static final String TENDER_DEFAULT = "tender.Default";
     private static final String PRINTERCOPIESNUMBER = "printedCopiesNumber";
-    private static final String CHECKNEWBASKET_PROP="checkNewBasketTimer";
+    private static final String CHECKNEWBASKET_PROP="checkNewBasketTimer";// ECOMMERCE HEARTBEAT PARAMETRABLE
     private static final String SHOW_POPUP = "showPopupOnPOS";
     private static final String FINALIZE = "finalize";
     private static final String NOT_SOLD_WARNING = "notSoldWarning";
@@ -43,7 +43,7 @@ public class ECommerceManager extends Action {
     private Basket basket;
     private int indexPrinterLine = 0;
     private boolean enabled = false;
-    private int checkNewBasketTimer;
+    private int checkNewBasketTimer;// ECOMMERCE HEARTBEAT PARAMETRABLE
 
     public static ECommerceManager getInstance() {
         if (instance == null) {
@@ -54,14 +54,13 @@ public class ECommerceManager extends Action {
 
     private ECommerceManager() {
         loadProperties();
-        setHeartBeatTimerTask(new HeartBeatTimerTask(editKey(ctl.reg_nbr, 3)));
     }
 
     private void loadProperties() {
         try {
             props.load(new FileInputStream(ECOMMERCE_PROPERTIES));
             enabled = Boolean.parseBoolean(props.getProperty(ENABLED, "false"));
-            setCheckNewBasketTimer(Integer.parseInt(props.getProperty(CHECKNEWBASKET_PROP, "5000")));
+            setCheckNewBasketTimer(Integer.parseInt(props.getProperty(CHECKNEWBASKET_PROP, "5000")));// ECOMMERCE HEARTBEAT PARAMETRABLE
 
         } catch (Exception e) {
             logger.error("Error: " + e.getMessage());
@@ -398,9 +397,7 @@ public class ECommerceManager extends Action {
     public void endOfTransaction() {
         logger.debug("endOfTransaction - Enter");
 
-        Set<Integer> allowedModes = new HashSet<Integer>(Arrays.asList(M_GROSS, M_CANCEL, M_SUSPND));
-
-        if (allowedModes.contains(tra.mode)) {
+        if (SALESTRN_MODES.contains(tra.mode)) {
             printNotSoldList();
             basket.setTerminalID(editKey(ctl.reg_nbr, 3));
             basket.setStatus(tra.mode == M_GROSS ? READY : CANCELED);
@@ -441,28 +438,6 @@ public class ECommerceManager extends Action {
         }
     }
 
-   /* public void sendHeartBeatMessage() {
-        int errorCode = 0;
-       Timer timer = new Timer();
-
-        try {
-            if (isEnabled() && !(Struc.ctl.ckr_nbr == 0)) {
-                if (panel.modal != null) {
-                    if (panel.modal instanceof ClrDlg) {
-                        ClrDlg dlg = (ClrDlg) panel.modal;
-                        if (dlg.info.text.toUpperCase(Locale.ENGLISH).contains("PRINTER")) errorCode = 102;
-                        else errorCode = 0;
-                    }
-                }
-
-                timer.schedule(new HeartBeatTimerTask(editKey(ctl.reg_nbr, 3), errorCode),
-                        Long.parseLong(props.getProperty("heartBeatSignal", "5000")));
-            }
-        } catch (Exception ex) {
-            logger.error("Error: ", ex);
-        }
-    }*/
-
     public void sendHeartBeatMessage() {
         logger.debug("sendHeartBeatMessage Enter");
         int errorCode = 0;
@@ -475,9 +450,7 @@ public class ECommerceManager extends Action {
                         else errorCode = 0;
                     }
                 }
-                heartBeatTimerTask.sendRequest();
-                logger.debug("sendHeartBeatMessage to WS: TerminalID: " + ctl.reg_nbr + "- ErrorCode: " + errorCode);
-
+                new HeartBeatTimerTask(editKey(ctl.reg_nbr, 3), errorCode).sendRequest();        // ECOMMERCE HEARTBEAT PARAMETRABLE
             }
         } catch (Exception ex) {
             logger.error("Error: ", ex);
@@ -496,7 +469,7 @@ public class ECommerceManager extends Action {
         logger.debug("CHR_NBR : " + Struc.ctl.ckr_nbr);
         return (isEnabled() && !Boolean.parseBoolean(props.getProperty(SHOW_POPUP, "true")) && Struc.ctl.ckr_nbr > 0);
     }
-
+    // ECOMMERCE HEARTBEAT PARAMETRABLE BEGAN
     public int getCheckNewBasketTimer() {
         return checkNewBasketTimer;
     }
@@ -504,6 +477,7 @@ public class ECommerceManager extends Action {
     public void setCheckNewBasketTimer(int checkNewBasketTimeout) {
         this.checkNewBasketTimer = checkNewBasketTimeout;
     }
+    // ECOMMERCE HEARTBEAT PARAMETRABLE END
 
     // TODO: Method addDecimals  Math.pow(10, tnd[0].dec)
     // Input :amt

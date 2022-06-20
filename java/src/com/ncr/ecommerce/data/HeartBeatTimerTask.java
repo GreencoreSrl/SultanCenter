@@ -44,7 +44,7 @@ public class HeartBeatTimerTask
             logger.error("Error: ", e);
         }
     }
-
+    // ECOMMERCE-SSAM#A BEGAN
     public void sendRequest() {
         TerminalItem item = new TerminalItem(terminalId, errorCode);
         HashMap<String, String> headers = new HashMap<String, String>();
@@ -53,5 +53,7 @@ public class HeartBeatTimerTask
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         String content = gson.toJson(item);
         client.post(params, content);
+        logger.debug("sendHeartBeatMessage to WS: TerminalID: " + terminalId + "- ErrorCode: " + errorCode);
     }
+    // ECOMMERCE-SSAM#A END
 }

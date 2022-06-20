@@ -1,5 +1,9 @@
 package com.ncr;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /*******************************************************************
  *
  * definitions of constants in use on access to data structures
@@ -238,7 +242,7 @@ interface Constant {
 	static final int L_MinSls = 7;
 	/** maximum amount of change **/
 	static final int L_MaxChg = 8;
-
+	Set<Integer> SALESTRN_MODES = new HashSet<Integer>(Arrays.asList(M_GROSS, M_CANCEL, M_SUSPND));
 	// EMEA-UPB-DMA#A BEG
 	public static final int UPB_TIMEOUT_ERROR = 251;
 	public static final int UPB_TRA_VOID = 1001;

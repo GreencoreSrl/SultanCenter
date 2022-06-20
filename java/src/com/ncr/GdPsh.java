@@ -187,11 +187,11 @@ public class GdPsh extends Action implements GiftCardPluginInterface {
     public boolean isPxlEnabled() {
         return isEnabled() && pxlEnabled;
     }
-
+    //PRINTBARCODE-CGA#A BEGAN
     public static boolean isNewBarcode() {
         return newBarcode;
     }
-
+    //PRINTBARCODE-CGA#A END
     static boolean priceAskDisabled() {
         return priceAskDisabled;
     }
@@ -351,7 +351,7 @@ public class GdPsh extends Action implements GiftCardPluginInterface {
             }
             //PRINTBARCODE-CGA#A BEGAN
             try {
-                newBarcode = Boolean.parseBoolean(prop.getProperty(PAR_NEW_BARCODE));
+                newBarcode = Boolean.parseBoolean(prop.getProperty(PAR_NEW_BARCODE,"false"));
             } catch (Exception e) {
                 throw new Exception("missing or malformed newBarcode parameter in file " + PROP_FILENAME);
             }

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/unified-sa-pos-SultanCenter.iml" filepath="$PROJECT_DIR$/.idea/unified-sa-pos-SultanCenter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/unified-sa-pos.iml" filepath="$PROJECT_DIR$/.idea/unified-sa-pos.iml" />
     </modules>
   </component>
 </project>

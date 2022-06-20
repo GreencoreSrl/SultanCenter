@@ -3,9 +3,10 @@ package com.ncr;
 import java.io.*;
 
 class GdMaint extends Action {
+	// ECOMMERCE HEARTBEAT PARAMETRABLE BEGAN
 	private static long genericCheckDeltaMilliSec = 0;
 	private static long milliSec = System.currentTimeMillis();
-
+	// ECOMMERCE HEARTBEAT PARAMETRABLE END
 	static boolean hot_maint(DatIo io) {
 		File f = io.pathfile, hot = localFile("hot", f.getName());
 		if (!hot.exists())
@@ -87,8 +88,10 @@ class GdMaint extends Action {
 	public int action2(int spec) {
 		int ind = mon.opd_sts, pause = options[O_Pause];
 		int sts = 0; // TSC-MOD2014-AMZ#ADD
+		// ECOMMERCE HEARTBEAT PARAMETRABLE BEGAN
 		genericCheckDeltaMilliSec += (System.currentTimeMillis() - milliSec);
 		milliSec = System.currentTimeMillis();
+		// ECOMMERCE HEARTBEAT PARAMETRABLE END
 		if (ctl.ckr_nbr > 0) {
 			if (pause > 0)
 				if (input.tic > pause * 60) {
